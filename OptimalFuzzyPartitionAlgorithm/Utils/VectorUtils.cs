@@ -1,0 +1,12 @@
+using System.Collections.Generic;
+using MathNet.Numerics.LinearAlgebra;
+
+namespace OptimalFuzzyPartitionAlgorithm.Utils
+{
+    public static class VectorUtils
+    {
+        public static Vector<double> CreateVector(params double[] coordinates) => Vector<double>.Build.SparseOfArray(coordinates);
+
+        public static IReadOnlyList<int> CreateVector(params int[] coordinates) => new List<int>(coordinates);
+    }
+}

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimalFuzzyPartition", "OptimalFuzzyPartition\OptimalFuzzyPartition.csproj", "{315DFFC6-1D74-446F-98F1-63CEBBAF9105}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OFP_AlgorithmTests", "OFP_AlgorithmTests\OFP_AlgorithmTests.csproj", "{0EA1E0D1-35F1-4CE4-A50C-4E813E9CD2D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimalFuzzyPartitionAlgorithm", "OptimalFuzzyPartitionAlgorithm\OptimalFuzzyPartitionAlgorithm.csproj", "{38196AC9-6A10-4E9B-A758-5C3985C6126E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{315DFFC6-1D74-446F-98F1-63CEBBAF9105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{315DFFC6-1D74-446F-98F1-63CEBBAF9105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{315DFFC6-1D74-446F-98F1-63CEBBAF9105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{315DFFC6-1D74-446F-98F1-63CEBBAF9105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EA1E0D1-35F1-4CE4-A50C-4E813E9CD2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EA1E0D1-35F1-4CE4-A50C-4E813E9CD2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EA1E0D1-35F1-4CE4-A50C-4E813E9CD2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EA1E0D1-35F1-4CE4-A50C-4E813E9CD2D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38196AC9-6A10-4E9B-A758-5C3985C6126E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38196AC9-6A10-4E9B-A758-5C3985C6126E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38196AC9-6A10-4E9B-A758-5C3985C6126E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38196AC9-6A10-4E9B-A758-5C3985C6126E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4CAB1E6-AFEC-4E6E-997C-5C7524B381F2}
+	EndGlobalSection
+EndGlobal
