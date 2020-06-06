@@ -16,14 +16,14 @@ namespace OptimalFuzzyPartitionAlgorithm
 
         public int CurrentIterationNumber { get; private set; }
 
-        private int NextIterationNumber => CurrentIterationNumber++;
-
-        //private Vector<double> ZeroCentersVector
-
         /// <summary>
         /// Список центров (точек-генераторов).
         /// </summary>
         public List<Vector<double>> Centers { get; private set; }
+
+        private int NextIterationNumber => CurrentIterationNumber++;
+
+        private Matrix<double> MatrixH;
 
         public Partition(PartitionSettings partitionSettings)
         {
@@ -48,9 +48,14 @@ namespace OptimalFuzzyPartitionAlgorithm
 
                 for (int i = 0; i < Settings.CentersCount; i++)
                 {
-                    Centers[i] = Settings.MinCorner;
+                    Centers.Add(Settings.MinCorner);
                 }
             }
+
+            MatrixH = Matrix<double>.Build.Sparse(Settings.CentersCount, Settings.CentersCount);
+            for (var i = 0; i < Settings.CentersCount; i++)
+                MatrixH[i, i] = 1;
+
         }
 
         private void DoIterations()
@@ -60,6 +65,7 @@ namespace OptimalFuzzyPartitionAlgorithm
                 IterationNumber = NextIterationNumber,
                 Centers = Centers.Select(v => Vector<double>.Build.SparseOfVector(v)).ToList()
             };
+            IterationDatas.Add(zeroIterationData);
 
             while (true)
             {
@@ -107,6 +113,7 @@ namespace OptimalFuzzyPartitionAlgorithm
             return
                 CurrentIterationNumber > Settings.MaxIterationsCount ||
                 delta <= Settings.CentersDeltaEpsilon
+                //добавить ограничение на длину градиента 
                 ;
         }
     }

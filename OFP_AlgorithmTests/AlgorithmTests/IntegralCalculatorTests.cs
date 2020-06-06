@@ -1,4 +1,5 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using MathNet.Numerics.Integration;
+using MathNet.Numerics.LinearAlgebra;
 using NUnit.Framework;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
 using OptimalFuzzyPartitionAlgorithm.Utils;
@@ -14,7 +15,7 @@ namespace OFP_AlgorithmTests.AlgorithmTests
         {
             var minCorner = VectorUtils.CreateVector(0d, 0);
             var maxCorner = VectorUtils.CreateVector(2d, 2);
-            var grid = VectorUtils.CreateVector(2, 2);
+            var grid = VectorUtils.CreateVectorInt(2, 2);
             double IntegralFunction(Vector<double> x) => 1;
 
             var integralCalculator = new IntegralCalculator(minCorner, maxCorner, grid, IntegralFunction);
@@ -27,14 +28,16 @@ namespace OFP_AlgorithmTests.AlgorithmTests
         [Test]
         public void _10x20_20x300_XxX_Test()
         {
-            var minCorner = VectorUtils.CreateVector(-10d, -20);
-            var maxCorner = VectorUtils.CreateVector(20d, 300);
-            var grid = VectorUtils.CreateVector(200, 200);
-            double IntegralFunction(Vector<double> point) => point[0] * point[0];
+            //var minCorner = VectorUtils.CreateVector(-10d, -20);
+            //var maxCorner = VectorUtils.CreateVector(20d, 300);
+            //var grid = VectorUtils.CreateVectorInt(200, 200);
+            //double IntegralFunction(Vector<double> point) => point[0] * point[0];
 
-            var integralCalculator = new IntegralCalculator(minCorner, maxCorner, grid, IntegralFunction);
+            //var integralCalculator = new IntegralCalculator(minCorner, maxCorner, grid, IntegralFunction);
 
-            var res = integralCalculator.CalculateIntegral();
+            //var res = integralCalculator.CalculateIntegral();
+
+            var res = GaussLegendreRule.Integrate((x, y) => x * x, -10, 20, -20, 300, 20);
 
             Assert.AreEqual(960_000, res, 40);
         }

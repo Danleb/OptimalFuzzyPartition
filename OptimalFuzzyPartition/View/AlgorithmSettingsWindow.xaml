@@ -1,0 +1,32 @@
+﻿<Window x:Class="OptimalFuzzyPartition.View.AlgorithmSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OptimalFuzzyPartition.View"
+        mc:Ignorable="d"
+        Title="Налаштування алгоритму побудови розбиття" Height="450" Width="800">
+    <Grid>
+        <StackPanel>
+            <Label Content="Введіть ліву границю за X"></Label>
+            <TextBox Text="0" Margin="5,0"></TextBox>
+            <Label Content="Введіть праву границю за X"></Label>
+            <TextBox Text="10" Margin="5,0"></TextBox>
+
+            <Label Content="Введіть ліву границю за Y"></Label>
+            <TextBox Text="0" Margin="5,0"></TextBox>
+            <Label Content="Введіть праву границю за Y"></Label>
+            <TextBox Text="10" Margin="5,0"></TextBox>
+
+            <Label Content="Введіть кількість сегментів за Х"></Label>
+            <TextBox Text="0" Margin="5,0"></TextBox>
+            <Label Content="Введіть кількість сегментів за Y"></Label>
+            <TextBox Text="10" Margin="5,0"></TextBox>
+
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Х"></Button>
+                <Button Content="Х"></Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

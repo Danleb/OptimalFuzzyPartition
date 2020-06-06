@@ -24,7 +24,7 @@ namespace OptimalFuzzyPartitionAlgorithm
         /// <summary>
         /// Количество сегментов разбиений области определения, сетка. Например [10,20] - мы разбиваем область по oX на 10 отрезков, и на 20 отрезков по oY.
         /// </summary>
-        public Vector<int> GridSize;
+        public IReadOnlyList<int> GridSize;
 
         /// <summary>
         /// Максимальное количество итераций. Алгоритм прекращается, если количество итераций превысило максимально допустимое, а заданная точность еще не достигнута.
@@ -69,7 +69,7 @@ namespace OptimalFuzzyPartitionAlgorithm
         /// <summary>
         /// Параметр m - экспоненциальный вес. Это степень, в которую возводится функция принадлежности.
         /// </summary>
-        public int ExponentialWeight;
+        //public int ExponentialWeight;
 
         /// <summary>
         /// Функция расстояния между двумя точками. В описании алгоритма используется как c(x, тета).

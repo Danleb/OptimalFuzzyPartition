@@ -6,12 +6,26 @@
         xmlns:local="clr-namespace:OptimalFuzzyPartition"
         xmlns:u="clr-namespace:OptimalFuzzyPartition.View"
         mc:Ignorable="d"
-        Title="Оптимальне нечітке розбиття множин" Height="450" Width="800">
+        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800">
     <Grid>
         <DockPanel>
-            <StackPanel>
-                <Label Content="Введіть"></Label>
-            </StackPanel>
+            <ScrollViewer>
+                <StackPanel>
+                    <Button Margin="5" Name="ButtonOpenAlgorithmSettings" Content="Відкрити налаштування алгоритму"></Button>
+
+                    
+
+
+                    <Button Margin="5" Name="ButtonBuildDiagram" Content="Побудувати діаграму"></Button>
+
+                    <Label Content="Часу пройшло: "></Label>
+                    <Label Name="LabelTimePassedValue" Content="- "></Label>
+
+                    <Button Margin="5" Name="ButtonOpenLogs" Content="Відкрити віконце логів"></Button>
+                    <Button Margin="5" Name="ButtonStopBuildDiagram" Content="Зупинити побудову діаграми"></Button>
+                </StackPanel>
+            </ScrollViewer>
+            
             <u:UnityWindowHost></u:UnityWindowHost>
         </DockPanel>
     </Grid>

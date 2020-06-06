@@ -7,6 +7,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
     {
         public static Vector<double> CreateVector(params double[] coordinates) => Vector<double>.Build.SparseOfArray(coordinates);
 
-        public static IReadOnlyList<int> CreateVector(params int[] coordinates) => new List<int>(coordinates);
+        public static IReadOnlyList<int> CreateVectorInt(params int[] coordinates) => new List<int>(coordinates);
     }
 }

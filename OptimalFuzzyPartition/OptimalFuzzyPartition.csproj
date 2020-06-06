@@ -57,7 +57,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="View\AlgorithmSettingsWindow.xaml.cs">
+      <DependentUpon>AlgorithmSettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\UnityWindowHost.cs" />
+    <Page Include="View\AlgorithmSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
