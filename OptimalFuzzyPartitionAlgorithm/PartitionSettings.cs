@@ -1,6 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OptimalFuzzyPartitionAlgorithm
 {
@@ -24,7 +25,7 @@ namespace OptimalFuzzyPartitionAlgorithm
         /// <summary>
         /// Количество сегментов разбиений области определения, сетка. Например [10,20] - мы разбиваем область по oX на 10 отрезков, и на 20 отрезков по oY.
         /// </summary>
-        public IReadOnlyList<int> GridSize;
+        public List<int> GridSize;
 
         /// <summary>
         /// Максимальное количество итераций. Алгоритм прекращается, если количество итераций превысило максимально допустимое, а заданная точность еще не достигнута.
@@ -57,22 +58,17 @@ namespace OptimalFuzzyPartitionAlgorithm
         public double H0;
 
         /// <summary>
-        /// Мультипликативные коэффициенты w[i]
-        /// </summary>
-        public List<double> MultiplicativeCoefficients;
-
-        /// <summary>
         /// Аддитивные коэффициенты a[i].
         /// </summary>
         public List<double> AdditiveCoefficients;
 
         /// <summary>
-        /// Параметр m - экспоненциальный вес. Это степень, в которую возводится функция принадлежности.
+        /// Мультипликативные коэффициенты w[i]
         /// </summary>
-        //public int ExponentialWeight;
+        public List<double> MultiplicativeCoefficients;
 
         /// <summary>
-        /// Функция расстояния между двумя точками. В описании алгоритма используется как c(x, тета).
+        /// Функция расстояния между двумя точками. В описании алгоритма используется как c(Х, тау).
         /// </summary>
         public Func<Vector<double>, Vector<double>, double> Distance;
 
@@ -80,5 +76,21 @@ namespace OptimalFuzzyPartitionAlgorithm
         /// Функция плотности "ро" - ρ(x). Возвращает значение плотности пространства в его точке. Может интерпретироваться как мощность потребления в данной точке.
         /// </summary>
         public Func<Vector<double>, double> Density;
+
+        public double SpaceStretchFactor;
+
+        public PartitionSettings GetCopy()
+        {
+            var settings = (PartitionSettings)MemberwiseClone();
+
+            settings.MinCorner = Vector<double>.Build.SparseOfVector(MinCorner);
+            settings.MaxCorner = Vector<double>.Build.SparseOfVector(MaxCorner);
+            settings.GridSize = new List<int>(GridSize);
+            settings.AdditiveCoefficients = new List<double>(AdditiveCoefficients);
+            settings.MultiplicativeCoefficients = new List<double>(MultiplicativeCoefficients);
+            settings.CenterPositions = CenterPositions.Select(v => Vector<double>.Build.SparseOfVector(v)).ToList();
+
+            return settings;
+        }
     }
 }

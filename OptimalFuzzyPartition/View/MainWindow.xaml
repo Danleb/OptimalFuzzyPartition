@@ -11,18 +11,11 @@
         <DockPanel>
             <ScrollViewer>
                 <StackPanel>
-                    <Button Margin="5" Name="ButtonOpenAlgorithmSettings" Content="Відкрити налаштування алгоритму"></Button>
-
-                    
-
-
-                    <Button Margin="5" Name="ButtonBuildDiagram" Content="Побудувати діаграму"></Button>
 
                     <Label Content="Часу пройшло: "></Label>
                     <Label Name="LabelTimePassedValue" Content="- "></Label>
 
                     <Button Margin="5" Name="ButtonOpenLogs" Content="Відкрити віконце логів"></Button>
-                    <Button Margin="5" Name="ButtonStopBuildDiagram" Content="Зупинити побудову діаграми"></Button>
                 </StackPanel>
             </ScrollViewer>
             

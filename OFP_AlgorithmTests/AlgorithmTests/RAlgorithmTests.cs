@@ -19,7 +19,7 @@ namespace OFP_AlgorithmTests.AlgorithmTests
             });
             var initialX = VectorUtils.CreateVector(0, 0);
 
-            var rAlgorithm = new RAlgorithmSolverBForm(initialX.Count, initialX, gradient);
+            var rAlgorithm = new RAlgorithmSolverBForm(initialX, gradient);
 
             rAlgorithm.DoIteration();
 

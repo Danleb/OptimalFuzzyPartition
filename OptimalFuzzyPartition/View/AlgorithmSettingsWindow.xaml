@@ -4,29 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OptimalFuzzyPartition.View"
+        xmlns:v="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
         Title="Налаштування алгоритму побудови розбиття" Height="450" Width="800">
+    <Window.DataContext>
+        <v:AlgorithmSettingsViewModel/>
+    </Window.DataContext>
     <Grid>
         <StackPanel>
-            <Label Content="Введіть ліву границю за X"></Label>
-            <TextBox Text="0" Margin="5,0"></TextBox>
-            <Label Content="Введіть праву границю за X"></Label>
-            <TextBox Text="10" Margin="5,0"></TextBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Label Content="Введіть меншу границю за X"></Label>
+                <TextBox Text="{Binding MinX}"  Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                <Label Content="Введіть більшу границю за X"></Label>
+                <TextBox Text="{Binding MaxX}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                <Label Content="Введіть кількість сегментів за Х"></Label>
+                <TextBox Text="{Binding SegmentsCountX}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+            </StackPanel>
 
-            <Label Content="Введіть ліву границю за Y"></Label>
-            <TextBox Text="0" Margin="5,0"></TextBox>
-            <Label Content="Введіть праву границю за Y"></Label>
-            <TextBox Text="10" Margin="5,0"></TextBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Label Content="Введіть меншу границю за Y"></Label>
+                <TextBox Text="{Binding MinY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                <Label Content="Введіть більшу границю за Y"></Label>
+                <TextBox Text="{Binding MaxY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                <Label Content="Введіть кількість сегментів за Y"></Label>
+                <TextBox Text="{Binding SegmentsCountY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+            </StackPanel>
 
-            <Label Content="Введіть кількість сегментів за Х"></Label>
-            <TextBox Text="0" Margin="5,0"></TextBox>
-            <Label Content="Введіть кількість сегментів за Y"></Label>
-            <TextBox Text="10" Margin="5,0"></TextBox>
+            <Label Content="Функція щільності (попиту) ρ(x,y)"></Label>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Margin="5" Text="$$$"></ComboBox>
+            </StackPanel>
+
+            <Label Content="Функція вартості транспортування (метрика) с(X,)"></Label>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Margin="5" Text="$$$"></ComboBox>
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Button Content="Х"></Button>
-                <Button Content="Х"></Button>
+                <Label Content="Кількість центрів"></Label>
+                <TextBox Text="{Binding CentersCount}" Margin="5" Width="70"></TextBox>
             </StackPanel>
+
+            <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="Задача із розміщенням центрів" Margin="5"></CheckBox>
+
+            <StackPanel>
+                <Label Content="Координати центрів (точок-генераторів)"></Label>
+                <DataGrid>
+
+                </DataGrid>
+            </StackPanel>
+
+            <Label Content="Адитивні коефіцієнти а"></Label>
+
+
+            <Label Content="Мультиплікативні коефіцієнти w"></Label>
+
+
+            <Label Content="Параметри r-алгоритму:"></Label>
+            <Label Content="Максимальна кількість ітерацій:"></Label>
+            <TextBox Margin="5" Width="70" Text="{Binding MaxIterationsCount}" HorizontalAlignment="Left"></TextBox>
+            <Label Content="Коефіцієнт розтягу простору"></Label>
+            <TextBox Margin="5" Width="70" Text="{Binding SpaceStretchFactor}" HorizontalAlignment="Left"></TextBox>
+            <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center"></Button>
         </StackPanel>
     </Grid>
 </Window>
