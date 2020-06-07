@@ -32,12 +32,12 @@
 
             <Label Content="Функція щільності (попиту) ρ(x,y)"></Label>
             <StackPanel Orientation="Horizontal">
-                <ComboBox Margin="5" Text="$$$"></ComboBox>
+                <ComboBox ItemsSource="{Binding DensityFunctionTypes}" SelectedItem="{Binding SelectedDensityFunctionType}" DisplayMemberPath="Item2" SelectedValuePath="Item1" Margin="5" MinWidth="100"></ComboBox>
             </StackPanel>
 
             <Label Content="Функція вартості транспортування (метрика) с(X,)"></Label>
             <StackPanel Orientation="Horizontal">
-                <ComboBox Margin="5" Text="$$$"></ComboBox>
+                <ComboBox ItemsSource="{Binding MetricsTypes}" SelectedItem="{Binding SelectedMetricsType}" DisplayMemberPath="Item2" SelectedValuePath="Item1" Margin="5" Text="$$$" MinWidth="100"></ComboBox>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
@@ -47,17 +47,18 @@
 
             <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="Задача із розміщенням центрів" Margin="5"></CheckBox>
 
-            <StackPanel>
+            <StackPanel Visibility="{Binding ShowCentersCoordinates}">
                 <Label Content="Координати центрів (точок-генераторів)"></Label>
-                <DataGrid>
+                <DataGrid Margin="5">
 
                 </DataGrid>
             </StackPanel>
 
             <Label Content="Адитивні коефіцієнти а"></Label>
-
+            <DataGrid Margin="5"></DataGrid>
 
             <Label Content="Мультиплікативні коефіцієнти w"></Label>
+            <DataGrid Margin="5"></DataGrid>
 
 
             <Label Content="Параметри r-алгоритму:"></Label>

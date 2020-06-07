@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
-using System.Runtime.CompilerServices;
-using OptimalFuzzyPartition.Annotations;
+﻿using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Utils;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace OptimalFuzzyPartition.ViewModel
 {
     public class AlgorithmSettingsViewModel : INotifyPropertyChanged
     {
         public PartitionSettings Settings;
+        private Tuple<DensityFunctionType, string> _selectedDensityFunctionType;
+        private Tuple<MetricsType, string> _selectedMetricsType;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -29,6 +33,9 @@ namespace OptimalFuzzyPartition.ViewModel
                 CentersDeltaEpsilon = 0.01d,
                 H0 = 1
             };
+
+            SelectedDensityFunctionType = DensityFunctionTypes[0];
+            SelectedMetricsType = MetricsTypes[0];
         }
 
         public double MinX
@@ -128,8 +135,45 @@ namespace OptimalFuzzyPartition.ViewModel
             {
                 Settings.IsCenterPlacingTask = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowCentersCoordinates));
             }
         }
+
+        public Visibility ShowCentersCoordinates => IsCentersPlacingTask ? Visibility.Collapsed : Visibility.Visible;
+
+        public Tuple<DensityFunctionType, string> SelectedDensityFunctionType
+        {
+            get => _selectedDensityFunctionType;
+            set
+            {
+                _selectedDensityFunctionType = value;
+                
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Tuple<DensityFunctionType, string>> DensityFunctionTypes { get; set; } =
+            new ObservableCollection<Tuple<DensityFunctionType, string>>
+            {
+                Tuple.Create(DensityFunctionType.Constant1, "Тотожна одиниця")
+            };
+
+        public Tuple<MetricsType, string> SelectedMetricsType
+        {
+            get => _selectedMetricsType;
+            set
+            {
+                _selectedMetricsType = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Tuple<MetricsType, string>> MetricsTypes { get; set; } =
+            new ObservableCollection<Tuple<MetricsType, string>>
+            {
+                Tuple.Create(MetricsType.Euclidean, "Евклідова метрика"),
+                Tuple.Create(MetricsType.Manhattan, "Манхеттенська  метрика"),
+            };
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -108,7 +108,7 @@ namespace OptimalFuzzyPartitionAlgorithm
 
             var delta = Settings.Distance(centerDeltas, Vector<double>.Build.Sparse(Settings.CentersCount));
 
-            Trace.WriteLine($"Teta iterations delta = {delta}");
+            Trace.WriteLine($"Tau iterations delta = {delta}");
 
             return
                 CurrentIterationNumber > Settings.MaxIterationsCount ||

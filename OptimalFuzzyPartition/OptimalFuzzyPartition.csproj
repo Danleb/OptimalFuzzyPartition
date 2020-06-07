@@ -70,6 +70,8 @@
     </ApplicationDefinition>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\AlgorithmSettingsViewModel.cs" />
+    <Compile Include="ViewModel\DensityFunctionType.cs" />
+    <Compile Include="ViewModel\MetricsType.cs" />
     <Compile Include="View\AlgorithmSettingsWindow.xaml.cs">
       <DependentUpon>AlgorithmSettingsWindow.xaml</DependentUpon>
     </Compile>
