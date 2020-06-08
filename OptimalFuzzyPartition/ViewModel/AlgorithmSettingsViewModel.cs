@@ -31,7 +31,9 @@ namespace OptimalFuzzyPartition.ViewModel
                 MaxIterationsCount = 100,
                 GridSize = new List<int> { 100, 100 },
                 CentersDeltaEpsilon = 0.01d,
-                H0 = 1
+                H0 = 1,
+                SpaceStretchFactor = 2,
+
             };
 
             SelectedDensityFunctionType = DensityFunctionTypes[0];
@@ -104,7 +106,11 @@ namespace OptimalFuzzyPartition.ViewModel
             set
             {
                 Settings.CentersCount = value;
+                Settings.AdditiveCoefficients.ResizeList(CentersCount);
+
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(AdditiveCoefficients));
+                //OnPropertyChanged(nameof());
             }
         }
 
@@ -147,7 +153,7 @@ namespace OptimalFuzzyPartition.ViewModel
             set
             {
                 _selectedDensityFunctionType = value;
-                
+
                 OnPropertyChanged();
             }
         }
@@ -163,7 +169,7 @@ namespace OptimalFuzzyPartition.ViewModel
             get => _selectedMetricsType;
             set
             {
-                _selectedMetricsType = value; 
+                _selectedMetricsType = value;
                 OnPropertyChanged();
             }
         }
@@ -174,6 +180,34 @@ namespace OptimalFuzzyPartition.ViewModel
                 Tuple.Create(MetricsType.Euclidean, "Евклідова метрика"),
                 Tuple.Create(MetricsType.Manhattan, "Манхеттенська  метрика"),
             };
+
+        public ObservableCollection<CenterCoordinateData> CenterCoordinates { get; set; } = new ObservableCollection<CenterCoordinateData>
+        {
+            new CenterCoordinateData
+            {
+                CenterIndex = 0,
+                X = 3.33,
+                Y = 5
+            },
+            new CenterCoordinateData
+            {
+                CenterIndex = 1,
+                X = 6.66,
+                Y = 5
+            }
+        };
+
+        public List<Tuple<int, double>> AdditiveCoefficients { get; set; }//=> Settings.AdditiveCoefficients;
+
+        public double InitialStepH0
+        {
+            get => Settings.H0;
+            set
+            {
+                Settings.H0 = value;
+                OnPropertyChanged();
+            }
+        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

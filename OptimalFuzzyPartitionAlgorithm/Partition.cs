@@ -12,7 +12,7 @@ namespace OptimalFuzzyPartitionAlgorithm
 
         public List<IterationData> IterationDatas { get; private set; }
 
-        public event Action<IterationData> NextIterationCalculated;
+        public event Action<IterationData> OnNextIterationCalculated;
 
         public int CurrentIterationNumber { get; private set; }
 
@@ -73,7 +73,7 @@ namespace OptimalFuzzyPartitionAlgorithm
 
                 IterationDatas.Add(iterationData);
 
-                NextIterationCalculated?.Invoke(iterationData);
+                OnNextIterationCalculated?.Invoke(iterationData);
 
                 if (IsStopConditionsSatisfied(iterationData, IterationDatas[CurrentIterationNumber - 1]))
                     break;

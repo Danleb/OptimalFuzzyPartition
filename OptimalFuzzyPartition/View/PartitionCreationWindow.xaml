@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:OptimalFuzzyPartition"
         xmlns:u="clr-namespace:OptimalFuzzyPartition.View"
         mc:Ignorable="d"
-        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800">
+        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
         <DockPanel>
             <ScrollViewer>
@@ -16,9 +16,20 @@
                     <Label Name="LabelTimePassedValue" Content="- "></Label>
 
                     <Button Margin="5" Name="ButtonOpenLogs" Content="Відкрити віконце логів"></Button>
+
+                    <!--<Label Content="{Binding StringFormat=Ітерацій пройшло: {0}, Path=}"></Label>-->
+
+                    <DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер центру" IsReadOnly="True"></DataGridTextColumn>
+                            <DataGridTextColumn Header="X" IsReadOnly="True"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Y" IsReadOnly="True"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
                 </StackPanel>
             </ScrollViewer>
-            
+
             <u:UnityWindowHost></u:UnityWindowHost>
         </DockPanel>
     </Grid>

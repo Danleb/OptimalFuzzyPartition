@@ -23,7 +23,7 @@ namespace OptimalFuzzyPartitionAlgorithm
         public Vector<double> MaxCorner;
 
         /// <summary>
-        /// Количество сегментов разбиений области определения, сетка. Например [10,20] - мы разбиваем область по oX на 10 отрезков, и на 20 отрезков по oY.
+        /// Количество узлов разбиений области определения, сетка. Например [10,20] - мы разбиваем область по oX на 9 отрезков (10 точек-узлов), и на 19 отрезков по oY (20 точек-узлов).
         /// </summary>
         public List<int> GridSize;
 
@@ -77,6 +77,9 @@ namespace OptimalFuzzyPartitionAlgorithm
         /// </summary>
         public Func<Vector<double>, double> Density;
 
+        /// <summary>
+        /// Коэффициент растяжения пространства а.
+        /// </summary>
         public double SpaceStretchFactor;
 
         public PartitionSettings GetCopy()

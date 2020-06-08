@@ -1,7 +1,4 @@
-﻿using OptimalFuzzyPartitionAlgorithm;
-using OptimalFuzzyPartitionAlgorithm.Utils;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 
 namespace OptimalFuzzyPartition.View
 {
