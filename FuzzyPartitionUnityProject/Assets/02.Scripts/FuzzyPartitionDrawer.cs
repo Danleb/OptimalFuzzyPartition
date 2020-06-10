@@ -6,7 +6,7 @@ namespace FuzzyPartitionVisualizing
     /// <summary>
     /// Draws fuzzy partition 2d.
     /// </summary>
-    public class FuzzyPartition2dDrawer : MonoBehaviour
+    public class FuzzyPartitionDrawer : MonoBehaviour
     {
         [SerializeField] private Image _outputImage;
         [SerializeField] private Shader _partitionDrawingShader;

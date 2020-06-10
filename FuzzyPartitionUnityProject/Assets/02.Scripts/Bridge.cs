@@ -1,50 +1,55 @@
-﻿using FuzzyPartitionComputing;
+﻿using FuzzyPartitionVisualizing;
 using OptimalFuzzyPartitionAlgorithm.Utils;
-using System;
+using SimpleTCP;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
 using UnityEngine;
 
-namespace FuzzyPartitionVisualizing
+namespace FuzzyPartitionComputing
 {
     /// <summary>
     /// Entry point of app.
     /// </summary>
     public class Bridge : MonoBehaviour
     {
-        [SerializeField] private string pipeNameIn;
-        [SerializeField] private string pipeNameOut;
+        [SerializeField] private FuzzyPartitionPlacingCentersComputer _fuzzyPartitionPlacingCentersComputer;
+        [SerializeField] private FuzzyPartitionFixedCentersComputer _fuzzyPartitionFixedCentersComputer;
+        [SerializeField] private FuzzyPartitionDrawer _fuzzyPartitionDrawer;
 
-        [SerializeField] private FuzzyPartition2dComputer fuzzyPartition2DComputer;
-        [SerializeField] private FuzzyPartition2dDrawer fuzzyPartition2DDrawer;
+        private readonly Queue<CommandAndData> _commandsAndDatas = new Queue<CommandAndData>();
 
-        private AnonymousPipeClientStream _pipeClientIn;
-        private AnonymousPipeClientStream _pipeClientOut;
+        private SimpleTcpClient client;
 
-        private Queue<CommandAndData> _commandsAndDatas = new Queue<CommandAndData>();
-
-        private Thread _commandsListeningThread;
+        private SimpleTcpServer simpleTcpServer;
 
         private void Awake()
         {
+#if !UNITY_EDITOR
+            Debug.Log(Environment.CommandLine);
+
             var args = Environment.GetCommandLineArgs();
-            pipeNameIn = args[2];
-            pipeNameOut = args[3];
+            var portNumber = int.Parse(args[3]);
 
-            _pipeClientOut = new AnonymousPipeClientStream(PipeDirection.Out, pipeNameIn);
-            _pipeClientIn = new AnonymousPipeClientStream(PipeDirection.In, pipeNameOut);
-
-            _commandsListeningThread = new Thread(ListenCommands);
-            _commandsListeningThread.Start();
+            client = new SimpleTcpClient().Connect("127.0.0.1", portNumber);
+            client.DataReceived += Client_DataReceived;
+            client.Write("ClientReadyToWork");
+#endif
         }
 
-        private void Start()
+        private void Client_DataReceived(object sender, Message e)
         {
+            Debug.Log("Data received from the server: " + e.MessageString);
+            _commandsAndDatas.Enqueue(new CommandAndData());
 
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream(e.Data))
+            {
+                var obj = bf.Deserialize(ms);
+                var data = (CommandAndData)obj;
+                _commandsAndDatas.Enqueue(data);
+            }
         }
 
         private void Update()
@@ -53,32 +58,21 @@ namespace FuzzyPartitionVisualizing
 
             var data = _commandsAndDatas.Dequeue();
 
+            Debug.Log($"Start to compute. Mode = {data.CommandType}");
+
             if (data.CommandType == CommandType.CreateFuzzyPartitionWithoutCentersPlacing)
             {
-                fuzzyPartition2DComputer.Run(data.PartitionSettings);
+                _fuzzyPartitionFixedCentersComputer.Run(data.PartitionSettings);
             }
-        }
-
-        private void ListenCommands()
-        {
-            PipesMessaging.ReadMessages(_pipeClientIn, OnNewCommandReceived);
-        }
-
-        private void OnNewCommandReceived(byte[] buffer, int offset, int count)
-        {
-            var bf = new BinaryFormatter();
-            using (var ms = new MemoryStream(buffer, offset, count))
+            else if (data.CommandType == CommandType.CreateFuzzyPartitionWithCentersPlacing)
             {
-                var obj = bf.Deserialize(ms);
-                var data = (CommandAndData)obj;
-                _commandsAndDatas.Enqueue(data);
+                _fuzzyPartitionPlacingCentersComputer.Run(data.PartitionSettings);
             }
         }
 
         private void OnDestroy()
         {
-            _pipeClientIn.Close();
-            _pipeClientOut.Close();
+            simpleTcpServer.Stop();
         }
     }
 }

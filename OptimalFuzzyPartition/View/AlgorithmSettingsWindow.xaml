@@ -83,7 +83,7 @@
                 <TextBox Margin="5" Width="70" Text="{Binding InitialStepH0}" HorizontalAlignment="Left"></TextBox>
                 <Label Content="Коефіцієнт розтягу простору:"></Label>
                 <TextBox Margin="5" Width="70" Text="{Binding SpaceStretchFactor}" HorizontalAlignment="Left"></TextBox>
-                <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}"></Button>
+                <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}" IsDefault="True"></Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

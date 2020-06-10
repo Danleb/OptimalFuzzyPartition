@@ -1,4 +1,4 @@
-﻿Shader "Custom/FuzzyPartition2dComputer"
+﻿Shader "Custom/FuzzyPartitionComputer"
 {
     Properties
     {
@@ -17,6 +17,7 @@
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
+
 
             struct appdata
             {

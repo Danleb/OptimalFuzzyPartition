@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="PostBuildCommand.bat $(SolutionDir) $(TargetPath)" />
+    <Exec Command="PostBuildCommand.bat $(SolutionDir) $(TargetDir) $(TargetFileName)" />
   </Target>
 
 </Project>

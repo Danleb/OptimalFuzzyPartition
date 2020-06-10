@@ -1,4 +1,4 @@
-﻿Shader "Custom/FuzzyPartition2dDrawer"
+﻿Shader "Custom/FuzzyPartitionDrawer"
 {
     Properties
     {
@@ -17,6 +17,8 @@
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
+
+            int CentersCount;
 
             struct appdata
             {

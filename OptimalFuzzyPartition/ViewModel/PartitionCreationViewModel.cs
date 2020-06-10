@@ -1,12 +1,13 @@
 ﻿using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Utils;
+using SimpleTCP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO.Pipes;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -28,25 +29,28 @@ namespace OptimalFuzzyPartition.ViewModel
 
         private readonly DispatcherTimer _timer;
 
-        private AnonymousPipeServerStream _pipeServerIn;
-        private AnonymousPipeServerStream _pipeServerOut;
+        private SimpleTcpServer _simpleTcpServer;
 
-        private Thread _listeningThread;
-
-        public PartitionCreationViewModel(PartitionSettings partitionSettings, AnonymousPipeServerStream pipeServerIn, AnonymousPipeServerStream pipeServerOut)
+        public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
         {
-            PartitionSettings = partitionSettings;
+            _simpleTcpServer = simpleTcpServer;
+            _simpleTcpServer.DataReceived += OnDataReceived;
 
-            _pipeServerIn = pipeServerIn;
-            _pipeServerOut = pipeServerOut;
+            PartitionSettings = partitionSettings;
 
             _timer = new DispatcherTimer();
             _timer.Tick += OnTimerTick;
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
 
-            //_listeningThread = new Thread();
+            //RunPartitionCreation();
+        }
 
-            RunPartitionCreation();
+        private void OnDataReceived(object sender, Message e)
+        {
+            if (e.MessageString == "ClientReadyToWork")
+            {
+                RunPartitionCreation();
+            }
         }
 
         public void RunPartitionCreation()
@@ -59,7 +63,13 @@ namespace OptimalFuzzyPartition.ViewModel
                 PartitionSettings = PartitionSettings
             };
 
-            PipesMessaging.SendObject(_pipeServerOut, data);
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, data);
+                var bytes = ms.ToArray();
+                _simpleTcpServer.Broadcast(bytes);
+            }
         }
 
         private void OnTimerTick(object sender, EventArgs e)

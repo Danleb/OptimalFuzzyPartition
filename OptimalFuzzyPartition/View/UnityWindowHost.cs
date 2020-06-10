@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SimpleTCP;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -10,8 +10,8 @@ namespace OptimalFuzzyPartition.View
 {
     public class UnityWindowHost : HwndHost
     {
-        public AnonymousPipeServerStream PipeServerOut { get; private set; }
-        public AnonymousPipeServerStream PipeServerIn { get; private set; }
+        public StreamWriter StreamWriter => _unityPlayerProcess.StandardInput;
+        public StreamReader StreamReader => _unityPlayerProcess.StandardOutput;
 
         private readonly string UnityPlayerName = "FuzzyPartitionUnityProject.exe";
 
@@ -19,11 +19,20 @@ namespace OptimalFuzzyPartition.View
 
         private IntPtr _unityPlayerHwnd;
 
+        public SimpleTcpServer SimpleTcpServer;
+
+        private static int NextPortNumber = 8910;
+
+        private int port;
+
+        public UnityWindowHost()
+        {
+            port = NextPortNumber++;
+            SimpleTcpServer = new SimpleTcpServer().Start(port);
+        }
+
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
-            PipeServerOut = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable);
-            PipeServerIn = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
-
             if (!File.Exists(UnityPlayerName))
             {
                 MessageBox.Show("Unity player file not found.", "Fatal error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -37,8 +46,11 @@ namespace OptimalFuzzyPartition.View
                 StartInfo =
                 {
                     FileName = UnityPlayerName,
-                    Arguments = "-parentHWND " + handle + " " + PipeServerIn.GetClientHandleAsString() + " " + PipeServerOut.GetClientHandleAsString(),
-                    UseShellExecute = true,
+                    Arguments = "-parentHWND " + handle + " " + port,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -59,15 +71,31 @@ namespace OptimalFuzzyPartition.View
             return 0;
         }
 
+        private bool destroyed = false;
+
         protected override void DestroyWindowCore(HandleRef hwnd)
         {
-            _unityPlayerProcess.CloseMainWindow();
+            Destroy();
+        }
 
-            System.Threading.Thread.Sleep(1000);
-            while (_unityPlayerProcess.HasExited == false)
-                _unityPlayerProcess.Kill();
+        public void Destroy()
+        {
+            _unityPlayerProcess.Kill();
+            //_unityPlayerProcess.Close();
 
-            DestroyWindow(hwnd.Handle);
+            //System.Threading.Thread.Sleep(1000);
+            //while (_unityPlayerProcess.HasExited == false)
+            //    
+
+            //DestroyWindow(handle);
+            destroyed = true;
+        }
+
+        ~UnityWindowHost()
+        {
+            if (destroyed) return;
+
+            Destroy();
         }
 
         //protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

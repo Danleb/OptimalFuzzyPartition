@@ -7,7 +7,7 @@
         xmlns:view="clr-namespace:OptimalFuzzyPartition.View"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
-        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico" WindowStartupLocation="CenterScreen">
+        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <vm:TimePassedConverter x:Key="TimePassedConverter"></vm:TimePassedConverter>
     </Window.Resources>

@@ -3,10 +3,8 @@ using UnityEngine;
 
 namespace FuzzyPartitionComputing
 {
-    public class FuzzyPartition2dComputer : MonoBehaviour
+    public class FuzzyPartitionPlacingCentersComputer : MonoBehaviour
     {
-
-
         private PartitionSettings _partitionSettings;
 
         public void Run(PartitionSettings partitionSettings)
