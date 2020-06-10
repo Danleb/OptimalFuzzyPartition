@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:v="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови розбиття" Height="618.667" Width="800">
+        Title="Налаштування алгоритму побудови розбиття" Height="618.667" Width="800" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <v:AlgorithmSettingsViewModel/>
     </Window.DataContext>
-
     <Grid>
         <ScrollViewer>
             <StackPanel>
+                <Label Content="{Binding CentersCount}" ContentStringFormat="Amount is {0}"></Label>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Label Content="Введіть меншу границю за X"></Label>
                     <TextBox Text="{Binding MinX}"  Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
@@ -31,12 +31,12 @@
                     <TextBox Text="{Binding SegmentsCountY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
                 </StackPanel>
 
-                <Label Content="Функція щільності (попиту) ρ(x,y)"></Label>
+                <Label Content="Функція щільності (попиту) ρ(x,y):"></Label>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox ItemsSource="{Binding DensityFunctionTypes}" SelectedItem="{Binding SelectedDensityFunctionType}" DisplayMemberPath="Item2" SelectedValuePath="Item1" Margin="5" MinWidth="100"></ComboBox>
                 </StackPanel>
 
-                <Label Content="Функція вартості транспортування (метрика) с((x,y),)"></Label>
+                <Label Content="Функція вартості транспортування (метрика) с((x,y), τ):"></Label>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox ItemsSource="{Binding MetricsTypes}" SelectedItem="{Binding SelectedMetricsType}" DisplayMemberPath="Item2" SelectedValuePath="Item1" Margin="5" Text="$$$" MinWidth="100"></ComboBox>
                 </StackPanel>
@@ -50,28 +50,28 @@
 
                 <StackPanel Visibility="{Binding ShowCentersCoordinates}">
                     <Label Content="Координати центрів (точок-генераторів):"></Label>
-                    <DataGrid Margin="5" HorizontalAlignment="Left">
+                    <DataGrid Margin="5" HorizontalAlignment="Left" ItemsSource="{Binding CenterCoordinates}" CanUserAddRows="False" CanUserSortColumns="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Номер центру" IsReadOnly="True"></DataGridTextColumn>
-                            <DataGridTextColumn Header="Координата Х" IsReadOnly="False"></DataGridTextColumn>
-                            <DataGridTextColumn Header="Координата Y" IsReadOnly="False"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Координата Х" IsReadOnly="False" Binding="{Binding Path=X}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Координата Y" IsReadOnly="False" Binding="{Binding Path=Y}"></DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
 
                 <Label Content="Адитивні коефіцієнти а:"></Label>
-                <DataGrid Margin="5" AutoGenerateColumns="False" HorizontalAlignment="Left" ItemsSource="{Binding AdditiveCoefficients}">
+                <DataGrid Margin="5" AutoGenerateColumns="False" HorizontalAlignment="Left" ItemsSource="{Binding AdditiveCoefficients}" CanUserAddRows="False" CanUserSortColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер центру" IsReadOnly="True"></DataGridTextColumn>
-                        <DataGridTextColumn Header="Коефіцієнт а" IsReadOnly="False"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Коефіцієнт а" IsReadOnly="False" Binding="{Binding Path=Coefficient}"></DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 
                 <Label Content="Мультиплікативні коефіцієнти w:"></Label>
-                <DataGrid Margin="5" HorizontalAlignment="Left">
+                <DataGrid Margin="5" HorizontalAlignment="Left" CanUserAddRows="False" CanUserSortColumns="False" AutoGenerateColumns="False"  ItemsSource="{Binding MultiplicativeCoefficients}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер центру" IsReadOnly="True"></DataGridTextColumn>
-                        <DataGridTextColumn Header="Коефіцієнт а" IsReadOnly="False"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Коефіцієнт w" IsReadOnly="False" Binding="{Binding Path=Coefficient}"></DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -83,7 +83,7 @@
                 <TextBox Margin="5" Width="70" Text="{Binding InitialStepH0}" HorizontalAlignment="Left"></TextBox>
                 <Label Content="Коефіцієнт розтягу простору:"></Label>
                 <TextBox Margin="5" Width="70" Text="{Binding SpaceStretchFactor}" HorizontalAlignment="Left"></TextBox>
-                <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center"></Button>
+                <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}"></Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

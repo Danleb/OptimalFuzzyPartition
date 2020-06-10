@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace OptimalFuzzyPartitionAlgorithm
 {
+    [Serializable]
     public class PartitionSettings
     {
         /// <summary>

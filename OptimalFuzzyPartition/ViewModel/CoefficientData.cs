@@ -2,7 +2,8 @@
 {
     public class CoefficientData
     {
-        private int CenterIndex { get; set; }
-        private double Coefficient { get; set; }
+        public int CenterIndex { get; set; }
+        public int CenterNumber => CenterIndex + 1;
+        public double Coefficient { get; set; }
     }
 }

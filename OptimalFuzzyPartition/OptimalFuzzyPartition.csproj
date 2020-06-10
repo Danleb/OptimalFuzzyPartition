@@ -70,8 +70,13 @@
     </ApplicationDefinition>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\AlgorithmSettingsViewModel.cs" />
+    <Compile Include="ViewModel\CoefficientData.cs" />
     <Compile Include="ViewModel\DensityFunctionType.cs" />
     <Compile Include="ViewModel\MetricsType.cs" />
+    <Compile Include="ViewModel\CenterCoordinateData.cs" />
+    <Compile Include="ViewModel\PartitionCreationViewModel.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\TimePassedConverter.cs" />
     <Compile Include="View\AlgorithmSettingsWindow.xaml.cs">
       <DependentUpon>AlgorithmSettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -80,7 +85,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MainWindow.xaml">
+    <Page Include="View\PartitionCreationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -88,8 +93,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="View\PartitionCreationWindow.xaml.cs">
+      <DependentUpon>PartitionCreationWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

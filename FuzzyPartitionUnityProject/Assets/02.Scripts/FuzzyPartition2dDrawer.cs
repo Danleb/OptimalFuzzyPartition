@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace FuzzyPartitionVisualizing
 {
@@ -9,11 +8,22 @@ namespace FuzzyPartitionVisualizing
     /// </summary>
     public class FuzzyPartition2dDrawer : MonoBehaviour
     {
-        public Shader partitionShader;
+        [SerializeField] private Image _outputImage;
+        [SerializeField] private Shader _partitionDrawingShader;
+
+        private RenderTexture _renderTexture1;
+        private RenderTexture _renderTexture2;
 
         public void CreatePartition()
         {
+            //Graphics.Blit();
 
+            //_outputImage.mainTexture = 
+        }
+
+        public void Hide()
+        {
+            _outputImage.gameObject.SetActive(false);
         }
     }
 }

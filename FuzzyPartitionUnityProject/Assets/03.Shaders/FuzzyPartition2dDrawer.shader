@@ -6,7 +6,6 @@
     }
     SubShader
     {
-        // No culling or depth
         Cull Off ZWrite Off ZTest Always
 
         Pass
@@ -16,6 +15,8 @@
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
 
             struct appdata
             {
@@ -37,13 +38,12 @@
                 return o;
             }
 
-            sampler2D _MainTex;
-
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                // just invert the colors
-                col.rgb = 1 - col.rgb;
+
+
+
                 return col;
             }
             ENDCG

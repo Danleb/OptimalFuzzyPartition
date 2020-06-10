@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -38,6 +39,33 @@ namespace OptimalFuzzyPartition.ViewModel
 
             SelectedDensityFunctionType = DensityFunctionTypes[0];
             SelectedMetricsType = MetricsTypes[0];
+
+            CreatePartitionCommand = new RelayCommand(obj =>
+                {
+                    Settings.AdditiveCoefficients = AdditiveCoefficients.Select(v => v.Coefficient).ToList();
+                    Settings.MultiplicativeCoefficients =
+                        MultiplicativeCoefficients.Select(v => v.Coefficient).ToList();
+                    Settings.CenterPositions =
+                        CenterCoordinates.Select(v => VectorUtils.CreateVector(v.X, v.Y)).ToList();
+
+                    var settingsCopy = Settings.GetCopy();
+                    var partitionCreationWindow = new PartitionCreationWindow(settingsCopy);
+                    //partitionCreationWindow.ShowActivated = true;
+                    partitionCreationWindow.Show();
+                },
+                obj =>
+                {
+                    //#TOD add validation check
+                    var valid = true;
+
+                    if (!valid)
+                    {
+                        MessageBox.Show("Введені некоректні дані! Щоб продовжити, введіть коректні дані.", "Некоректні дані",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    return true;
+                });
         }
 
         public double MinX
@@ -110,7 +138,7 @@ namespace OptimalFuzzyPartition.ViewModel
 
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(AdditiveCoefficients));
-                //OnPropertyChanged(nameof());
+                OnPropertyChanged(nameof(MultiplicativeCoefficients));
             }
         }
 
@@ -181,7 +209,7 @@ namespace OptimalFuzzyPartition.ViewModel
                 Tuple.Create(MetricsType.Manhattan, "Манхеттенська  метрика"),
             };
 
-        public ObservableCollection<CenterCoordinateData> CenterCoordinates { get; set; } = new ObservableCollection<CenterCoordinateData>
+        public List<CenterCoordinateData> CenterCoordinates { get; set; } = new List<CenterCoordinateData>
         {
             new CenterCoordinateData
             {
@@ -197,7 +225,17 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         };
 
-        public List<Tuple<int, double>> AdditiveCoefficients { get; set; }//=> Settings.AdditiveCoefficients;
+        public List<CoefficientData> AdditiveCoefficients { get; set; } = new List<CoefficientData>
+        {
+            new CoefficientData{ CenterIndex = 0, Coefficient = 1 },
+            new CoefficientData{ CenterIndex = 1, Coefficient = 2 },
+        };
+
+        public List<CoefficientData> MultiplicativeCoefficients { get; set; } = new List<CoefficientData>
+        {
+            new CoefficientData{ CenterIndex = 0, Coefficient = 2 },
+            new CoefficientData{ CenterIndex = 1, Coefficient = 3 },
+        };
 
         public double InitialStepH0
         {
@@ -208,6 +246,8 @@ namespace OptimalFuzzyPartition.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        public RelayCommand CreatePartitionCommand { get; }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
