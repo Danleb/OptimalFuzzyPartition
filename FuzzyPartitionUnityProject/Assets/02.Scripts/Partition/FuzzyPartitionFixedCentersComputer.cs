@@ -208,8 +208,8 @@ namespace FuzzyPartitionComputing
             var centersArray = new float[Settings.CentersCount * 2];
             for (var i = 0; i < Settings.CentersCount; i++)
             {
-                centersArray[i] = (float)Settings.CenterPositions[0][0];
-                centersArray[i + 1] = (float)Settings.CenterPositions[0][1];
+                centersArray[i * 2] = (float)Settings.CenterPositions[i][0];
+                centersArray[i * 2 + 1] = (float)Settings.CenterPositions[i][1];
             }
 
             _centersPositionsBuffer.SetData(centersArray);

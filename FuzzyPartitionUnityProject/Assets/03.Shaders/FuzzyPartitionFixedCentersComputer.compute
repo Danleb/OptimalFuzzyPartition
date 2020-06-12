@@ -59,19 +59,6 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 	
 	float distance = EuclideanNorm(centerPosition, spacePoint);
 
-	//MuGrids[id] = pointRatio.y;
-	//return;
-
-	//if(distance < 1)
-	//{
-	//	MuGrids[id] = float4(0,0,0,1);
-	//}
-	//else
-	//{
-	//	MuGrids[id] = float4(1,1,1,1);
-	//}
-	//return;
-
 	float psiValue = PsiGrid[texturePoint];
 
 	float newMuValue = -psiValue / (m * densityValue * (distance / w + a));
