@@ -1,0 +1,94 @@
+﻿int CentersCount;
+
+StructuredBuffer<float2> CentersPositions;
+StructuredBuffer<float> AdditiveCoefficients;
+StructuredBuffer<float> MultiplicativeCoefficients;
+
+RWTexture3D<float> MuGrids;
+RWTexture2D<float> PsiGrid;
+
+float GradientLambdaStep;
+
+float GradientEpsilon;
+
+float2 MinCorner;
+float2 Diff;
+
+float EuclideanNorm(float2 point1, float2 point2)
+{
+	return distance(point1, point2);
+}
+
+#pragma kernel ZeroIterationInit
+[numthreads(8,8,1)]
+void ZeroIterationInit(uint3 id : SV_DispatchThreadID)
+{
+	uint2 texturePoint = id.xy;
+	uint centerIndex = id.z;
+	PsiGrid[texturePoint] = 1;
+	MuGrids[uint3(texturePoint, 0)] = 0.1;
+	MuGrids[uint3(texturePoint, 1)] = 0.9;
+}
+
+#pragma kernel UpdateMu
+[numthreads(8,8,1)]
+void UpdateMu(uint3 id : SV_DispatchThreadID)
+{
+	uint2 texturePoint = id.xy;
+	uint centerIndex = id.z;
+	
+	float a = AdditiveCoefficients[centerIndex];
+	float w = MultiplicativeCoefficients[centerIndex];
+	float2 centerPosition = CentersPositions[centerIndex];
+
+	float2 spacePoint = MinCorner + Diff * float2(id.x, id.y);
+
+	float previousMuValue = MuGrids[id];
+	float densityValue = 1;
+	float m = 2;
+	
+	float distance = EuclideanNorm(centerPosition, spacePoint);
+
+	float psi = PsiGrid[texturePoint];
+
+	float newMuValue = -psi / ((1)*densityValue);
+
+	float normalizedMuValue;
+
+	if(newMuValue >= 0 && newMuValue <= 1)
+	{
+		normalizedMuValue = newMuValue;
+	}
+	else
+	{		
+		float muGradient = psi + m * previousMuValue * (distance / w + a) * densityValue;
+		muGradient = sign(muGradient);
+		normalizedMuValue = 0.5 * (1 - muGradient);
+	}
+
+	MuGrids[id] = normalizedMuValue;
+}
+
+#pragma kernel UpdatePsi
+[numthreads(8,8,1)]
+void UpdatePsi(uint3 id : SV_DispatchThreadID)
+{
+	uint2 texturePoint = id.xy;
+	float grad = 0;
+	for(int centerIndex = 0; centerIndex < CentersCount; centerIndex++)
+		grad += MuGrids[uint3(texturePoint, centerIndex)];
+
+	grad -= 1;
+
+	PsiGrid[id.xy] = PsiGrid[id.xy] + GradientLambdaStep * grad;
+
+	//check psi gradient value
+	if(grad < GradientEpsilon)
+	{
+		
+	}
+	else
+	{
+		
+	}
+}

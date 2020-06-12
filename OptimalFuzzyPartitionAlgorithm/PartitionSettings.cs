@@ -83,6 +83,21 @@ namespace OptimalFuzzyPartitionAlgorithm
         /// </summary>
         public double SpaceStretchFactor;
 
+        /// <summary>
+        /// Максимальное количество итераций для построения нечеткого разбиения с заданными центрами.
+        /// </summary>
+        public int FixedPartitionMaxIterationsCount;
+
+        /// <summary>
+        /// Точность расчета градиента.
+        /// </summary>
+        public double FixedPartitionGradientEpsilon;
+
+        /// <summary>
+        /// Размер шага лямбда для градиентного спуска построения нечеткого разбиения с заданными центрами.
+        /// </summary>
+        public double FixedPartitionGradientStep;
+
         public PartitionSettings GetCopy()
         {
             var settings = (PartitionSettings)MemberwiseClone();

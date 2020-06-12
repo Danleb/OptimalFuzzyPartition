@@ -1,4 +1,5 @@
-﻿using FuzzyPartitionVisualizing;
+﻿using System;
+using FuzzyPartitionVisualizing;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using SimpleTCP;
 using System.Collections.Generic;
@@ -16,25 +17,26 @@ namespace FuzzyPartitionComputing
     {
         [SerializeField] private FuzzyPartitionPlacingCentersComputer _fuzzyPartitionPlacingCentersComputer;
         [SerializeField] private FuzzyPartitionFixedCentersComputer _fuzzyPartitionFixedCentersComputer;
-        [SerializeField] private FuzzyPartitionDrawer _fuzzyPartitionDrawer;
+        [SerializeField] private FuzzyPartitionImageCreator _fuzzyPartitionDrawer;
 
         private readonly Queue<CommandAndData> _commandsAndDatas = new Queue<CommandAndData>();
 
-        private SimpleTcpClient client;
-
-        private SimpleTcpServer simpleTcpServer;
+        private SimpleTcpClient _client;
 
         private void Awake()
         {
+            if(!SystemInfo.supportsComputeShaders)
+                throw new NotSupportedException("Compute shaders are not supported on your platform.");
+
 #if !UNITY_EDITOR
             Debug.Log(Environment.CommandLine);
 
             var args = Environment.GetCommandLineArgs();
             var portNumber = int.Parse(args[3]);
 
-            client = new SimpleTcpClient().Connect("127.0.0.1", portNumber);
-            client.DataReceived += Client_DataReceived;
-            client.Write("ClientReadyToWork");
+            _client = new SimpleTcpClient().Connect("127.0.0.1", portNumber);
+            _client.DataReceived += Client_DataReceived;
+            _client.Write("ClientReadyToWork");
 #endif
         }
 
@@ -62,7 +64,9 @@ namespace FuzzyPartitionComputing
 
             if (data.CommandType == CommandType.CreateFuzzyPartitionWithoutCentersPlacing)
             {
-                _fuzzyPartitionFixedCentersComputer.Run(data.PartitionSettings);
+                _fuzzyPartitionFixedCentersComputer.Init(data.PartitionSettings);
+                //_fuzzyPartitionFixedCentersComputer.Run();
+                //_fuzzyPartitionDrawer.DrawPartition();
             }
             else if (data.CommandType == CommandType.CreateFuzzyPartitionWithCentersPlacing)
             {
@@ -72,7 +76,7 @@ namespace FuzzyPartitionComputing
 
         private void OnDestroy()
         {
-            simpleTcpServer.Stop();
+            _client?.Dispose();
         }
     }
 }

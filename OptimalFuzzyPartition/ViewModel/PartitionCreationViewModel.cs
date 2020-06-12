@@ -40,9 +40,7 @@ namespace OptimalFuzzyPartition.ViewModel
 
             _timer = new DispatcherTimer();
             _timer.Tick += OnTimerTick;
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
-
-            //RunPartitionCreation();
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
         }
 
         private void OnDataReceived(object sender, Message e)
@@ -50,6 +48,10 @@ namespace OptimalFuzzyPartition.ViewModel
             if (e.MessageString == "ClientReadyToWork")
             {
                 RunPartitionCreation();
+            }
+            else
+            {
+
             }
         }
 
