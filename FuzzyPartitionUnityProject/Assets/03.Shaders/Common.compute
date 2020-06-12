@@ -1,0 +1,4 @@
+﻿float GetEuclideanDistance(float2 a, float2 b)
+{
+	return distance(a, b);
+}

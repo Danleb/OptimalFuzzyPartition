@@ -48,10 +48,8 @@ namespace FuzzyPartitionVisualizing
 
             var partitionTexture2D = renderTexture.ToTexture2D();
 
-            var sprite = Sprite.Create(partitionTexture2D, new Rect(0, 0, partitionTexture2D.width, partitionTexture2D.height), Vector2.zero);
-            //_outputImage.sprite = sprite;
-
-            _outputImage.material.mainTexture = renderTexture;
+            var sprite = partitionTexture2D.ToSprite();
+            _outputImage.sprite = sprite;
 
             return partitionTexture2D;
         }
@@ -71,6 +69,11 @@ namespace FuzzyPartitionVisualizing
         public void Hide()
         {
             _outputImage.gameObject.SetActive(false);
+        }
+
+        public void Release()
+        {
+            _colorsComputeBuffer.Release();
         }
     }
 }

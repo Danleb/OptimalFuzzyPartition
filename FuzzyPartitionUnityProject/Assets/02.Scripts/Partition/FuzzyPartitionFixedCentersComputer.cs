@@ -1,5 +1,4 @@
-﻿using Assets._02.Scripts;
-using OptimalFuzzyPartitionAlgorithm;
+﻿using OptimalFuzzyPartitionAlgorithm;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -14,21 +13,26 @@ namespace FuzzyPartitionComputing
         [SerializeField] private ComputeShader _fuzzyPartitionShader;
         [SerializeField] private Slicer _slicer;
 
-        public int PerformedIterationsCount { get; private set; }
+        #region DebugRes
+        [SerializeField] private bool debug;
+        [SerializeField] private Image[] rs;
+        #endregion
 
-        public PartitionSettings Settings { get; private set; }
+        [SerializeField] private Vector3Int _zeroInitNumThreads;
+        [SerializeField] private Vector3Int _muUpdateNumThreads;
+        [SerializeField] private Vector3Int _psiUpdateNumThreads;
 
-        private const string ZeroIterationInitName = "ZeroIterationInit";
+        private Vector3Int _zeroInitGroups;
+        private Vector3Int _muUpdateGroups;
+        private Vector3Int _psiUpdateGroups;
+
+        private const string ZeroIterationInitName = "ZeroIterationInit";//TODO put out
         private const string UpdateMuKernelName = "UpdateMu";
         private const string UpdatePsiKernelName = "UpdatePsi";
 
         private int _zeroIterationInitKernelHandle;
         private int _updateMuKernelHandle;
         private int _updatePsiKernelHandle;
-
-        [SerializeField] private Vector3Int _zeroInitGroups;
-        [SerializeField] private Vector3Int _groupsMu;
-        [SerializeField] private Vector3Int _groupsPsi;
 
         private RenderTexture _muGridsTexture;
         private RenderTexture _psiGridTexture;
@@ -37,12 +41,12 @@ namespace FuzzyPartitionComputing
         private ComputeBuffer _multiplicativeCoefficientsBuffer;
         private ComputeBuffer _centersPositionsBuffer;
 
-        /// <summary>
-        /// For debug purposes.
-        /// </summary>
-        [SerializeField] private Image[] rs;
+        private ComputeBuffer _stopConditionComputeBuffer;
+        private readonly int[] _stopConditionsArray = new int[1];
 
-        [SerializeField] private bool debug;
+        public int PerformedIterationsCount { get; private set; }
+
+        public PartitionSettings Settings { get; private set; }
 
         public void Init(PartitionSettings partitionSettings)
         {
@@ -50,11 +54,21 @@ namespace FuzzyPartitionComputing
 
             Settings = partitionSettings;
 
+            SetGroupSizes();
+
+            SetMinCornerToShader();
+            SetDiffToShader();
+
+            var gridSize = Settings.GridSize.Select(v => (float)(v - 1)).ToArray();
+            _fuzzyPartitionShader.SetFloats("GridSize", gridSize);
+
             _centersPositionsBuffer = new ComputeBuffer(Settings.CentersCount, sizeof(float) * 2, ComputeBufferType.Default);
 
             _additiveCoefficientsBuffer = new ComputeBuffer(Settings.CentersCount, sizeof(float), ComputeBufferType.Default);
 
             _multiplicativeCoefficientsBuffer = new ComputeBuffer(Settings.CentersCount, sizeof(float), ComputeBufferType.Default);
+
+            _stopConditionComputeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Default);
 
             _zeroIterationInitKernelHandle = _fuzzyPartitionShader.FindKernel(ZeroIterationInitName);
             _updateMuKernelHandle = _fuzzyPartitionShader.FindKernel(UpdateMuKernelName);
@@ -73,12 +87,43 @@ namespace FuzzyPartitionComputing
             _fuzzyPartitionShader.SetTexture(_zeroIterationInitKernelHandle, "MuGrids", _muGridsTexture);
             _fuzzyPartitionShader.SetTexture(_zeroIterationInitKernelHandle, "PsiGrid", _psiGridTexture);
 
-            _fuzzyPartitionShader.Dispatch(_zeroIterationInitKernelHandle, Settings.GridSize[0] / _zeroInitGroups.x, Settings.GridSize[1] / _zeroInitGroups.y, Settings.CentersCount / _zeroInitGroups.z);
+            _fuzzyPartitionShader.Dispatch(_zeroIterationInitKernelHandle, _zeroInitGroups.x, _zeroInitGroups.y, _zeroInitGroups.z);
 
             ShowMuTextures();
         }
 
-        public void Run()
+        private void SetGroupSizes()
+        {
+            _zeroInitGroups = new Vector3Int(
+                Settings.GridSize[0] / _zeroInitNumThreads.x,
+                Settings.GridSize[1] / _zeroInitNumThreads.y,
+                Settings.CentersCount / _zeroInitNumThreads.z
+                );
+            _muUpdateGroups = new Vector3Int(
+                Settings.GridSize[0] / _muUpdateNumThreads.x,
+                Settings.GridSize[1] / _muUpdateNumThreads.y,
+                Settings.CentersCount / _muUpdateNumThreads.z
+            );
+            _psiUpdateGroups = new Vector3Int(
+                Settings.GridSize[0] / _psiUpdateNumThreads.x,
+                Settings.GridSize[1] / _psiUpdateNumThreads.y,
+                1
+                );
+        }
+
+        private void SetDiffToShader()
+        {
+            var diff = (Settings.MaxCorner - Settings.MinCorner).ToVector2();
+            _fuzzyPartitionShader.SetFloats("Diff", diff.ToArray());
+        }
+
+        private void SetMinCornerToShader()
+        {
+            var minCorner = Settings.MinCorner.ToVector2();
+            _fuzzyPartitionShader.SetFloats("MinCorner", minCorner.ToArray());
+        }
+
+        public RenderTexture Run()
         {
             PerformedIterationsCount = 0;
 
@@ -103,24 +148,33 @@ namespace FuzzyPartitionComputing
                 var epsilon = (float)Settings.FixedPartitionGradientEpsilon;
                 _fuzzyPartitionShader.SetFloat("GradientEpsilon", epsilon);
 
-                //
-                _fuzzyPartitionShader.Dispatch(_updateMuKernelHandle, _groupsMu.x, _groupsMu.y, _groupsMu.z);
+                _fuzzyPartitionShader.SetTexture(_updateMuKernelHandle, "MuGrids", _muGridsTexture);
+                _fuzzyPartitionShader.SetTexture(_updateMuKernelHandle, "PsiGrid", _psiGridTexture);
 
-                _fuzzyPartitionShader.Dispatch(_updatePsiKernelHandle, _groupsPsi.x, _groupsPsi.y, _groupsPsi.z);
+                _fuzzyPartitionShader.Dispatch(_updateMuKernelHandle, _muUpdateGroups.x, _muUpdateGroups.y, _muUpdateGroups.z);
+
+                _fuzzyPartitionShader.SetTexture(_updatePsiKernelHandle, "MuGrids", _muGridsTexture);
+                _fuzzyPartitionShader.SetTexture(_updatePsiKernelHandle, "PsiGrid", _psiGridTexture);
+
+                _stopConditionsArray[0] = 999;
+                _stopConditionComputeBuffer.SetData(_stopConditionsArray);
+                _fuzzyPartitionShader.SetBuffer(_updatePsiKernelHandle, "StopConditions", _stopConditionComputeBuffer);
+
+                _fuzzyPartitionShader.Dispatch(_updatePsiKernelHandle, _psiUpdateGroups.x, _psiUpdateGroups.y, _psiUpdateGroups.z);
 
                 PerformedIterationsCount++;
 
-                //_psiBuffer.GetData();
+                _stopConditionComputeBuffer.GetData(_stopConditionsArray);
 
-                if (true)
+                if (_stopConditionsArray[0] > 100)
                 {
-                    //break;
+                    break;
                 }
+
+                ShowMuTextures();
             }
 
-            //_muBuffer.GetData();
-
-
+            return _muGridsTexture;
         }
 
         private void ShowMuTextures()
@@ -159,6 +213,19 @@ namespace FuzzyPartitionComputing
             }
 
             _centersPositionsBuffer.SetData(centersArray);
+        }
+
+        public void Release()
+        {
+            _additiveCoefficientsBuffer?.Release();
+            _centersPositionsBuffer?.Release();
+            _multiplicativeCoefficientsBuffer?.Release();
+            _stopConditionComputeBuffer?.Release();
+        }
+
+        private void OnDestroy()
+        {
+            Release();
         }
     }
 }

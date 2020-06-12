@@ -1,4 +1,6 @@
-﻿int CentersCount;
+﻿#pragma enable_d3d11_debug_symbols
+
+int CentersCount;
 RWStructuredBuffer<float4> CentersColors;
 
 Texture3D<float> MuGrids;
@@ -11,7 +13,9 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 {
 	float4 res = float4(0,0,0,0);
 	for(int i = 0; i < CentersCount; i++)
-		res += CentersColors[i] * MuGrids[uint3(i, id.xy)];
+		res += CentersColors[i] * MuGrids[uint3(id.xy, i)];
+
+	res.a = 1;
 
 	Result[id.xy] = res;
 }

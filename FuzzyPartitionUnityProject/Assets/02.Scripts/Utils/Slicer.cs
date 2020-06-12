@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets._02.Scripts
+namespace Utils
 {
     public class Slicer : MonoBehaviour//, ISlicer
     {

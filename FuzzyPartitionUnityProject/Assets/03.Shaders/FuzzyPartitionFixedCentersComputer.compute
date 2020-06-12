@@ -1,4 +1,6 @@
-﻿int CentersCount;
+﻿#pragma enable_d3d11_debug_symbols
+
+int CentersCount;
 
 StructuredBuffer<float2> CentersPositions;
 StructuredBuffer<float> AdditiveCoefficients;
@@ -11,10 +13,13 @@ float GradientLambdaStep;
 
 float GradientEpsilon;
 
+float2 GridSize;
 float2 MinCorner;
 float2 Diff;
 
-float EuclideanNorm(float2 point1, float2 point2)
+RWStructuredBuffer<int> StopConditions;
+
+float EuclideanNorm(float2 point1, float2 point2)//TODO to common utils
 {
 	return distance(point1, point2);
 }
@@ -25,9 +30,14 @@ void ZeroIterationInit(uint3 id : SV_DispatchThreadID)
 {
 	uint2 texturePoint = id.xy;
 	uint centerIndex = id.z;
+	
 	PsiGrid[texturePoint] = 1;
-	MuGrids[uint3(texturePoint, 0)] = 0.1;
-	MuGrids[uint3(texturePoint, 1)] = 0.9;
+	
+	float muRatio = 1.0 / CentersCount;
+	MuGrids[id] = muRatio;
+
+	//MuGrids[uint3(texturePoint, 0)] = 0.1;
+	//MuGrids[uint3(texturePoint, 1)] = 0.9;
 }
 
 #pragma kernel UpdateMu
@@ -41,17 +51,30 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 	float w = MultiplicativeCoefficients[centerIndex];
 	float2 centerPosition = CentersPositions[centerIndex];
 
-	float2 spacePoint = MinCorner + Diff * float2(id.x, id.y);
-
-	float previousMuValue = MuGrids[id];
+	float2 pointRatio = float2(texturePoint.x, texturePoint.y) / GridSize;
+	float2 spacePoint = MinCorner + Diff * pointRatio;
+	
 	float densityValue = 1;
 	float m = 2;
 	
 	float distance = EuclideanNorm(centerPosition, spacePoint);
 
-	float psi = PsiGrid[texturePoint];
+	//MuGrids[id] = pointRatio.y;
+	//return;
 
-	float newMuValue = -psi / ((1)*densityValue);
+	//if(distance < 1)
+	//{
+	//	MuGrids[id] = float4(0,0,0,1);
+	//}
+	//else
+	//{
+	//	MuGrids[id] = float4(1,1,1,1);
+	//}
+	//return;
+
+	float psiValue = PsiGrid[texturePoint];
+
+	float newMuValue = -psiValue / (m * densityValue * (distance / w + a));
 
 	float normalizedMuValue;
 
@@ -60,10 +83,11 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 		normalizedMuValue = newMuValue;
 	}
 	else
-	{		
-		float muGradient = psi + m * previousMuValue * (distance / w + a) * densityValue;
-		muGradient = sign(muGradient);
-		normalizedMuValue = 0.5 * (1 - muGradient);
+	{
+		float previousMuValue = MuGrids[id];
+		float muGradient = psiValue + m * previousMuValue * (distance / w + a) * densityValue;
+		float signMuGradient = sign(muGradient);
+		normalizedMuValue = 0.5 * (1 - signMuGradient);
 	}
 
 	MuGrids[id] = normalizedMuValue;
@@ -80,15 +104,11 @@ void UpdatePsi(uint3 id : SV_DispatchThreadID)
 
 	grad -= 1;
 
-	PsiGrid[id.xy] = PsiGrid[id.xy] + GradientLambdaStep * grad;
+	PsiGrid[texturePoint] = PsiGrid[texturePoint] + GradientLambdaStep * grad;
 
 	//check psi gradient value
-	if(grad < GradientEpsilon)
+	//if(grad > GradientEpsilon)//reset if gradient too big
 	{
-		
-	}
-	else
-	{
-		
+		StopConditions[0] = 0;
 	}
 }
