@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Assertions;
+using Random = UnityEngine.Random;
 
 namespace Utils
 {
@@ -20,11 +21,11 @@ namespace Utils
         {
             if (autoGenerateColors)
                 return AutoGenerateColors(count);
-            else
-            {
-                Assert.AreEqual(count, manualColors.Length);
-                return manualColors.ToArray();
-            }
+
+            if (manualColors.Length < count)
+                throw new Exception($"Not enough manual colors are set ({manualColors.Length} vs {count})");
+
+            return manualColors.ToArray();
         }
 
         private Color[] AutoGenerateColors(int count)

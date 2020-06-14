@@ -8,7 +8,7 @@ using System.Windows.Interop;
 
 namespace OptimalFuzzyPartition.View
 {
-    public class UnityWindowHost : HwndHost
+    public class UnityWindowHost : HwndHost //TODO dispose
     {
         public StreamWriter StreamWriter => _unityPlayerProcess.StandardInput;
         public StreamReader StreamReader => _unityPlayerProcess.StandardOutput;
@@ -21,13 +21,13 @@ namespace OptimalFuzzyPartition.View
 
         public SimpleTcpServer SimpleTcpServer;
 
-        private static int NextPortNumber = 8910;
+        private static int _nextPortNumber = 8910;
 
-        private int port;
+        private readonly int port;
 
         public UnityWindowHost()
         {
-            port = NextPortNumber++;
+            port = _nextPortNumber++;
             SimpleTcpServer = new SimpleTcpServer().Start(port);
         }
 
@@ -98,29 +98,8 @@ namespace OptimalFuzzyPartition.View
             Destroy();
         }
 
-        //protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        //{
-        //    handled = false;
-        //    return IntPtr.Zero;
-        //}
-
-        //[DllImport("user32.dll", EntryPoint = "CreateWindowEx", CharSet = CharSet.Unicode)]
-        //private static extern IntPtr CreateWindowEx(int dwExStyle,
-        //                                              string lpszClassName,
-        //                                              string lpszWindowName,
-        //                                              int style,
-        //                                              int x, int y,
-        //                                              int width, int height,
-        //                                              IntPtr hwndParent,
-        //                                              IntPtr hMenu,
-        //                                              IntPtr hInst,
-        //                                              [MarshalAs(UnmanagedType.AsAny)] object pvParam);
-
         [DllImport("user32.dll", EntryPoint = "DestroyWindow", CharSet = CharSet.Unicode)]
         private static extern bool DestroyWindow(IntPtr hwnd);
-
-        //[DllImport("User32.dll")]
-        //private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
 
         private delegate int WindowEnumProc(IntPtr hwnd, IntPtr lparam);
         [DllImport("user32.dll")]

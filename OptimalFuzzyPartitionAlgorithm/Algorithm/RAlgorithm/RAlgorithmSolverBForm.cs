@@ -42,9 +42,9 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// <summary>
         /// Значение вектора градиента функции от х на предыдущей итерации.
         /// </summary>
-        public Vector<double> gPrevious;
+        //public Vector<double> gPrevious;
 
-        public Func<Vector<double>, Vector<double>> FunctionGradient;
+        public Func<Vector<double>, Vector<double>> FunctionGradient { get; set; }
 
         /// <summary>
         /// Коэффициент растяжения пространства.

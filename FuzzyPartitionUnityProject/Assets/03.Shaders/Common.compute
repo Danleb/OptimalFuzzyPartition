@@ -1,4 +1,10 @@
-﻿float GetEuclideanDistance(float2 a, float2 b)
+﻿//#define DEBUG
+
+#if DEBUG
+#pragma enable_d3d11_debug_symbols
+#endif
+
+float GetEuclideanDistance(float2 a, float2 b)
 {
 	return distance(a, b);
 }

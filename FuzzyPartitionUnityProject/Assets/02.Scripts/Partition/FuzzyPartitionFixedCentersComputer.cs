@@ -1,10 +1,12 @@
 ﻿using OptimalFuzzyPartitionAlgorithm;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using Utils;
+using Debug = UnityEngine.Debug;
 
 namespace FuzzyPartitionComputing
 {
@@ -44,6 +46,9 @@ namespace FuzzyPartitionComputing
         private ComputeBuffer _stopConditionComputeBuffer;
         private readonly int[] _stopConditionsArray = new int[1];
 
+        private Stopwatch _iterationTimer;
+        private Stopwatch _globalTimer;
+
         public int PerformedIterationsCount { get; private set; }
 
         public PartitionSettings Settings { get; private set; }
@@ -54,19 +59,22 @@ namespace FuzzyPartitionComputing
 
             Settings = partitionSettings;
 
+            _iterationTimer = new Stopwatch();
+            _globalTimer = new Stopwatch();
+
             SetGroupSizes();
 
             SetMinCornerToShader();
             SetDiffToShader();
 
-            var gridSize = Settings.GridSize.Select(v => (float)(v - 1)).ToArray();
+            var gridSize = Settings.SpaceSettings.GridSize.Select(v => (float)(v - 1)).ToArray();
             _fuzzyPartitionShader.SetFloats("GridSize", gridSize);
 
-            _centersPositionsBuffer = new ComputeBuffer(Settings.CentersCount, sizeof(float) * 2, ComputeBufferType.Default);
+            _centersPositionsBuffer = new ComputeBuffer(Settings.CentersSettings.CentersCount, sizeof(float) * 2, ComputeBufferType.Default);
 
-            _additiveCoefficientsBuffer = new ComputeBuffer(Settings.CentersCount, sizeof(float), ComputeBufferType.Default);
+            _additiveCoefficientsBuffer = new ComputeBuffer(Settings.CentersSettings.CentersCount, sizeof(float), ComputeBufferType.Default);
 
-            _multiplicativeCoefficientsBuffer = new ComputeBuffer(Settings.CentersCount, sizeof(float), ComputeBufferType.Default);
+            _multiplicativeCoefficientsBuffer = new ComputeBuffer(Settings.CentersSettings.CentersCount, sizeof(float), ComputeBufferType.Default);
 
             _stopConditionComputeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Default);
 
@@ -74,13 +82,13 @@ namespace FuzzyPartitionComputing
             _updateMuKernelHandle = _fuzzyPartitionShader.FindKernel(UpdateMuKernelName);
             _updatePsiKernelHandle = _fuzzyPartitionShader.FindKernel(UpdatePsiKernelName);
 
-            _psiGridTexture = new RenderTexture(Settings.GridSize[0], Settings.GridSize[1], 0, GraphicsFormat.R32_SFloat);
+            _psiGridTexture = new RenderTexture(Settings.SpaceSettings.GridSize[0], Settings.SpaceSettings.GridSize[1], 0, GraphicsFormat.R32_SFloat);
             _psiGridTexture.enableRandomWrite = true;
             _psiGridTexture.Create();
 
-            _muGridsTexture = new RenderTexture(Settings.GridSize[0], Settings.GridSize[1], 0, GraphicsFormat.R32_SFloat);
+            _muGridsTexture = new RenderTexture(Settings.SpaceSettings.GridSize[0], Settings.SpaceSettings.GridSize[1], 0, GraphicsFormat.R32_SFloat);
             _muGridsTexture.dimension = TextureDimension.Tex3D;
-            _muGridsTexture.volumeDepth = Settings.CentersCount;
+            _muGridsTexture.volumeDepth = Settings.CentersSettings.CentersCount;
             _muGridsTexture.enableRandomWrite = true;
             _muGridsTexture.Create();
 
@@ -95,43 +103,48 @@ namespace FuzzyPartitionComputing
         private void SetGroupSizes()
         {
             _zeroInitGroups = new Vector3Int(
-                Settings.GridSize[0] / _zeroInitNumThreads.x,
-                Settings.GridSize[1] / _zeroInitNumThreads.y,
-                Settings.CentersCount / _zeroInitNumThreads.z
+                Settings.SpaceSettings.GridSize[0] / _zeroInitNumThreads.x,
+                Settings.SpaceSettings.GridSize[1] / _zeroInitNumThreads.y,
+                Settings.CentersSettings.CentersCount / _zeroInitNumThreads.z
                 );
             _muUpdateGroups = new Vector3Int(
-                Settings.GridSize[0] / _muUpdateNumThreads.x,
-                Settings.GridSize[1] / _muUpdateNumThreads.y,
-                Settings.CentersCount / _muUpdateNumThreads.z
+                Settings.SpaceSettings.GridSize[0] / _muUpdateNumThreads.x,
+                Settings.SpaceSettings.GridSize[1] / _muUpdateNumThreads.y,
+                Settings.CentersSettings.CentersCount / _muUpdateNumThreads.z
             );
             _psiUpdateGroups = new Vector3Int(
-                Settings.GridSize[0] / _psiUpdateNumThreads.x,
-                Settings.GridSize[1] / _psiUpdateNumThreads.y,
+                Settings.SpaceSettings.GridSize[0] / _psiUpdateNumThreads.x,
+                Settings.SpaceSettings.GridSize[1] / _psiUpdateNumThreads.y,
                 1
                 );
         }
 
         private void SetDiffToShader()
         {
-            var diff = (Settings.MaxCorner - Settings.MinCorner).ToVector2();
+            var diff = (Settings.SpaceSettings.MaxCorner - Settings.SpaceSettings.MinCorner).ToVector2();
             _fuzzyPartitionShader.SetFloats("Diff", diff.ToArray());
         }
 
         private void SetMinCornerToShader()
         {
-            var minCorner = Settings.MinCorner.ToVector2();
+            var minCorner = Settings.SpaceSettings.MinCorner.ToVector2();
             _fuzzyPartitionShader.SetFloats("MinCorner", minCorner.ToArray());
         }
 
         public RenderTexture Run()
         {
+            _globalTimer.Start();
+            _iterationTimer.Start();
+
             PerformedIterationsCount = 0;
 
-            for (var i = 0; i < Settings.FixedPartitionMaxIterationsCount; i++)
+            for (var i = 0; i < Settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount; i++)
             {
+                _iterationTimer.Reset();
+
                 Debug.Log($"FuzzyFixedPartition Iteration={PerformedIterationsCount + 1}");
 
-                _fuzzyPartitionShader.SetInt("CentersCount", Settings.CentersCount);
+                _fuzzyPartitionShader.SetInt("CentersCount", Settings.CentersSettings.CentersCount);
 
                 SetCentersPositionsToBuffer();//to init
                 _fuzzyPartitionShader.SetBuffer(_updateMuKernelHandle, "CentersPositions", _centersPositionsBuffer);
@@ -142,10 +155,10 @@ namespace FuzzyPartitionComputing
                 SetMultiplicativeCoefficientsToBuffer();//to init
                 _fuzzyPartitionShader.SetBuffer(_updateMuKernelHandle, "MultiplicativeCoefficients", _multiplicativeCoefficientsBuffer);
 
-                var lambda = (float)Settings.FixedPartitionGradientStep;
+                var lambda = (float)Settings.FuzzyPartitionFixedCentersSettings.GradientStep;
                 _fuzzyPartitionShader.SetFloat("GradientLambdaStep", lambda);
 
-                var epsilon = (float)Settings.FixedPartitionGradientEpsilon;
+                var epsilon = (float)Settings.FuzzyPartitionFixedCentersSettings.GradientEpsilon;
                 _fuzzyPartitionShader.SetFloat("GradientEpsilon", epsilon);
 
                 _fuzzyPartitionShader.SetTexture(_updateMuKernelHandle, "MuGrids", _muGridsTexture);
@@ -172,7 +185,14 @@ namespace FuzzyPartitionComputing
                 }
 
                 ShowMuTextures();
+
+                Debug.Log($"Iteration execution time: {_iterationTimer.ElapsedMilliseconds}");
             }
+
+            Debug.Log($"Partition execution time: {_globalTimer.ElapsedMilliseconds}");
+
+            _globalTimer.Stop();
+            _iterationTimer.Stop();
 
             return _muGridsTexture;
         }
@@ -193,23 +213,23 @@ namespace FuzzyPartitionComputing
 
         private void SetMultiplicativeCoefficientsToBuffer()
         {
-            var multiplicativeCoefficients = Settings.MultiplicativeCoefficients.Select(v => (float)v).ToArray();
+            var multiplicativeCoefficients = Settings.CentersSettings.CenterDatas.Select(v => (float)v.W).ToArray();
             _multiplicativeCoefficientsBuffer.SetData(multiplicativeCoefficients);
         }
 
         private void SetAdditiveCoefficientsToBuffer()
         {
-            var additiveCoefficients = Settings.AdditiveCoefficients.Select(v => (float)v).ToArray();
+            var additiveCoefficients = Settings.CentersSettings.CenterDatas.Select(v => (float)v.A).ToArray();
             _additiveCoefficientsBuffer.SetData(additiveCoefficients);
         }
 
         private void SetCentersPositionsToBuffer()
         {
-            var centersArray = new float[Settings.CentersCount * 2];
-            for (var i = 0; i < Settings.CentersCount; i++)
+            var centersArray = new float[Settings.CentersSettings.CentersCount * 2];
+            for (var i = 0; i < Settings.CentersSettings.CentersCount; i++)
             {
-                centersArray[i * 2] = (float)Settings.CenterPositions[i][0];
-                centersArray[i * 2 + 1] = (float)Settings.CenterPositions[i][1];
+                centersArray[i * 2] = (float)Settings.CentersSettings.CenterDatas[i].Position[0];
+                centersArray[i * 2 + 1] = (float)Settings.CentersSettings.CenterDatas[i].Position[1];
             }
 
             _centersPositionsBuffer.SetData(centersArray);

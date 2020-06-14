@@ -31,7 +31,7 @@ namespace FuzzyPartitionVisualizing
 
             _partitionDrawingKernel = _partitionDrawingShader.FindKernel(PartitionDrawingKernel);
 
-            _partitionRenderTexture = new RenderTexture(_settings.GridSize[0], _settings.GridSize[1], 0)
+            _partitionRenderTexture = new RenderTexture(_settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1], 0)
             {
                 format = RenderTextureFormat.ARGB32,
                 enableRandomWrite = true
@@ -56,12 +56,12 @@ namespace FuzzyPartitionVisualizing
 
         public RenderTexture CreatePartitionTexture(IterationData iterationData, RenderTexture muRenderTexture)
         {
-            _partitionDrawingShader.SetInt("CentersCount", _settings.CentersCount);
+            _partitionDrawingShader.SetInt("CentersCount", _settings.CentersSettings.CentersCount);
             _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "Result", _partitionRenderTexture);
 
-            _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.GridSize[0] / ShaderNumThreads.x, _settings.GridSize[1] / ShaderNumThreads.y, 1);
+            _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.SpaceSettings.GridSize[0] / ShaderNumThreads.x, _settings.SpaceSettings.GridSize[1] / ShaderNumThreads.y, 1);
 
             return _partitionRenderTexture;
         }

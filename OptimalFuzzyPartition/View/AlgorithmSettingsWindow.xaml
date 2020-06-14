@@ -3,16 +3,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:v="clr-namespace:OptimalFuzzyPartition.ViewModel"
+        xmlns:v="clr-namespace:OptimalFuzzyPartition.View"
+        xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови розбиття" Height="618.667" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="800" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
-        <v:AlgorithmSettingsViewModel/>
+        <vm:AlgorithmSettingsViewModel></vm:AlgorithmSettingsViewModel>
     </Window.DataContext>
+    <Window.Resources>
+        <v:DensityConverter x:Key="DensityConverter"></v:DensityConverter>
+        <v:MetricsConverter x:Key="MetricsConverter"></v:MetricsConverter>
+        <v:CenterDataConverter x:Key="CenterDataConverter"></v:CenterDataConverter>
+        <v:VisibilityConverter x:Key="VisibilityConverter"></v:VisibilityConverter>
+    </Window.Resources>
     <Grid>
         <ScrollViewer>
             <StackPanel>
-                <Label Content="{Binding CentersCount}" ContentStringFormat="Amount is {0}"></Label>
+                <Label Content="Налаштування простору, на якому буде проводитись розбиття:" FontWeight="Bold"></Label>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Label Content="Введіть меншу границю за X"></Label>
                     <TextBox Text="{Binding MinX}"  Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
@@ -33,57 +40,76 @@
 
                 <Label Content="Функція щільності (попиту) ρ(x,y):"></Label>
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox ItemsSource="{Binding DensityFunctionTypes}" SelectedItem="{Binding SelectedDensityFunctionType}" DisplayMemberPath="Item2" SelectedValuePath="Item1" Margin="5" MinWidth="100"></ComboBox>
+                    <ComboBox ItemsSource="{Binding DensityTypes}" ItemStringFormat="11" SelectedItem="{Binding DensityType}" Margin="5" MinWidth="100">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource DensityConverter}}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
 
                 <Label Content="Функція вартості транспортування (метрика) с((x,y), τ):"></Label>
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox ItemsSource="{Binding MetricsTypes}" SelectedItem="{Binding SelectedMetricsType}" DisplayMemberPath="Item2" SelectedValuePath="Item1" Margin="5" Text="$$$" MinWidth="100"></ComboBox>
+                    <ComboBox ItemsSource="{Binding MetricsTypes}" SelectedItem="{Binding MetricsType}" Margin="5" MinWidth="100">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource MetricsConverter}}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
 
+                <Label Content="Налаштування центрів (точок-генераторів):" FontWeight="Bold"></Label>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Кількість центрів"></Label>
-                    <TextBox Text="{Binding CentersCount}" Margin="5" Width="70"></TextBox>
+                    <TextBox Text="{Binding CentersCount}" Margin="5" Width="70" v:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"></TextBox>
                 </StackPanel>
 
-                <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="Задача із розміщенням центрів" Margin="5"></CheckBox>
+                <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="Задача із оптимальним  розміщенням центрів" Margin="5"></CheckBox>
 
                 <StackPanel Visibility="{Binding ShowCentersCoordinates}">
                     <Label Content="Координати центрів (точок-генераторів):"></Label>
-                    <DataGrid Margin="5" HorizontalAlignment="Left" ItemsSource="{Binding CenterCoordinates}" CanUserAddRows="False" CanUserSortColumns="False" AutoGenerateColumns="False">
+                    <DataGrid Margin="5" HorizontalAlignment="Left" ItemsSource="{Binding Path=CenterDatas, Converter={StaticResource CenterDataConverter}}" CanUserAddRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" d:DataContext="{d:DesignInstance v:CenterDataView}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
-                            <DataGridTextColumn Header="Координата Х" IsReadOnly="False" Binding="{Binding Path=X}"></DataGridTextColumn>
-                            <DataGridTextColumn Header="Координата Y" IsReadOnly="False" Binding="{Binding Path=Y}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding  Path=CenterNumber}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Координата Х" IsReadOnly="{Binding IsPositionCellReadonly}" Binding="{Binding ValueX}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Координата Y" IsReadOnly="{Binding IsPositionCellReadonly}" Binding="{Binding ValueY}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Адитивний коефіцієнт а" IsReadOnly="False" Binding="{Binding  Path=CoefficientA}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Мультиплікативний коефіцієнт w" IsReadOnly="False" Binding="{Binding  Path=CoefficientW}"></DataGridTextColumn>
+                            <DataGridCheckBoxColumn Header="Фіксований центр?" Visibility="Visible" IsReadOnly="False" Binding="{Binding  Path=IsFixedCenter}"></DataGridCheckBoxColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
 
-                <Label Content="Адитивні коефіцієнти а:"></Label>
-                <DataGrid Margin="5" AutoGenerateColumns="False" HorizontalAlignment="Left" ItemsSource="{Binding AdditiveCoefficients}" CanUserAddRows="False" CanUserSortColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
-                        <DataGridTextColumn Header="Коефіцієнт а" IsReadOnly="False" Binding="{Binding Path=Coefficient}"></DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Label Content="Налаштування нечіткого розбиття з розміщенням центрів:" FontWeight="Bold"></Label>
+                <Label Content="Кількість коефіцієнтів Гауса-Лежадра для рахування інтеграла:"></Label>
+                <TextBox Margin="5" Text="32"></TextBox>
 
-                <Label Content="Мультиплікативні коефіцієнти w:"></Label>
-                <DataGrid Margin="5" HorizontalAlignment="Left" CanUserAddRows="False" CanUserSortColumns="False" AutoGenerateColumns="False"  ItemsSource="{Binding MultiplicativeCoefficients}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
-                        <DataGridTextColumn Header="Коефіцієнт w" IsReadOnly="False" Binding="{Binding Path=Coefficient}"></DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Label Content="Параметри r-алгоритму:" FontWeight="Bold"></Label>
 
-
-                <Label Content="Параметри r-алгоритму:"></Label>
                 <Label Content="Максимальна кількість ітерацій:"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding MaxIterationsCount}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Margin="5" Width="70" Text="{Binding RAlgorithmMaxIterationsCount}" HorizontalAlignment="Left"></TextBox>
+
                 <Label Content="Початковий крок H0:"></Label>
                 <TextBox Margin="5" Width="70" Text="{Binding InitialStepH0}" HorizontalAlignment="Left"></TextBox>
+
                 <Label Content="Коефіцієнт розтягу простору:"></Label>
                 <TextBox Margin="5" Width="70" Text="{Binding SpaceStretchFactor}" HorizontalAlignment="Left"></TextBox>
-                <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}" IsDefault="True"></Button>
+
+                <Label Content="Налаштування нечіткого розбиття з закріпленими центрами:" FontWeight="Bold"></Label>
+
+                <Label Content="Крок градієнтного спуску"></Label>
+                <TextBox Margin="5" Width="70" Text="{Binding FixedPartitionGradientStep}" HorizontalAlignment="Left"></TextBox>
+
+                <Label Content="Мінімальне граничне значення градієнту для закінчення ітерацій:"></Label>
+                <TextBox Margin="5" Width="70" Text="{Binding FixedPartitionGradientThreshold}" HorizontalAlignment="Left"></TextBox>
+
+                <Label Content="Максимальна кількість ітерацій:"></Label>
+                <TextBox Margin="5" Width="70" Text="{Binding FixedPartitionMaxIteration}" HorizontalAlignment="Left"></TextBox>
+
+                <!--IsDefault="True"-->
+                <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}" ></Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

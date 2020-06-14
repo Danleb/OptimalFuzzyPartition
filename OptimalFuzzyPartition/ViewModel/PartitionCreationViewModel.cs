@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using OptimalFuzzyPartitionAlgorithm.Settings;
 
 namespace OptimalFuzzyPartition.ViewModel
 {
@@ -21,15 +22,20 @@ namespace OptimalFuzzyPartition.ViewModel
 
         public TimeSpan TimePassed { get; set; }
 
-        public int PerformedIterationCount { get; set; } = 0;
+        public int PerformedIterationCount
+        {
+            get => _performedIterationCount;
+            set => _performedIterationCount = value;
+        }
 
         public BitmapImage PartitionImage { get; set; }
 
-        public List<CenterCoordinateData> CenterCoordinates { get; set; } = new List<CenterCoordinateData>();
+        public List<CenterData> CenterCoordinates { get; set; } = new List<CenterData>();
 
         private readonly DispatcherTimer _timer;
 
-        private SimpleTcpServer _simpleTcpServer;
+        private readonly SimpleTcpServer _simpleTcpServer;
+        private int _performedIterationCount = 0;
 
         public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
         {

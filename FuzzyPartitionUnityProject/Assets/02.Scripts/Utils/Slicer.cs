@@ -2,7 +2,11 @@
 
 namespace Utils
 {
-    public class Slicer : MonoBehaviour//, ISlicer
+    /// <summary>
+    /// Slice a 3D RenderTexture to get one 2D RenderTexture at specified index.
+    /// Requires ComputeShader to be set.
+    /// </summary>
+    public class Slicer : MonoBehaviour
     {
         [SerializeField] private ComputeShader _slicerShader;
 
@@ -22,44 +26,5 @@ namespace Utils
 
             return targetRenderTexture;
         }
-
-        //public void Save()
-        //{
-        //    Texture3D export = new Texture3D(voxelSize, voxelSize, voxelSize, TextureFormat.ARGB32, false);
-        //    RenderTexture selectedRenderTexture;
-
-        //    if (useA)
-        //        selectedRenderTexture = renderA;
-        //    else
-        //        selectedRenderTexture = renderB;
-
-        //    RenderTexture[] layers = new RenderTexture[voxelSize];
-        //    for (int i = 0; i < 64; i++)
-        //        layers[i] = Copy3DSliceToRenderTexture(selectedRenderTexture, i);
-
-        //    Texture2D[] finalSlices = new Texture2D[voxelSize];
-        //    for (int i = 0; i < 64; i++)
-        //        finalSlices[i] = ConvertFromRenderTexture(layers[i]);
-
-        //    Texture3D output = new Texture3D(voxelSize, voxelSize, voxelSize, TextureFormat.ARGB32, true);
-        //    output.filterMode = FilterMode.Trilinear;
-        //    Color[] outputPixels = output.GetPixels();
-
-        //    for (int k = 0; k < voxelSize; k++)
-        //    {
-        //        Color[] layerPixels = finalSlices[k].GetPixels();
-
-        //        for (int i = 0; i < voxelSize; i++)
-        //            for (int j = 0; j < voxelSize; j++)
-        //            {
-        //                outputPixels[i + j * voxelSize + k * voxelSize * voxelSize] = layerPixels[i + j * voxelSize];
-        //            }
-        //    }
-
-        //    output.SetPixels(outputPixels);
-        //    output.Apply();
-
-        //    AssetDatabase.CreateAsset(output, "Assets/" + nameOfTheAsset + ".asset");
-        //}
     }
 }

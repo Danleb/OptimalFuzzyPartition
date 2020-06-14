@@ -73,17 +73,19 @@
     </ApplicationDefinition>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\AlgorithmSettingsViewModel.cs" />
-    <Compile Include="ViewModel\CoefficientData.cs" />
-    <Compile Include="ViewModel\DensityFunctionType.cs" />
-    <Compile Include="ViewModel\MetricsType.cs" />
-    <Compile Include="ViewModel\CenterCoordinateData.cs" />
     <Compile Include="ViewModel\PartitionCreationViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\TimePassedConverter.cs" />
+    <Compile Include="View\CenterDataConverter.cs" />
+    <Compile Include="View\CenterDataView.cs" />
+    <Compile Include="View\InputBindingsManager.cs" />
+    <Compile Include="View\MetricsConverter.cs" />
+    <Compile Include="View\TimePassedConverter.cs" />
     <Compile Include="View\AlgorithmSettingsWindow.xaml.cs">
       <DependentUpon>AlgorithmSettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\DensityConverter.cs" />
     <Compile Include="View\UnityWindowHost.cs" />
+    <Compile Include="View\VisibilityConverter.cs" />
     <Page Include="View\AlgorithmSettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

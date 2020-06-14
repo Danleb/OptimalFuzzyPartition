@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace FuzzyPartitionComputing
@@ -19,9 +20,17 @@ namespace FuzzyPartitionComputing
         [SerializeField] private FuzzyPartitionFixedCentersComputer _fuzzyPartitionFixedCentersComputer;
         [SerializeField] private FuzzyPartitionImageCreator _fuzzyPartitionDrawer;
 
+        [SerializeField] private int _port;
+
         private readonly Queue<CommandAndData> _commandsAndDatas = new Queue<CommandAndData>();
 
         private SimpleTcpClient _client;
+
+        [Button]
+        public void Connect()
+        {
+            ConnectToServer(_port);
+        }
 
         private void Awake()
         {
@@ -34,10 +43,15 @@ namespace FuzzyPartitionComputing
             var args = Environment.GetCommandLineArgs();
             var portNumber = int.Parse(args[3]);
 
-            _client = new SimpleTcpClient().Connect("127.0.0.1", portNumber);
+            ConnectToServer(portNumber);
+#endif
+        }
+
+        private void ConnectToServer(int port)
+        {
+            _client = new SimpleTcpClient().Connect("127.0.0.1", port);
             _client.DataReceived += Client_DataReceived;
             _client.Write("ClientReadyToWork");
-#endif
         }
 
         private void Client_DataReceived(object sender, Message e)

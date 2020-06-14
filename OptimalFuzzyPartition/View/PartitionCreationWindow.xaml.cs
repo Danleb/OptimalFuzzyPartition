@@ -2,7 +2,7 @@
 using OptimalFuzzyPartitionAlgorithm;
 using System.Windows;
 
-namespace OptimalFuzzyPartition
+namespace OptimalFuzzyPartition.View
 {
     /// <summary>
     /// Interaction logic for PartitionCreationWindow.xaml

@@ -1,4 +1,4 @@
-﻿<Window x:Class="OptimalFuzzyPartition.PartitionCreationWindow"
+﻿<Window x:Class="OptimalFuzzyPartition.View.PartitionCreationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,32 +9,39 @@
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
         Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
-        <vm:TimePassedConverter x:Key="TimePassedConverter"></vm:TimePassedConverter>
+        <view:TimePassedConverter x:Key="TimePassedConverter"></view:TimePassedConverter>
     </Window.Resources>
     <Grid>
         <DockPanel>
             <ScrollViewer>
                 <StackPanel>
                     <Label Content="{Binding TimePassed, Converter={StaticResource TimePassedConverter}}" ContentStringFormat="Часу пройшло: {0}" Margin="5"></Label>
+                    <Label Content="{Binding Path=PerformedIterationCount}" ContentStringFormat="Ітерацій виконано: {0}"></Label>
 
-                    <Button Name="ButtonOpenLogs" Content="Відкрити віконце логів" Margin="5"></Button>
+                    <!--<Button Name="ButtonOpenLogs" Content="Відкрити віконце логів" Margin="5"></Button>-->
 
-                    <Label Content="{Binding Path=PerformedIterationCount}" ContentStringFormat="Ітерацій пройшло: {0}"></Label>
+                    
 
-                    <DataGrid Margin="5" ItemsSource="{Binding CenterCoordinates}">
+                    <!--<DataGrid Margin="5" ItemsSource="{Binding CenterCoordinates}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding Path=CenterNumber}"></DataGridTextColumn>
                             <DataGridTextColumn Header="X" IsReadOnly="True" Binding="{Binding Path=X}"></DataGridTextColumn>
                             <DataGridTextColumn Header="Y" IsReadOnly="True" Binding="{Binding Path=Y}"></DataGridTextColumn>
                         </DataGrid.Columns>
-                    </DataGrid>
+                    </DataGrid>-->
 
-                    <StackPanel Margin="5" Orientation="Horizontal">
+                    <!--<StackPanel Margin="5" Orientation="Horizontal">
                         <Label Content="Шлях:"></Label>
                         <Label Content="Розбиття.png"></Label>
                         <Button Content="Обрати"></Button>
                     </StackPanel>
-                    <Button Margin="5" Content="Зберегти зображення"></Button>
+                    <Button Margin="5" Content="Зберегти зображення"></Button>-->
+
+                    <CheckBox Content="Завжди показувати інформацію про центри" Margin="5"></CheckBox>
+
+                    <Label Content="Номер ітерації для дослідження:"></Label>
+                    <TextBox Margin="5" Text="" Width="70" HorizontalAlignment="Left"></TextBox>
+                    <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>
 
                 </StackPanel>
             </ScrollViewer>

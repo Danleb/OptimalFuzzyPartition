@@ -1,4 +1,8 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using MathNet.Numerics.Integration;
+using MathNet.Numerics.LinearAlgebra;
+using OptimalFuzzyPartition.ViewModel;
+using System;
+using System.Collections.Generic;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
@@ -9,69 +13,66 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
     {
         private PartitionSettings Settings { get; }
 
+        private List<Vector<double>> _centersPositions;
+
         public GradientCalculator(PartitionSettings settings)
         {
             Settings = settings;
-            
         }
 
-        /// <summary>
-        /// Посчитать значение градиента функционала G по центрам.
-        /// Градиент - это вектор размера количества центров.
-        /// </summary>
-        /// <param name="iterationData"></param>
-        /// <returns></returns>
-        private Vector<double> CalculateGradient(IterationData iterationData)
+        public Vector<double> CalculateGradientForCenter(int centerIndex, List<Vector<double>> centersPositions, Matrix<double> psi, List<Matrix<double>> mu)
         {
-            //var gradient = Matrix<double>.Build.Sparse(Settings.DimensionsCount, Settings.CentersCount);
-
-            var gradient = Vector<double>.Build.Sparse(Settings.CentersCount);
-
-            for (var centerIndex = 0; centerIndex < Settings.CentersCount; centerIndex++)
+            for (var i = 0; i < psi.RowCount; i++)
             {
-                var index = centerIndex;
-                var integralCalculator = new IntegralCalculator(Settings.MinCorner, Settings.MaxCorner, Settings.GridSize, point => GetUnderIntegralFunctionValue(point, index));
-                var value = integralCalculator.CalculateIntegral();
-                gradient[centerIndex] = value;
+                for (var u = 0; u < psi.ColumnCount; u++)
+                {
+                    psi[i, u] *= psi[i, u];
+                }
             }
 
-            return gradient;
-        }
+            _centersPositions = centersPositions;
 
-        /// <summary>
-        /// Посчитать i компоненту градиента. Это вектор, он зависит от centerIndex.
-        /// </summary>
-        /// <param name="centerIndex"></param>
-        /// <returns></returns>
-        private double GetGradientComponentValueForCenter(int centerIndex)
-        {
-            for (var i = 0; i < Settings.DimensionsCount; i++)
+            if (Settings.SpaceSettings.MetricsType != MetricsType.Euclidean)
+                throw new NotImplementedException($"Визначення градієнту метрики {Settings.SpaceSettings.MetricsType} не реалізовано");
+
+            var vector = Vector<double>.Build.Sparse(Settings.SpaceSettings.DimensionsCount);
+
+            for (var i = 0; i < Settings.SpaceSettings.DimensionsCount; i++)
             {
-                
+                var value = GaussLegendreRule.Integrate(
+                    (x, y) =>
+                    {
+                        //var distanceVector
+
+                        return;
+                    },
+                    Settings.SpaceSettings.MinCorner[0],
+                    Settings.SpaceSettings.MaxCorner[0],
+                    Settings.SpaceSettings.MinCorner[1],
+                    Settings.SpaceSettings.MaxCorner[1]
+                );
+
+                value /= 4d;
+
+                vector[i] = value;
             }
 
-
-            return 0;
+            return vector;
         }
 
-        /// <summary>
-        /// Найти вектор.
-        /// </summary>
-        /// <returns></returns>
-        private Vector<double> GetGradientC()
+        private Vector<double> CalculateDistanceGradientVector(int centerIndex, Vector<double> point)
         {
+            var vector = Vector<double>.Build.Sparse(Settings.SpaceSettings.DimensionsCount);//to init?
+            var centerPosition = _centersPositions[centerIndex];
+            var distance = (centerPosition - point).L2Norm();
 
+            for (var i = 0; i < Settings.SpaceSettings.DimensionsCount; i++)
+            {
+                var diff = point[i] - centerPosition[i];
+                vector[i] = diff / distance;
+            }
 
-            return null;
-        }
-
-        private double GetUnderIntegralFunctionValue(Vector<double> point, int centerIndex)
-        {
-            //var diff = point - ;
-
-            //var value = diff / ;
-
-            return 0;
+            return vector;
         }
     }
 }
