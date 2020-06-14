@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 namespace Utils
 {
@@ -6,7 +7,7 @@ namespace Utils
     {
         public static Texture2D ToTexture2D(this RenderTexture renderTexture)
         {
-            Texture2D tex = new Texture2D(renderTexture.width, renderTexture.height);//, TextureFormat.RGB24/*TextureFormat.ARGB32*/, false);
+            Texture2D tex = new Texture2D(renderTexture.width, renderTexture.height, GraphicsFormat.R32_SFloat, 0, TextureCreationFlags.None);//, TextureFormat.RGB24/*TextureFormat.ARGB32*/, false);
             RenderTexture.active = renderTexture;
             tex.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
             tex.Apply();

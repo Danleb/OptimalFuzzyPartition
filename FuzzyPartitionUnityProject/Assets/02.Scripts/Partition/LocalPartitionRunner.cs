@@ -4,17 +4,24 @@ using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using Utils;
+using Debug = UnityEngine.Debug;
 
 namespace FuzzyPartitionComputing
 {
     public class LocalPartitionRunner : MonoBehaviour
     {
-        [SerializeField] private FuzzyPartitionPlacingCentersComputer _fuzzyPartitionPlacingCentersComputer;
-        [SerializeField] private FuzzyPartitionFixedCentersComputer _fuzzyPartitionFixedCentersComputer;
-        [SerializeField] private FuzzyPartitionImageCreator _fuzzyPartitionDrawer;
+        [SerializeField] private FuzzyPartitionPlacingCentersComputer _partitionPlacingCentersComputer;
+        [SerializeField] private FuzzyPartitionFixedCentersComputer _partitionFixedCentersComputer;
+        [SerializeField] private FuzzyPartitionImageCreator _partitionDrawer;
+        [SerializeField] private CentersInfoShower _centersInfoShower;
+
+        [Header("Space settings:")]
+        [SerializeField] private RAlgorithmSettings rAlgorithmSettings;
+        [SerializeField] private FuzzyPartitionPlacingCentersSettings fuzzyPartitionPlacingCentersSettings;
 
         [SerializeField] private ColorsGenerator _colorsGenerator;
 
@@ -22,6 +29,8 @@ namespace FuzzyPartitionComputing
         [SerializeField] private Vector2 maxCorner;
         [SerializeField] private Vector2Int gridSize;
 
+        [Header("Centers settings:")]
+        [SerializeField] private int centerCount;
         [SerializeField] private Vector2[] Centers;
         [SerializeField] private double[] AdditiveCoefficients;
         [SerializeField] private double[] MultiplicativeCoefficients;
@@ -37,6 +46,9 @@ namespace FuzzyPartitionComputing
 
         private void Start()
         {
+            Trace.Listeners.Add(new UnityConsoleTraceListener());
+            Trace.WriteLine("Local partition runner init");
+
             if (autoStart)
             {
                 if (commandType == CommandType.CreateFuzzyPartitionWithoutCentersPlacing)
@@ -49,34 +61,57 @@ namespace FuzzyPartitionComputing
         private void Update()
         {
             if (endlessComputing)
+            {
                 CreateFuzzyPartitionWithFixedCenters();
+            }
         }
 
+        [Button("Create fuzzy partition with placing centers")]
         public void CreateFuzzyWithPlacingCenters()
         {
+            var settings = GetPartitionSettings();
 
+            _partitionPlacingCentersComputer.Init(settings);
+            var centersPositions = _partitionPlacingCentersComputer.Run();
+
+            for (var index = 0; index < centersPositions.Count; index++)
+            {
+                var centersPosition = centersPositions[index];
+                Debug.Log($"Tau #{index + 1} = ({centersPosition[0]}; {centersPosition[1]})");
+                settings.CentersSettings.CenterDatas[index].Position = centersPosition;
+            }
+
+            CreateFuzzyPartitionWithFixedCenters(settings);
         }
 
         [Button("Create fuzzy partition with fixed centers")]
         public void CreateFuzzyPartitionWithFixedCenters()
         {
             var partitionSettings = GetPartitionSettings();
+            CreateFuzzyPartitionWithFixedCenters(partitionSettings);
+        }
 
-            _fuzzyPartitionFixedCentersComputer.Init(partitionSettings);
-            var muGridsRenderTexture = _fuzzyPartitionFixedCentersComputer.Run();
+        public void CreateFuzzyPartitionWithFixedCenters(PartitionSettings settings)
+        {
+            _partitionFixedCentersComputer.Init(settings);
+            var muGridsRenderTexture = _partitionFixedCentersComputer.Run();
 
-            _fuzzyPartitionDrawer.Init(partitionSettings, _colorsGenerator.GetColors(partitionSettings.CentersSettings.CentersCount));
+            _partitionDrawer.Init(settings, _colorsGenerator.GetColors(settings.CentersSettings.CentersCount));
 
-            _fuzzyPartitionDrawer.CreatePartitionAndShow(null, muGridsRenderTexture);
+            _partitionDrawer.CreatePartitionAndShow(muGridsRenderTexture);
 
-            _fuzzyPartitionFixedCentersComputer.Release();
-            _fuzzyPartitionDrawer.Release();
+            _centersInfoShower.Init(settings);
+
+            _partitionFixedCentersComputer.Release();
+            _partitionDrawer.Release();
         }
 
         private PartitionSettings GetPartitionSettings()
         {
             var partitionSettings = new PartitionSettings
             {
+                RAlgorithmSettings = rAlgorithmSettings,
+                FuzzyPartitionPlacingCentersSettings = fuzzyPartitionPlacingCentersSettings,
                 IsCenterPlacingTask = false,
                 SpaceSettings = new SpaceSettings
                 {
@@ -86,8 +121,8 @@ namespace FuzzyPartitionComputing
                 },
                 CentersSettings = new CentersSettings
                 {
-                    CentersCount = Centers.Length,
-                    CenterDatas = Centers.Select((v, i) => new CenterData
+                    CentersCount = centerCount,
+                    CenterDatas = Centers.Take(centerCount).Select((v, i) => new CenterData
                     {
                         Position = VectorUtils.CreateVector(Centers[i].x, Centers[i].y),
                         A = AdditiveCoefficients[i],

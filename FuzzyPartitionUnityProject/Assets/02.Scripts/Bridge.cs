@@ -1,12 +1,12 @@
-﻿using System;
-using FuzzyPartitionVisualizing;
+﻿using FuzzyPartitionVisualizing;
+using NaughtyAttributes;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using SimpleTCP;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using NaughtyAttributes;
 using UnityEngine;
 
 namespace FuzzyPartitionComputing
@@ -19,8 +19,9 @@ namespace FuzzyPartitionComputing
         [SerializeField] private FuzzyPartitionPlacingCentersComputer _fuzzyPartitionPlacingCentersComputer;
         [SerializeField] private FuzzyPartitionFixedCentersComputer _fuzzyPartitionFixedCentersComputer;
         [SerializeField] private FuzzyPartitionImageCreator _fuzzyPartitionDrawer;
+        [SerializeField] private CentersInfoShower _centersInfoShower;
 
-        [SerializeField] private int _port;
+        [SerializeField] private int _manualConnectionPort;
 
         private readonly Queue<CommandAndData> _commandsAndDatas = new Queue<CommandAndData>();
 
@@ -29,12 +30,12 @@ namespace FuzzyPartitionComputing
         [Button]
         public void Connect()
         {
-            ConnectToServer(_port);
+            ConnectToServer(_manualConnectionPort);
         }
 
         private void Awake()
         {
-            if(!SystemInfo.supportsComputeShaders)
+            if (!SystemInfo.supportsComputeShaders)
                 throw new NotSupportedException("Compute shaders are not supported on your platform.");
 
 #if !UNITY_EDITOR
@@ -79,12 +80,24 @@ namespace FuzzyPartitionComputing
             if (data.CommandType == CommandType.CreateFuzzyPartitionWithoutCentersPlacing)
             {
                 _fuzzyPartitionFixedCentersComputer.Init(data.PartitionSettings);
-                //_fuzzyPartitionFixedCentersComputer.Run();
+                var renderTexture = _fuzzyPartitionFixedCentersComputer.Run();
                 //_fuzzyPartitionDrawer.DrawPartition();
             }
             else if (data.CommandType == CommandType.CreateFuzzyPartitionWithCentersPlacing)
             {
-                _fuzzyPartitionPlacingCentersComputer.Run(data.PartitionSettings);
+                _fuzzyPartitionPlacingCentersComputer.Init(data.PartitionSettings);
+                _fuzzyPartitionPlacingCentersComputer.Run();
+            }
+            else if (data.CommandType == CommandType.AlwaysShowCentersValueChange)
+            {
+                if (data.AlwaysShowCentersInfo)
+                    _centersInfoShower.EnableShowAlways();
+                else
+                    _centersInfoShower.DisableShowAlways();
+            }
+            else if (data.CommandType == CommandType.ShowPartitionAtIterationIndex)
+            {
+
             }
         }
 

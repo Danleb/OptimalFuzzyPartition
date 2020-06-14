@@ -12,6 +12,7 @@ namespace FuzzyPartitionVisualizing
     {
         [SerializeField] private Image _outputImage;
         [SerializeField] private ComputeShader _partitionDrawingShader;
+        [SerializeField] private bool muThresholdValue;
 
         private const string PartitionDrawingKernel = "DrawPartition";
 
@@ -42,11 +43,15 @@ namespace FuzzyPartitionVisualizing
             _colorsComputeBuffer.SetData(_centersColors);
         }
 
-        public Texture2D CreatePartitionAndShow(IterationData iterationData, RenderTexture muRenderTexture)
+        public Texture2D CreatePartitionAndShow(RenderTexture muRenderTexture)
         {
-            var renderTexture = CreatePartitionTexture(iterationData, muRenderTexture);
+            var renderTexture = CreatePartitionTexture(muRenderTexture);
 
-            var partitionTexture2D = renderTexture.ToTexture2D();
+            var partitionTexture2D = new Texture2D(renderTexture.width, renderTexture.height);
+            partitionTexture2D.wrapMode = TextureWrapMode.Clamp;
+            RenderTexture.active = renderTexture;
+            partitionTexture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+            partitionTexture2D.Apply();
 
             var sprite = partitionTexture2D.ToSprite();
             _outputImage.sprite = sprite;
@@ -54,12 +59,13 @@ namespace FuzzyPartitionVisualizing
             return partitionTexture2D;
         }
 
-        public RenderTexture CreatePartitionTexture(IterationData iterationData, RenderTexture muRenderTexture)
+        public RenderTexture CreatePartitionTexture(RenderTexture muRenderTexture)
         {
             _partitionDrawingShader.SetInt("CentersCount", _settings.CentersSettings.CentersCount);
             _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "Result", _partitionRenderTexture);
+            _partitionDrawingShader.SetBool("MuThresholdValue", muThresholdValue);
 
             _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.SpaceSettings.GridSize[0] / ShaderNumThreads.x, _settings.SpaceSettings.GridSize[1] / ShaderNumThreads.y, 1);
 

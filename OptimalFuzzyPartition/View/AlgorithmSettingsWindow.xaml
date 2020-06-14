@@ -84,7 +84,7 @@
 
                 <Label Content="Налаштування нечіткого розбиття з розміщенням центрів:" FontWeight="Bold"></Label>
                 <Label Content="Кількість коефіцієнтів Гауса-Лежадра для рахування інтеграла:"></Label>
-                <TextBox Margin="5" Text="32"></TextBox>
+                <TextBox Margin="5" Text="{Binding GaussLegendreIntegralOrder}" Width="70" HorizontalAlignment="Left"></TextBox>
 
                 <Label Content="Параметри r-алгоритму:" FontWeight="Bold"></Label>
 

@@ -9,13 +9,32 @@ Texture3D<float> MuGrids;
 
 RWTexture2D<float4> Result;
 
+bool MuThresholdValue;
+
 #pragma kernel DrawPartition
 [numthreads(8,8,1)]
 void DrawPartition(uint3 id : SV_DispatchThreadID)
 {
 	float4 res = float4(0,0,0,0);
+	
+	int imax = 0;
+	float max = MuGrids[uint3(id.xy, 0)];
+	
 	for(int i = 0; i < CentersCount; i++)
-		res += CentersColors[i] * MuGrids[uint3(id.xy, i)];
+	{
+		float muValue = MuGrids[uint3(id.xy, i)];
+
+		if(muValue > max)
+		{
+			max = muValue;
+			imax = i;
+		}
+
+		res += CentersColors[i] * muValue;
+	}
+
+	if(MuThresholdValue)
+		res = CentersColors[imax];
 
 	res.a = 1;
 

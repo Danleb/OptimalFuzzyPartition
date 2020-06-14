@@ -1,10 +1,11 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using System;
+using System.Diagnostics;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
     /// <summary>
-    /// Реализация алгоритма субградиентного метода оптимизации с растяжением пространства.
+    /// Реализация r-алгоритма субградиентного метода оптимизации с растяжением пространства.
     /// Алгоритм реализован в так называемой B-форме.
     /// </summary>
     public class RAlgorithmSolverBForm
@@ -17,12 +18,12 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// <summary>
         /// Количество выполненных итераций.
         /// </summary>
-        public int PreformedIterationsCount { private set; get; } = 0;
+        public int PerformedIterationsCount { private set; get; }
 
         /// <summary>
         /// Текущее, на данный момент приближение точки минимума.
         /// </summary>
-        public Vector<double> x { private set; get; }
+        public Vector<double> CurrentX { private set; get; }
 
         /// <summary>
         /// Матрица растяжения пространства B.
@@ -32,24 +33,21 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// <summary>
         /// Шаговый множитель.
         /// </summary>
-        public double h;
+        public double h;//TODO adaptive step
 
         /// <summary>
         /// Значение вектора градиента функции от х на текущей итерации.
         /// </summary>
         public Vector<double> g;
 
-        /// <summary>
-        /// Значение вектора градиента функции от х на предыдущей итерации.
-        /// </summary>
-        //public Vector<double> gPrevious;
-
         public Func<Vector<double>, Vector<double>> FunctionGradient { get; set; }
 
         /// <summary>
-        /// Коэффициент растяжения пространства.
+        /// Коэффициент растяжения пространства a.
         /// </summary>
-        public double a;
+        public double SpaceStretchFactor;
+
+        private Matrix<double> Bt;
 
         /// <summary>
         /// Конструктор для инициализации начала работы r-алгоритма.
@@ -60,16 +58,16 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         public RAlgorithmSolverBForm(Vector<double> initialX, Func<Vector<double>, Vector<double>> functionGradient, double a = 2)
         {
             DimensionsCount = initialX.Count;
-            x = initialX;
+            CurrentX = initialX;
             FunctionGradient = functionGradient;
-            this.a = a;
+            SpaceStretchFactor = a;
 
             B = Matrix<double>.Build.Sparse(DimensionsCount, DimensionsCount);
             //делаем единичную матрицу B0.
             ResetBMatrixToUnit();
 
             //считаем градиент функции в точке x для первой итерации
-            g = functionGradient(x);
+            g = functionGradient(CurrentX);
         }
 
         /// <summary>
@@ -85,29 +83,31 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
         public void DoIteration()
         {
-            var Bt = B.Transpose();//считаем транспонированную матрицу B
+            if (PerformedIterationsCount != 0)
+            {
+                var g1 = FunctionGradient(CurrentX);
+                var r = CalculateR(g, g1);
+                var eta = CalculateEta(Bt, r);
+                var beta = 1d / SpaceStretchFactor;
+                var operatorR = CalculateOperatorR(eta, beta);
+                var B1 = B * operatorR;
+                B = B1;
+                g = g1;
+            }
+
+            Bt = B.Transpose();//считаем транспонированную матрицу B
             var Ksi = CalculateKsi(Bt, g);//считаем ξ (кси), единичный вектор направления растяжения пространства
-            var x1 = x - h * B * Ksi;//делаем основной шаг итерации
-            var g1 = FunctionGradient(x1);
+            var direction = B * Ksi;
+            Trace.WriteLine($"r-algorithm step = {h}; direction=({direction[0]}; {direction[1]}); ||direction||={direction.L2Norm()}");
+            var x1 = CurrentX - h * direction;//делаем основной шаг итерации
+            CurrentX = x1;
 
-
-            var r = CalculateR(g, g1);
-            var eta = CalculateEta(Bt, r);
-            var beta = 1d / a;
-            var operatorR = CalculateOperatorR(eta, beta);
-            var B1 = B * operatorR;
-
-            //
-            x = x1;
-            B = B1;
-
-            PreformedIterationsCount++;
+            PerformedIterationsCount++;
         }
 
         /// <summary>
         /// Рассчитать ξ - кси.
         /// </summary>
-        /// <returns></returns>
         private static Vector<double> CalculateKsi(Matrix<double> Bt, Vector<double> g)
         {
             var Bt_g = Bt * g;//умножаем транспонированную матрицу на вектор градиента
@@ -136,13 +136,12 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// <summary>
         /// Рассчитать матрицу-оператор R растяжения пространства по бета.
         /// </summary>
-        /// <param name="eta"></param>
-        /// <returns></returns>
         private static Matrix<double> CalculateOperatorR(Vector<double> Ksi, double coef)
         {
             var DimensionsCount = Ksi.Count;
 
             var I = Matrix<double>.Build.Sparse(DimensionsCount, DimensionsCount);
+            I.CoerceZero(double.MaxValue);//???
             for (var i = 0; i < DimensionsCount; i++)
                 I[i, i] = 1;
 

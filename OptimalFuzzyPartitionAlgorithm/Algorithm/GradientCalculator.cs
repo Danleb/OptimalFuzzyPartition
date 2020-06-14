@@ -1,58 +1,66 @@
 ﻿using MathNet.Numerics.Integration;
 using MathNet.Numerics.LinearAlgebra;
 using OptimalFuzzyPartition.ViewModel;
+using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
-using System.Collections.Generic;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
     /// <summary>
-    /// Высчитывает значение градиента.
+    /// Calculated the gradient vector for a single center (one gradient vector for one point-generator).
     /// </summary>
     public class GradientCalculator
     {
         private PartitionSettings Settings { get; }
 
-        private List<Vector<double>> _centersPositions;
+        private Vector<double> _centerPosition;
+        private Matrix<double> _muGrid;
 
         public GradientCalculator(PartitionSettings settings)
         {
             Settings = settings;
         }
 
-        public Vector<double> CalculateGradientForCenter(int centerIndex, List<Vector<double>> centersPositions, Matrix<double> psi, List<Matrix<double>> mu)
+        /// <summary>
+        /// Calculated gradient.
+        /// </summary>
+        /// <param name="centerPosition">Current optimal center position, τ*.</param>
+        /// <param name="muGrid">Grid of the mu values for the current center.</param>
+        /// <returns>Gradient vector</returns>
+        public Vector<double> CalculateGradientForCenter(Vector<double> centerPosition, Matrix<double> muGrid)
         {
-            for (var i = 0; i < psi.RowCount; i++)
-            {
-                for (var u = 0; u < psi.ColumnCount; u++)
-                {
-                    psi[i, u] *= psi[i, u];
-                }
-            }
-
-            _centersPositions = centersPositions;
+            _muGrid = muGrid;
+            _centerPosition = centerPosition;
 
             if (Settings.SpaceSettings.MetricsType != MetricsType.Euclidean)
-                throw new NotImplementedException($"Визначення градієнту метрики {Settings.SpaceSettings.MetricsType} не реалізовано");
+                throw new NotImplementedException($"Визначення градієнту для метрики {Settings.SpaceSettings.MetricsType} не реалізовано");
 
             var vector = Vector<double>.Build.Sparse(Settings.SpaceSettings.DimensionsCount);
+            var muValueCalculator = new MuValueInterpolator(Settings.SpaceSettings, muGrid);
 
             for (var i = 0; i < Settings.SpaceSettings.DimensionsCount; i++)
             {
+                var dimensionIndex = i;
+
                 var value = GaussLegendreRule.Integrate(
                     (x, y) =>
                     {
-                        //var distanceVector
+                        var densityValue = 1;
+                        var mu = muValueCalculator.GetMuValueAtPoint(x, y);
 
-                        return;
+                        var point = VectorUtils.CreateVector(x, y);
+                        var distanceGradientValue = CalculateDistanceGradientValue(point, dimensionIndex);
+
+                        var integralFunctionValue = distanceGradientValue * densityValue * mu;
+
+                        return integralFunctionValue;
                     },
                     Settings.SpaceSettings.MinCorner[0],
                     Settings.SpaceSettings.MaxCorner[0],
                     Settings.SpaceSettings.MinCorner[1],
-                    Settings.SpaceSettings.MaxCorner[1]
+                    Settings.SpaceSettings.MaxCorner[1],
+                    Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder
                 );
-
-                value /= 4d;
 
                 vector[i] = value;
             }
@@ -60,19 +68,15 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             return vector;
         }
 
-        private Vector<double> CalculateDistanceGradientVector(int centerIndex, Vector<double> point)
+        /// <summary>
+        /// Calculate gradient value of the function of the Euclidean distance c(x, τ).
+        /// </summary>
+        private double CalculateDistanceGradientValue(Vector<double> point, int dimensionIndex)
         {
-            var vector = Vector<double>.Build.Sparse(Settings.SpaceSettings.DimensionsCount);//to init?
-            var centerPosition = _centersPositions[centerIndex];
-            var distance = (centerPosition - point).L2Norm();
-
-            for (var i = 0; i < Settings.SpaceSettings.DimensionsCount; i++)
-            {
-                var diff = point[i] - centerPosition[i];
-                vector[i] = diff / distance;
-            }
-
-            return vector;
+            var distance = (_centerPosition - point).L2Norm();
+            var diff = _centerPosition[dimensionIndex] - point[dimensionIndex];
+            var value = diff / distance;
+            return value;
         }
     }
 }

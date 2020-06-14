@@ -21,13 +21,16 @@ namespace OptimalFuzzyPartition.ViewModel
         {
             Settings = new PartitionSettings
             {
+                IsCenterPlacingTask = false,
                 SpaceSettings = new SpaceSettings
                 {
                     MinCorner = VectorUtils.CreateVector(0, 0),
                     MaxCorner = VectorUtils.CreateVector(10, 10),
                     GridSize = new List<int> { 128, 128 },
                     DensityType = DensityType.Everywhere1,
-                    MetricsType = MetricsType.Euclidean
+                    MetricsType = MetricsType.Euclidean,
+                    CustomDensityFunction = null,
+                    CustomDistanceFunction = null
                 },
                 CentersSettings = new CentersSettings
                 {
@@ -59,6 +62,7 @@ namespace OptimalFuzzyPartition.ViewModel
                 FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
                 {
                     CentersDeltaEpsilon = 0.5,
+                    GaussLegendreIntegralOrder = 32
                 },
                 RAlgorithmSettings = new RAlgorithmSettings
                 {
@@ -219,6 +223,20 @@ namespace OptimalFuzzyPartition.ViewModel
         }
 
         public List<CenterData> CenterDatas => Settings.CentersSettings.CenterDatas;
+
+        #endregion
+
+        #region Settings for the: fuzzy partition with placing centers
+
+        public int GaussLegendreIntegralOrder
+        {
+            get => Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder;
+            set
+            {
+                Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion
 

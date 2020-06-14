@@ -21,7 +21,7 @@ namespace OptimalFuzzyPartitionAlgorithm
         public PartitionSettings GetCopy()
         {
             var settings = (PartitionSettings)MemberwiseClone();
-
+            
 
 
             return settings;

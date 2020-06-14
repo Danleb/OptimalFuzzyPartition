@@ -2,10 +2,14 @@
 using OptimalFuzzyPartitionAlgorithm;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Utils;
 
 namespace FuzzyPartitionComputing
 {
+    /// <summary>
+    /// Converts MuGrids RenderTexture to the list of matrices for each center.
+    /// </summary>
     public class MuConverter : MonoBehaviour
     {
         [SerializeField] private Slicer _slicer;
@@ -18,13 +22,17 @@ namespace FuzzyPartitionComputing
             {
                 var matrix = Matrix<double>.Build.Sparse(partitionSettings.SpaceSettings.GridSize[0], partitionSettings.SpaceSettings.GridSize[1]);
                 var sliceTexture = _slicer.Copy3DSliceToRenderTexture(muGridsRenderTexture, centerIndex);
+                var texture2D = sliceTexture.ToTexture2D();
+                var data = texture2D.GetRawTextureData<float>();
+
+                Assert.AreEqual(data.Length, partitionSettings.SpaceSettings.GridSize[0] * partitionSettings.SpaceSettings.GridSize[1]);
 
                 for (var rowIndex = 0; rowIndex < partitionSettings.SpaceSettings.GridSize[0]; rowIndex++)
                 {
                     for (var columnIndex = 0; columnIndex < partitionSettings.SpaceSettings.GridSize[1]; columnIndex++)
                     {
-
-                        matrix[rowIndex, columnIndex] = 1;
+                        float muValue = data[rowIndex * partitionSettings.SpaceSettings.GridSize[0] + columnIndex];//TODO check
+                        matrix[rowIndex, columnIndex] = muValue;
                     }
                 }
 

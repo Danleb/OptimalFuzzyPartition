@@ -1,5 +1,8 @@
-﻿namespace OptimalFuzzyPartitionAlgorithm
+﻿using System;
+
+namespace OptimalFuzzyPartitionAlgorithm
 {
+    [Serializable]
     public class RAlgorithmSettings
     {
         /// <summary>

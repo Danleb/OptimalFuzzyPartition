@@ -12,7 +12,7 @@ namespace Utils
 
         public RenderTexture Copy3DSliceToRenderTexture(RenderTexture sourceRenderTexture, int layer)
         {
-            RenderTexture targetRenderTexture = new RenderTexture(sourceRenderTexture.width, sourceRenderTexture.height, 0, RenderTextureFormat.ARGB32);
+            RenderTexture targetRenderTexture = new RenderTexture(sourceRenderTexture.width, sourceRenderTexture.height, 0, sourceRenderTexture.graphicsFormat, 0);
             targetRenderTexture.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
             targetRenderTexture.enableRandomWrite = true;
             targetRenderTexture.wrapMode = TextureWrapMode.Clamp;

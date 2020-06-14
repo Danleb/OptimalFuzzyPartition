@@ -8,8 +8,9 @@ namespace OptimalFuzzyPartitionAlgorithm.Settings
     [Serializable]
     public class FuzzyPartitionPlacingCentersSettings
     {
-        public int MaxIterationsCount;
+        //public int MaxIterationsCount;
 
         public double CentersDeltaEpsilon;
+        public int GaussLegendreIntegralOrder;
     }
 }
