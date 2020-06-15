@@ -48,6 +48,8 @@ namespace FuzzyPartitionComputing
 
         [SerializeField] private bool trace;
         [SerializeField] private bool debug;
+
+        private TextWriterTraceListener _textWriterTraceListener;
         private readonly UnityConsoleTraceListener _unityConsoleListener = new UnityConsoleTraceListener();
 
         private void Start()
@@ -60,9 +62,8 @@ namespace FuzzyPartitionComputing
                 var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Logs.txt");
                 if (File.Exists(path))
                     File.Delete(path);
-                Trace.Listeners.Add(new TextWriterTraceListener(path));
-                Trace.WriteLine("!!!");
-
+                _textWriterTraceListener = new TextWriterTraceListener(path);
+                Trace.Listeners.Add(_textWriterTraceListener);
             }
 
             Debug.WriteLine("Local partition runner init");

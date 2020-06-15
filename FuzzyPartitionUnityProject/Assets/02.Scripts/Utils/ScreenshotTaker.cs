@@ -29,7 +29,7 @@ namespace Utils
             do
             {
                 fileCount++;
-                path = Path.ChangeExtension(Path.Combine(folderPath, fileName + fileCount), "exe");
+                path = Path.ChangeExtension(Path.Combine(folderPath, fileName + fileCount), "png");
             } while (File.Exists(path));
 
             ScreenCapture.CaptureScreenshot(path);

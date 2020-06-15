@@ -31,7 +31,7 @@ namespace FuzzyPartitionComputing
                 {
                     for (var columnIndex = 0; columnIndex < partitionSettings.SpaceSettings.GridSize[1]; columnIndex++)
                     {
-                        float muValue = data[rowIndex * partitionSettings.SpaceSettings.GridSize[0] + columnIndex];//TODO check
+                        float muValue = data[columnIndex * partitionSettings.SpaceSettings.GridSize[0] + rowIndex];
                         matrix[rowIndex, columnIndex] = muValue;
                     }
                 }

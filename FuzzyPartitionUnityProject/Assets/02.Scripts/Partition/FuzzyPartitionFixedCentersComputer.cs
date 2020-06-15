@@ -196,9 +196,16 @@ namespace FuzzyPartitionComputing
             _globalTimer.Stop();
             _iterationTimer.Stop();
 
-            //var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings);
-            var calc = new FuzzyPartitionFixedCentersAlgorithm(Settings);
-            var muGrids = calc.BuildPartition();
+            var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings);
+
+            //var calc = new FuzzyPartitionFixedCentersAlgorithm(Settings);
+            //var muGrids2 = calc.BuildPartition();
+
+            //Trace.WriteLine("Compute shader center #1 mu matrix:");
+            //MatrixUtils.TraceMatrix(muGrids[0]);
+            //Trace.WriteLine("Cpu computed center #1 mu matrix:");
+            //MatrixUtils.TraceMatrix(muGrids2[0]);
+            //Trace.Flush();
 
             var targetFunctionalCalculator = new TargetFunctionalCalculator(Settings);
             var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muGrids);

@@ -15,8 +15,7 @@ namespace FuzzyPartitionComputing
         [SerializeField] private Vector2[] _zeroTausManual;
 
         private PartitionSettings _settings;
-
-        private FuzzyPartitionPlacingCentersAlgorithm _algorithm;
+        private FuzzyPartitionPlacingCentersAlgorithm _placingAlgorithm;
 
         public void Init(PartitionSettings settings)
         {
@@ -30,7 +29,7 @@ namespace FuzzyPartitionComputing
 
             var muGrids = GetMuGrids(settings);
 
-            _algorithm = new FuzzyPartitionPlacingCentersAlgorithm(_settings, zeroTaus, muGrids);
+            _placingAlgorithm = new FuzzyPartitionPlacingCentersAlgorithm(_settings, zeroTaus, muGrids);
         }
 
         private List<Vector<double>> GetZeroIterationCentersPositions(PartitionSettings settings)
@@ -44,7 +43,6 @@ namespace FuzzyPartitionComputing
             {
                 //var zeroTau = settings.SpaceSettings.MinCorner.Clone();
                 var zeroTau = p1 + ((i + 1) / (settings.CentersSettings.CentersCount + 1d)) * (p2 - p1);
-
                 zeroTaus.Add(zeroTau);
             }
 
@@ -54,7 +52,7 @@ namespace FuzzyPartitionComputing
 
         private List<Matrix<double>> GetMuGrids(PartitionSettings settings)
         {
-			return new FuzzyPartitionFixedCentersAlgorithm(_settings).BuildPartition();
+            //return new FuzzyPartitionFixedCentersAlgorithm(_settings).BuildPartition();
             var partitionTexture = _partitionFixedCentersComputer.Run();
             var muGrids = _muConverter.ConvertMuGridsTexture(partitionTexture, settings);
             return muGrids;
@@ -64,20 +62,20 @@ namespace FuzzyPartitionComputing
         {
             do
             {
-                Trace.WriteLine($"Iteration number {_algorithm.PerformedIterationCount + 1}");
+                Trace.WriteLine($"Iteration number {_placingAlgorithm.PerformedIterationCount + 1}");
 
-                var centers = _algorithm.GetCenters();
+                var centers = _placingAlgorithm.GetCenters();
                 SetCentersPositions(centers);
 
                 var muGrids = GetMuGrids(_settings);
 
-                _algorithm.DoIteration(muGrids);
+                _placingAlgorithm.DoIteration(muGrids);
 
-            } while (!_algorithm.IsStopConditionSatisfied());
+            } while (!_placingAlgorithm.IsStopConditionSatisfied());
 
             _partitionFixedCentersComputer.Release();
 
-            return _algorithm.GetCenters();
+            return _placingAlgorithm.GetCenters();
         }
 
         private void SetCentersPositions(List<Vector<double>> centers)
