@@ -1,4 +1,5 @@
-﻿using OptimalFuzzyPartition.ViewModel;
+﻿using OptimalFuzzyPartition.Model;
+using OptimalFuzzyPartition.ViewModel;
 using OptimalFuzzyPartitionAlgorithm;
 using System.Windows;
 
@@ -10,6 +11,11 @@ namespace OptimalFuzzyPartition.View
     public partial class PartitionCreationWindow : Window
     {
         private readonly PartitionSettings _partitionSettings;
+
+        public PartitionCreationWindow()
+        {
+            _partitionSettings = DefaultSettingsKeeper.GetPartitionSettings();
+        }
 
         public PartitionCreationWindow(PartitionSettings partitionSettings)
         {

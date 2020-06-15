@@ -3,13 +3,11 @@
 namespace OptimalFuzzyPartitionAlgorithm.Settings
 {
     /// <summary>
-    /// Settings for the 
+    /// Settings for the solving the fuzzy partition task with optimal centers placing.
     /// </summary>
     [Serializable]
     public class FuzzyPartitionPlacingCentersSettings
     {
-        //public int MaxIterationsCount;
-
         public double CentersDeltaEpsilon;
         public int GaussLegendreIntegralOrder;
     }

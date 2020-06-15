@@ -27,7 +27,7 @@ namespace FuzzyPartitionVisualizing
                 _centerInfos.Add(Instantiate(_centerInfoPrefab, transform, true));
             }
 
-            for (var index = 0; index < _centerInfos.Count; index++)
+            for (var index = 0; index < partitionSettings.CentersSettings.CentersCount; index++)
             {
                 var centerInfo = _centerInfos[index];
                 centerInfo.Init(partitionSettings, index);
@@ -73,7 +73,7 @@ namespace FuzzyPartitionVisualizing
 
         private void SetCenterInfoPositions()
         {
-            for (int i = 0; i < _centerInfos.Count; i++)
+            for (int i = 0; i < _partitionSettings.CentersSettings.CentersCount; i++)
             {
                 var centerInfo = _centerInfos[i];
                 var data = _partitionSettings.CentersSettings.CenterDatas[i];

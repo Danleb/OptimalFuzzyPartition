@@ -38,14 +38,16 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
                 _previousTaus[centerIndex] = rAlgorithm.CurrentX;
 
+                var centerIndex2 = centerIndex;
+
                 rAlgorithm.FunctionGradient = vector =>
                 {
                     var gradientCalculator = new GradientCalculator(_settings);
-                    var gradientVector = gradientCalculator.CalculateGradientForCenter(rAlgorithm.CurrentX, muGrids[centerIndex]);
+                    var gradientVector = gradientCalculator.CalculateGradientForCenter(rAlgorithm.CurrentX, muGrids[centerIndex2]);
                     return gradientVector;
                 };
 
-                rAlgorithm.h = 0.5;//TODO adaptive step
+                rAlgorithm.h = _settings.RAlgorithmSettings.H0 / (PerformedIterationCount + 1);// 0.5;//TODO adaptive step
 
                 rAlgorithm.DoIteration();
             }
@@ -74,8 +76,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
             if (tausDelta < _settings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon)
             {
-                Trace.WriteLine("Algorithm stop by centers max delta");
-                return true;
+                //Trace.WriteLine("Algorithm stop by centers max delta");
+                //return true;
             }
 
             return false;

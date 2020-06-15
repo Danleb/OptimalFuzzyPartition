@@ -18,9 +18,9 @@
                     <Label Content="{Binding TimePassed, Converter={StaticResource TimePassedConverter}}" ContentStringFormat="Часу пройшло: {0}" Margin="5"></Label>
                     <Label Content="{Binding Path=PerformedIterationCount}" ContentStringFormat="Ітерацій виконано: {0}"></Label>
 
-                    <!--<Button Name="ButtonOpenLogs" Content="Відкрити віконце логів" Margin="5"></Button>-->
+                    <!--<Button Command="RunPartitionCreation" Content="Побудувати розбиття" Margin="5"></Button>-->
 
-                    
+
 
                     <!--<DataGrid Margin="5" ItemsSource="{Binding CenterCoordinates}">
                         <DataGrid.Columns>
@@ -42,6 +42,10 @@
                     <Label Content="Номер ітерації для дослідження:"></Label>
                     <TextBox Margin="5" Text="" Width="70" HorizontalAlignment="Left"></TextBox>
                     <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>
+
+                    <Label ></Label>
+
+                    <Button Content="Відкрити налаштування"></Button>
 
                 </StackPanel>
             </ScrollViewer>

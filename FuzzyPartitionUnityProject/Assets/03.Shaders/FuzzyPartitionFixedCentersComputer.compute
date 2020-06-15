@@ -21,9 +21,13 @@ float2 Diff;
 
 RWStructuredBuffer<int> StopConditions;
 
-float EuclideanNorm(float2 point1, float2 point2)//TODO to common utils
+#include "Assets/03.Shaders/Common.compute"
+
+float GetDistance(float2 a, float2 b)
 {
-	return distance(point1, point2);
+	//return GetChebyshevDistance(a, b);
+    return GetEuclideanDistance(a, b);
+	return GetManhattanDistance(a, b);
 }
 
 #pragma kernel ZeroIterationInit
@@ -59,7 +63,7 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 	float densityValue = 1;
 	float m = 2;
 	
-	float distance = EuclideanNorm(centerPosition, spacePoint);
+	float distance = GetDistance(centerPosition, spacePoint);
 
 	float psiValue = PsiGrid[texturePoint];
 

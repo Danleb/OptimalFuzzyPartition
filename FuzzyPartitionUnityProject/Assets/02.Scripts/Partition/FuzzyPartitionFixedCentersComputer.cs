@@ -1,4 +1,6 @@
 ﻿using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.Algorithm;
+using OptimalFuzzyPartitionAlgorithm.Utils;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
@@ -6,7 +8,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using Utils;
-using Debug = UnityEngine.Debug;
+using Debug = System.Diagnostics.Debug;
 
 namespace FuzzyPartitionComputing
 {
@@ -14,6 +16,7 @@ namespace FuzzyPartitionComputing
     {
         [SerializeField] private ComputeShader _fuzzyPartitionShader;
         [SerializeField] private Slicer _slicer;
+        [SerializeField] private MuConverter _muConverter;
 
         #region DebugRes
         [SerializeField] private bool debug;
@@ -55,7 +58,7 @@ namespace FuzzyPartitionComputing
 
         public void Init(PartitionSettings partitionSettings)
         {
-            Debug.Log("FuzzyFixedPartition Initialization");
+            Debug.WriteLine("FuzzyFixedPartition Initialization");
 
             Settings = partitionSettings;
 
@@ -141,8 +144,7 @@ namespace FuzzyPartitionComputing
             for (var i = 0; i < Settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount; i++)
             {
                 _iterationTimer.Reset();
-
-                Debug.Log($"FuzzyFixedPartition Iteration={PerformedIterationsCount + 1}");
+                //Trace.WriteLine($"FuzzyFixedPartition Iteration={PerformedIterationsCount + 1}");
 
                 _fuzzyPartitionShader.SetInt("CentersCount", Settings.CentersSettings.CentersCount);
 
@@ -186,13 +188,37 @@ namespace FuzzyPartitionComputing
 
                 ShowMuTextures();
 
-                Debug.Log($"Iteration execution time: {_iterationTimer.ElapsedMilliseconds}");
+                //Trace.WriteLine($"Iteration execution time: {_iterationTimer.ElapsedMilliseconds}");
             }
 
-            Debug.Log($"Partition execution time: {_globalTimer.ElapsedMilliseconds}");
+            Trace.WriteLine($"Partition execution time: {_globalTimer.ElapsedMilliseconds}");
 
             _globalTimer.Stop();
             _iterationTimer.Stop();
+
+            //var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings);
+            var calc = new FuzzyPartitionFixedCentersAlgorithm(Settings);
+            var muGrids = calc.BuildPartition();
+
+            var targetFunctionalCalculator = new TargetFunctionalCalculator(Settings);
+            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muGrids);
+            Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
+
+            for (var index = 0; index < muGrids.Count; index++)
+            {
+                var matrix = muGrids[index];
+                Trace.WriteLine($"Mu Matrix for the center #{index + 1}");
+                MatrixUtils.TraceMatrix(matrix);
+            }
+
+            var sum = muGrids.Aggregate((a, b) => a + b);
+            Trace.WriteLine("Sum mu matrix:");
+            MatrixUtils.TraceMatrix(sum);
+            Trace.Flush();
+
+
+            Debug.WriteLine($"Target functional value = {targetFunctionalValue}", "AlgorithmResult");
+            Trace.Flush();
 
             return _muGridsTexture;
         }

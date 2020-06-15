@@ -71,6 +71,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\DefaultSettingsKeeper.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\AlgorithmSettingsViewModel.cs" />
     <Compile Include="ViewModel\PartitionCreationViewModel.cs" />
@@ -133,9 +134,7 @@
   <ItemGroup>
     <Resource Include="OptimalFuzzyPartitionIcon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\OptimalFuzzyPartitionAlgorithm\OptimalFuzzyPartitionAlgorithm.csproj">
       <Project>{38196ac9-6a10-4e9b-a758-5c3985c6126e}</Project>

@@ -97,8 +97,11 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
             Bt = B.Transpose();//считаем транспонированную матрицу B
             var Ksi = CalculateKsi(Bt, g);//считаем ξ (кси), единичный вектор направления растяжения пространства
-            var direction = B * Ksi;
-            Trace.WriteLine($"r-algorithm step = {h}; direction=({direction[0]}; {direction[1]}); ||direction||={direction.L2Norm()}");
+            //var direction = B * Ksi;
+            var direction = g.Clone();
+            direction = direction.Normalize(2);
+            //direction = direction.Normalize(2);//??????
+            Trace.WriteLine($"r-algorithm step = {h}; x = ({CurrentX[0]:0.00}; {CurrentX[1]:0.00}) Direction=({direction[0]:0.00}; {direction[1]:0.00}); ||direction||={direction.L2Norm():0.00}");
             var x1 = CurrentX - h * direction;//делаем основной шаг итерации
             CurrentX = x1;
 

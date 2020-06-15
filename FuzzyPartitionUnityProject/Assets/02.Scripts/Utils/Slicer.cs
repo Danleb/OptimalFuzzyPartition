@@ -8,6 +8,7 @@ namespace Utils
     /// </summary>
     public class Slicer : MonoBehaviour
     {
+        [SerializeField] private Vector2Int _slicerNumThreads;
         [SerializeField] private ComputeShader _slicerShader;
 
         public RenderTexture Copy3DSliceToRenderTexture(RenderTexture sourceRenderTexture, int layer)
@@ -22,7 +23,7 @@ namespace Utils
             _slicerShader.SetTexture(kernelIndex, "voxels", sourceRenderTexture);
             _slicerShader.SetInt("layer", layer);
             _slicerShader.SetTexture(kernelIndex, "Result", targetRenderTexture);
-            _slicerShader.Dispatch(kernelIndex, sourceRenderTexture.width / 32, sourceRenderTexture.height / 32, 1);
+            _slicerShader.Dispatch(kernelIndex, sourceRenderTexture.width / _slicerNumThreads.x, sourceRenderTexture.height / _slicerNumThreads.y, 1);
 
             return targetRenderTexture;
         }

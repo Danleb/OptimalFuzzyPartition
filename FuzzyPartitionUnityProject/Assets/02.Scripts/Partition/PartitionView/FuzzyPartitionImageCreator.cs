@@ -12,7 +12,10 @@ namespace FuzzyPartitionVisualizing
     {
         [SerializeField] private Image _outputImage;
         [SerializeField] private ComputeShader _partitionDrawingShader;
-        [SerializeField] private bool muThresholdValue;
+
+        [SerializeField] private bool DrawThresholdValue;
+        [SerializeField] private float MuThresholdValue;
+        [SerializeField] private bool DrawOnlyMaxValue;
 
         private const string PartitionDrawingKernel = "DrawPartition";
 
@@ -65,7 +68,9 @@ namespace FuzzyPartitionVisualizing
             _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "Result", _partitionRenderTexture);
-            _partitionDrawingShader.SetBool("MuThresholdValue", muThresholdValue);
+            _partitionDrawingShader.SetBool("DrawThresholdValue", DrawThresholdValue);
+            _partitionDrawingShader.SetFloat("MuThresholdValue", MuThresholdValue);
+            _partitionDrawingShader.SetBool("DrawOnlyMaxValue", DrawOnlyMaxValue);
 
             _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.SpaceSettings.GridSize[0] / ShaderNumThreads.x, _settings.SpaceSettings.GridSize[1] / ShaderNumThreads.y, 1);
 

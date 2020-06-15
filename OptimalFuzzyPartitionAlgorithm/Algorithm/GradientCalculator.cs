@@ -14,7 +14,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         private PartitionSettings Settings { get; }
 
         private Vector<double> _centerPosition;
-        private Matrix<double> _muGrid;
 
         public GradientCalculator(PartitionSettings settings)
         {
@@ -29,7 +28,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// <returns>Gradient vector</returns>
         public Vector<double> CalculateGradientForCenter(Vector<double> centerPosition, Matrix<double> muGrid)
         {
-            _muGrid = muGrid;
             _centerPosition = centerPosition;
 
             if (Settings.SpaceSettings.MetricsType != MetricsType.Euclidean)
@@ -45,13 +43,13 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 var value = GaussLegendreRule.Integrate(
                     (x, y) =>
                     {
-                        var densityValue = 1;
+                        var densityValue = 1d;
                         var mu = muValueCalculator.GetMuValueAtPoint(x, y);
 
                         var point = VectorUtils.CreateVector(x, y);
                         var distanceGradientValue = CalculateDistanceGradientValue(point, dimensionIndex);
 
-                        var integralFunctionValue = distanceGradientValue * densityValue * mu;
+                        var integralFunctionValue = distanceGradientValue * densityValue * mu * mu;
 
                         return integralFunctionValue;
                     },

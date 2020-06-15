@@ -3,12 +3,14 @@ using NaughtyAttributes;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using Utils;
-using Debug = UnityEngine.Debug;
+using Debug = System.Diagnostics.Debug;
 
 namespace FuzzyPartitionComputing
 {
@@ -44,10 +46,26 @@ namespace FuzzyPartitionComputing
 
         [SerializeField] private CommandType commandType;
 
+        [SerializeField] private bool trace;
+        [SerializeField] private bool debug;
+        private readonly UnityConsoleTraceListener _unityConsoleListener = new UnityConsoleTraceListener();
+
         private void Start()
         {
-            Trace.Listeners.Add(new UnityConsoleTraceListener());
-            Trace.WriteLine("Local partition runner init");
+            if (debug)
+                Debug.Listeners.Add(_unityConsoleListener);
+            if (trace)
+            {
+                Trace.Listeners.Add(_unityConsoleListener);
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Logs.txt");
+                if (File.Exists(path))
+                    File.Delete(path);
+                Trace.Listeners.Add(new TextWriterTraceListener(path));
+                Trace.WriteLine("!!!");
+
+            }
+
+            Debug.WriteLine("Local partition runner init");
 
             if (autoStart)
             {
@@ -77,7 +95,7 @@ namespace FuzzyPartitionComputing
             for (var index = 0; index < centersPositions.Count; index++)
             {
                 var centersPosition = centersPositions[index];
-                Debug.Log($"Tau #{index + 1} = ({centersPosition[0]}; {centersPosition[1]})");
+                Debug.WriteLine($"Tau #{index + 1} = ({centersPosition[0]}; {centersPosition[1]})");
                 settings.CentersSettings.CenterDatas[index].Position = centersPosition;
             }
 
@@ -138,6 +156,19 @@ namespace FuzzyPartitionComputing
                 }
             };
             return partitionSettings;
+        }
+
+        [Button]
+        public void EnableTracing()
+        {
+            if (!Trace.Listeners.Contains(_unityConsoleListener))
+                Trace.Listeners.Add(_unityConsoleListener);
+        }
+
+        [Button]
+        public void DisableTracing()
+        {
+            Trace.Listeners.Remove(_unityConsoleListener);
         }
     }
 }
