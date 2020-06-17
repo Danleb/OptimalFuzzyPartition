@@ -122,18 +122,6 @@ namespace FuzzyPartitionComputing
                 );
         }
 
-        private void SetDiffToShader()
-        {
-            var diff = (Settings.SpaceSettings.MaxCorner - Settings.SpaceSettings.MinCorner).ToVector2();
-            _fuzzyPartitionShader.SetFloats("Diff", diff.ToArray());
-        }
-
-        private void SetMinCornerToShader()
-        {
-            var minCorner = Settings.SpaceSettings.MinCorner.ToVector2();
-            _fuzzyPartitionShader.SetFloats("MinCorner", minCorner.ToArray());
-        }
-
         public RenderTexture Run()
         {
             _globalTimer.Start();
@@ -144,7 +132,6 @@ namespace FuzzyPartitionComputing
             for (var i = 0; i < Settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount; i++)
             {
                 _iterationTimer.Reset();
-                //Trace.WriteLine($"FuzzyFixedPartition Iteration={PerformedIterationsCount + 1}");
 
                 _fuzzyPartitionShader.SetInt("CentersCount", Settings.CentersSettings.CentersCount);
 
@@ -187,8 +174,6 @@ namespace FuzzyPartitionComputing
                 }
 
                 ShowMuTextures();
-
-                //Trace.WriteLine($"Iteration execution time: {_iterationTimer.ElapsedMilliseconds}");
             }
 
             Trace.WriteLine($"Partition execution time: {_globalTimer.ElapsedMilliseconds}");
@@ -196,35 +181,30 @@ namespace FuzzyPartitionComputing
             _globalTimer.Stop();
             _iterationTimer.Stop();
 
-            var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings);
+            //var muGrids2 = new FuzzyPartitionFixedCentersAlgorithm(Settings).BuildPartition();
 
-            //var calc = new FuzzyPartitionFixedCentersAlgorithm(Settings);
-            //var muGrids2 = calc.BuildPartition();
+            //var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings);
 
-            //Trace.WriteLine("Compute shader center #1 mu matrix:");
-            //MatrixUtils.TraceMatrix(muGrids[0]);
-            //Trace.WriteLine("Cpu computed center #1 mu matrix:");
-            //MatrixUtils.TraceMatrix(muGrids2[0]);
-            //Trace.Flush();
+            //for (var index = 0; index < muGrids.Count; index++)
+            //{
+            //    var muGrid = muGrids[index];
+            //    var muGrid2 = muGrids2[index];
+            //    Trace.WriteLine($"Mu Matrix for the center #{index + 1}");
+            //    MatrixUtils.TraceMatrix(Settings.SpaceSettings.GridSize[0], Settings.SpaceSettings.GridSize[1], (i, i1) => muGrid.GetMuValue(i, i1));
 
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(Settings);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muGrids);
-            Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
+            //    Trace.WriteLine("Matrix done by CPU:");
+            //    MatrixUtils.TraceMatrix(muGrid2);
+            //}
 
-            for (var index = 0; index < muGrids.Count; index++)
-            {
-                var matrix = muGrids[index];
-                Trace.WriteLine($"Mu Matrix for the center #{index + 1}");
-                MatrixUtils.TraceMatrix(matrix);
-            }
+            //var targetFunctionalCalculator = new TargetFunctionalCalculator(Settings);
+            //var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muGrids);
+            //Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
+           
+            //var sum = muGrids.Aggregate((a, b) => a + b);
+            //Trace.WriteLine("Sum mu matrix:");
+            //MatrixUtils.TraceMatrix(sum);
 
-            var sum = muGrids.Aggregate((a, b) => a + b);
-            Trace.WriteLine("Sum mu matrix:");
-            MatrixUtils.TraceMatrix(sum);
-            Trace.Flush();
-
-
-            Debug.WriteLine($"Target functional value = {targetFunctionalValue}", "AlgorithmResult");
+            Debug.Flush();
             Trace.Flush();
 
             return _muGridsTexture;
@@ -242,6 +222,18 @@ namespace FuzzyPartitionComputing
                 var sprite2 = rt2.ToSprite();
                 rs[1].sprite = sprite2;
             }
+        }
+
+        private void SetDiffToShader()
+        {
+            var diff = (Settings.SpaceSettings.MaxCorner - Settings.SpaceSettings.MinCorner).ToVector2();
+            _fuzzyPartitionShader.SetFloats("Diff", diff.ToArray());
+        }
+
+        private void SetMinCornerToShader()
+        {
+            var minCorner = Settings.SpaceSettings.MinCorner.ToVector2();
+            _fuzzyPartitionShader.SetFloats("MinCorner", minCorner.ToArray());
         }
 
         private void SetMultiplicativeCoefficientsToBuffer()

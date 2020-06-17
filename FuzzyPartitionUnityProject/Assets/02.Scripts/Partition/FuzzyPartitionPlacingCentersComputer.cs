@@ -2,9 +2,12 @@
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
 using OptimalFuzzyPartitionAlgorithm.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace FuzzyPartitionComputing
 {
@@ -14,12 +17,16 @@ namespace FuzzyPartitionComputing
         [SerializeField] private MuConverter _muConverter;
         [SerializeField] private Vector2[] _zeroTausManual;
 
+        private Stopwatch _timer;
         private PartitionSettings _settings;
         private FuzzyPartitionPlacingCentersAlgorithm _placingAlgorithm;
 
         public void Init(PartitionSettings settings)
         {
             _settings = settings;
+
+            _timer = new Stopwatch();
+            _timer.Start();
 
             _partitionFixedCentersComputer.Init(_settings);
 
@@ -30,6 +37,7 @@ namespace FuzzyPartitionComputing
             var muGrids = GetMuGrids(settings);
 
             _placingAlgorithm = new FuzzyPartitionPlacingCentersAlgorithm(_settings, zeroTaus, muGrids);
+            _timer.Stop();
         }
 
         private List<Vector<double>> GetZeroIterationCentersPositions(PartitionSettings settings)
@@ -50,16 +58,23 @@ namespace FuzzyPartitionComputing
             return zeroTaus;
         }
 
-        private List<Matrix<double>> GetMuGrids(PartitionSettings settings)
+        private List<MuValueInterpolator> GetMuGrids(PartitionSettings settings)
         {
-            //return new FuzzyPartitionFixedCentersAlgorithm(_settings).BuildPartition();
+            //var muMatrices = new FuzzyPartitionFixedCentersAlgorithm(_settings).BuildPartition();
+            //var interpolators = muMatrices.Select(m => new MuValueInterpolator(settings.SpaceSettings, new MuGridValueGetter(m))).ToList();
+            //return interpolators;
+
             var partitionTexture = _partitionFixedCentersComputer.Run();
+            //var muGrids = _muConverter.ConvertMuGridsTexture(partitionTexture, settings);
             var muGrids = _muConverter.ConvertMuGridsTexture(partitionTexture, settings);
-            return muGrids;
+            var muValueInterpolators = muGrids.Select(v => new MuValueInterpolator(settings.SpaceSettings, v)).ToList();
+            return muValueInterpolators;
         }
 
         public List<Vector<double>> Run()
         {
+            _timer.Start();
+
             do
             {
                 Trace.WriteLine($"Iteration number {_placingAlgorithm.PerformedIterationCount + 1}");
@@ -74,6 +89,12 @@ namespace FuzzyPartitionComputing
             } while (!_placingAlgorithm.IsStopConditionSatisfied());
 
             _partitionFixedCentersComputer.Release();
+            _timer.Stop();
+
+            var t = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
+            var timeString = $"{t.Hours:D2}h:{t.Minutes:D2}m:{t.Seconds:D2}s:{t.Milliseconds:D3}ms";
+            Debug.WriteLine($"Optimal placing partition global time: {timeString}");
+            Debug.Flush();
 
             return _placingAlgorithm.GetCenters();
         }

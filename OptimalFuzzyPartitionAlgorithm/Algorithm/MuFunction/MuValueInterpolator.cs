@@ -1,16 +1,14 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-
-namespace OptimalFuzzyPartitionAlgorithm.Algorithm
+﻿namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
     public class MuValueInterpolator
     {
         private readonly SpaceSettings _spaceSettings;
-        private readonly Matrix<double> _muGrid;
+        private readonly IMuValueGetter _muValueGetter;
 
-        public MuValueInterpolator(SpaceSettings spaceSettings, Matrix<double> muGrid)
+        public MuValueInterpolator(SpaceSettings spaceSettings, IMuValueGetter muValueGetter)
         {
             _spaceSettings = spaceSettings;
-            _muGrid = muGrid;
+            _muValueGetter = muValueGetter;
         }
 
         public double GetMuValueAtPoint(double x, double y)
@@ -34,10 +32,10 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             var localYRatio = yIndexFractional - y1;
 
             //bilinear interpolation
-            var pX1Y1 = _muGrid[x1, y1];
-            var pX1Y2 = _muGrid[x1, y2];
-            var pX2Y1 = _muGrid[x2, y1];
-            var pX2Y2 = _muGrid[x2, y2];
+            var pX1Y1 = _muValueGetter.GetMuValue(x1, y1);
+            var pX1Y2 = _muValueGetter.GetMuValue(x1, y2);
+            var pX2Y1 = _muValueGetter.GetMuValue(x2, y1);
+            var pX2Y2 = _muValueGetter.GetMuValue(x2, y2);
 
             var l1 = pX1Y1 * (1d - localXRatio) + pX2Y1 * localXRatio;
             var l2 = pX1Y2 * (1d - localXRatio) + pX2Y2 * localXRatio;

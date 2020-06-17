@@ -1,9 +1,7 @@
 ﻿using MathNet.Numerics.Integration;
-using MathNet.Numerics.LinearAlgebra;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
@@ -19,10 +17,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             Settings = partitionSettings;
         }
 
-        public double CalculateFunctionalValue(List<Matrix<double>> muGrids)
+        public double CalculateFunctionalValue(List<MuValueInterpolator> muValueInterpolators)
         {
-            var muValueCalculators = muGrids.Select(v => new MuValueInterpolator(Settings.SpaceSettings, v)).ToList();
-
             var value = GaussLegendreRule.Integrate((x, y) =>
                 {
                     var functionValue = 0d;
@@ -36,7 +32,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                         var a = centerData.A;
                         var point = VectorUtils.CreateVector(x, y);
                         var distanceValue = (point - center).L2Norm();
-                        var muValue = muValueCalculators[centerIndex].GetMuValueAtPoint(x, y);
+                        var muValue = muValueInterpolators[centerIndex].GetMuValueAtPoint(x, y);
                         functionValue += Math.Pow(muValue, 2) * (distanceValue / w + a) * densityValue;
                     }
 

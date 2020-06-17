@@ -1,4 +1,5 @@
-﻿using OptimalFuzzyPartitionAlgorithm;
+﻿using NaughtyAttributes;
+using OptimalFuzzyPartitionAlgorithm;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -17,8 +18,6 @@ namespace FuzzyPartitionVisualizing
         [SerializeField] private float MuThresholdValue;
         [SerializeField] private bool DrawOnlyMaxValue;
 
-        private const string PartitionDrawingKernel = "DrawPartition";
-
         private PartitionSettings _settings;
         private Color[] _centersColors;
 
@@ -26,14 +25,14 @@ namespace FuzzyPartitionVisualizing
         private int _partitionDrawingKernel;
         private ComputeBuffer _colorsComputeBuffer;
 
+        private const string PartitionDrawingKernel = "DrawPartition";
         private readonly Vector3Int ShaderNumThreads = new Vector3Int(8, 8, 1);
+        private RenderTexture _muRenderTexture;
 
         public void Init(PartitionSettings partitionSettings, Color[] centersColors)
         {
             _settings = partitionSettings;
-            _centersColors = centersColors;
-
-            _partitionDrawingKernel = _partitionDrawingShader.FindKernel(PartitionDrawingKernel);
+            _centersColors = centersColors;            
 
             _partitionRenderTexture = new RenderTexture(_settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1], 0)
             {
@@ -42,13 +41,22 @@ namespace FuzzyPartitionVisualizing
             };
             _partitionRenderTexture.Create();
 
+            if(_colorsComputeBuffer != null && _colorsComputeBuffer.IsValid())
+                _colorsComputeBuffer.Release();
+
             _colorsComputeBuffer = new ComputeBuffer(centersColors.Length, sizeof(float) * 4, ComputeBufferType.Default);
             _colorsComputeBuffer.SetData(_centersColors);
         }
 
         public Texture2D CreatePartitionAndShow(RenderTexture muRenderTexture)
         {
-            var renderTexture = CreatePartitionTexture(muRenderTexture);
+            _muRenderTexture = muRenderTexture;
+            return CreatePartitionAndShow();
+        }
+
+        private Texture2D CreatePartitionAndShow()
+        {
+            var renderTexture = CreatePartitionTexture(_muRenderTexture);
 
             var partitionTexture2D = new Texture2D(renderTexture.width, renderTexture.height);
             partitionTexture2D.wrapMode = TextureWrapMode.Clamp;
@@ -77,6 +85,12 @@ namespace FuzzyPartitionVisualizing
             return _partitionRenderTexture;
         }
 
+        [Button("Redraw image with current settings")]
+        public void ReDrawWithCurrentSettings()
+        {
+            CreatePartitionAndShow();
+        }
+
         public void Hide()
         {
             _outputImage.gameObject.SetActive(false);
@@ -84,7 +98,7 @@ namespace FuzzyPartitionVisualizing
 
         public void Release()
         {
-            _colorsComputeBuffer.Release();
+            //_colorsComputeBuffer.Release();
         }
     }
 }

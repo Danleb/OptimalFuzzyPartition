@@ -14,9 +14,11 @@ namespace OptimalFuzzyPartition.ViewModel
 {
     public class AlgorithmSettingsViewModel : INotifyPropertyChanged
     {
-        public PartitionSettings Settings;
+        public readonly PartitionSettings Settings;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private PartitionCreationWindow _partitionCreationWindow;
 
         public AlgorithmSettingsViewModel()
         {
@@ -24,10 +26,12 @@ namespace OptimalFuzzyPartition.ViewModel
 
             CreatePartitionCommand = new RelayCommand(obj =>
                 {
-                    var settingsCopy = Settings.GetCopy();
-                    var partitionCreationWindow = new PartitionCreationWindow(settingsCopy);
-                    //partitionCreationWindow.ShowActivated = true;
-                    partitionCreationWindow.Show();
+                    if (_partitionCreationWindow == null)
+                    {
+                        _partitionCreationWindow = new PartitionCreationWindow(Settings);
+                    }
+
+                    _partitionCreationWindow.Show();
                 },
                 obj =>
                 {

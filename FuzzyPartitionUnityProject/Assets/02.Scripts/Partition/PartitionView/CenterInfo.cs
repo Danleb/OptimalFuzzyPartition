@@ -14,7 +14,7 @@ namespace FuzzyPartitionVisualizing
         public void Init(PartitionSettings partitionSettings, int centerIndex)
         {
             var data = partitionSettings.CentersSettings.CenterDatas[centerIndex];
-            TextInfo.text = $"№{centerIndex + 1}\n(X; Y) = ({data.Position[0].ToString("0.00")}; {data.Position[1].ToString("0.00")})\nA = {data.A}\n W = {data.W}";
+            TextInfo.text = $"№{centerIndex + 1}\n(X; Y) = ({data.Position[0]:0.00}; {data.Position[1]:0.00})\nA = {data.A}\nW = {data.W}";
             gameObject.SetActive(true);
             CenterInfoBlock.SetActive(false);
         }

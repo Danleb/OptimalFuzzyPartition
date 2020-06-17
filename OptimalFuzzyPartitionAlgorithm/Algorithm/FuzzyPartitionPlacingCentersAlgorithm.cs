@@ -13,7 +13,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         private readonly List<RAlgorithmSolverBForm> _rAlgorithmSolvers;
         private readonly List<Vector<double>> _previousTaus = new List<Vector<double>>();
 
-        public FuzzyPartitionPlacingCentersAlgorithm(PartitionSettings partitionSettings, List<Vector<double>> zeroCenters, List<Matrix<double>> zeroMuGrids)
+        public FuzzyPartitionPlacingCentersAlgorithm(PartitionSettings partitionSettings, List<Vector<double>> zeroCenters, List<MuValueInterpolator> zeroMuGrids)
         {
             PerformedIterationCount = 0;
             _settings = partitionSettings;
@@ -30,7 +30,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             }
         }
 
-        public void DoIteration(List<Matrix<double>> muGrids)
+        public void DoIteration(List<MuValueInterpolator> muGrids)
         {
             for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
             {

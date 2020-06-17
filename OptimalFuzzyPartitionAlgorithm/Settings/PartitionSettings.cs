@@ -17,14 +17,5 @@ namespace OptimalFuzzyPartitionAlgorithm
         public FuzzyPartitionPlacingCentersSettings FuzzyPartitionPlacingCentersSettings;
 
         public RAlgorithmSettings RAlgorithmSettings;
-
-        public PartitionSettings GetCopy()
-        {
-            var settings = (PartitionSettings)MemberwiseClone();
-            
-
-
-            return settings;
-        }
     }
 }

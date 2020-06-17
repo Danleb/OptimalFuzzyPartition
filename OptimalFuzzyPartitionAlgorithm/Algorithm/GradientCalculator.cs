@@ -24,9 +24,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// Calculated gradient.
         /// </summary>
         /// <param name="centerPosition">Current optimal center position, τ*.</param>
-        /// <param name="muGrid">Grid of the mu values for the current center.</param>
         /// <returns>Gradient vector</returns>
-        public Vector<double> CalculateGradientForCenter(Vector<double> centerPosition, Matrix<double> muGrid)
+        public Vector<double> CalculateGradientForCenter(Vector<double> centerPosition, MuValueInterpolator muValueInterpolator)
         {
             _centerPosition = centerPosition;
 
@@ -34,7 +33,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 throw new NotImplementedException($"Визначення градієнту для метрики {Settings.SpaceSettings.MetricsType} не реалізовано");
 
             var vector = Vector<double>.Build.Sparse(Settings.SpaceSettings.DimensionsCount);
-            var muValueCalculator = new MuValueInterpolator(Settings.SpaceSettings, muGrid);
 
             for (var i = 0; i < Settings.SpaceSettings.DimensionsCount; i++)
             {
@@ -44,7 +42,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     (x, y) =>
                     {
                         var densityValue = 1d;
-                        var mu = muValueCalculator.GetMuValueAtPoint(x, y);
+                        var mu = muValueInterpolator.GetMuValueAtPoint(x, y);
 
                         var point = VectorUtils.CreateVector(x, y);
                         var distanceGradientValue = CalculateDistanceGradientValue(point, dimensionIndex);

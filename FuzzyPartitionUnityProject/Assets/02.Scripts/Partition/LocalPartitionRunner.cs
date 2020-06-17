@@ -32,10 +32,9 @@ namespace FuzzyPartitionComputing
         [SerializeField] private Vector2Int gridSize;
 
         [Header("Centers settings:")]
-        [SerializeField] private int centerCount;
-        [SerializeField] private Vector2[] Centers;
-        [SerializeField] private double[] AdditiveCoefficients;
-        [SerializeField] private double[] MultiplicativeCoefficients;
+        [SerializeField] private int _centerCount;
+        [SerializeField] private Vector2[] _centerPositions;
+        [SerializeField] protected CenterData[] _centerDatas;
 
         [SerializeField] private double _fixedPartitionGradientStep;
         [SerializeField] private double _fixedPartitionGradientEpsilon;
@@ -140,13 +139,12 @@ namespace FuzzyPartitionComputing
                 },
                 CentersSettings = new CentersSettings
                 {
-                    CentersCount = centerCount,
-                    CenterDatas = Centers.Take(centerCount).Select((v, i) => new CenterData
+                    CentersCount = _centerCount,
+                    CenterDatas = _centerDatas.Take(_centerCount).Select((v, i) =>
                     {
-                        Position = VectorUtils.CreateVector(Centers[i].x, Centers[i].y),
-                        A = AdditiveCoefficients[i],
-                        W = MultiplicativeCoefficients[i],
-                        IsFixed = false
+                        var p = _centerPositions[i];
+                        v.Position = VectorUtils.CreateVector(p.x, p.y);
+                        return v;
                     }).ToList()
                 },
                 FuzzyPartitionFixedCentersSettings = new FuzzyPartitionFixedCentersSettings

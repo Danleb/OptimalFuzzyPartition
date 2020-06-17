@@ -86,22 +86,23 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
 
             var calculator = new FuzzyPartitionFixedCentersAlgorithm(settings);
             var partition = calculator.BuildPartition();
-            var placingAlgorithm = new FuzzyPartitionPlacingCentersAlgorithm(settings, zeroTaus, partition);
+            var muValueGetters = partition.Select(v => new MuValueInterpolator(settings.SpaceSettings, new MuGridValueGetter(v))).ToList();
+            var placingAlgorithm = new FuzzyPartitionPlacingCentersAlgorithm(settings, zeroTaus, muValueGetters);
 
             while (true)
             {
-                placingAlgorithm.DoIteration(partition);
+                placingAlgorithm.DoIteration(muValueGetters);
 
                 var centers = placingAlgorithm.GetCenters();
 
                 var targetFunctionalCalculator = new TargetFunctionalCalculator(settings);
-                var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(partition);
+                var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
                 Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
 
                 for (int i = 0; i < settings.CentersSettings.CentersCount; i++)
                 {
                     settings.CentersSettings.CenterDatas[i].Position = centers[i].Clone();
-                    Trace.WriteLine($"Center #{i + 1}: {centers[i][0].ToString("0.00")} {centers[i][1].ToString("0.00")}");
+                    Trace.WriteLine($"Center #{i + 1}: {centers[i][0]:0.00} {centers[i][1]:0.00}");
                 }
 
                 calculator = new FuzzyPartitionFixedCentersAlgorithm(settings);
@@ -116,26 +117,25 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
             {
                 var center = list[index];
 
-                Trace.WriteLine($"Center #{index + 1}: {center[0].ToString("0.00")} {center[1].ToString("0.00")}");
+                Trace.WriteLine($"Center #{index + 1}: {center[0]:0.00} {center[1]:0.00}");
             }
 
             Trace.Flush();
 
-            var v = VectorUtils.CreateVector(44, 4, 4, 4, 4);
+            var vec = VectorUtils.CreateVector(44, 4, 4, 4, 4);
             var x = 4;
         }
 
         [Test]
         public void MuGridsFixedPartition3x3Test()
         {
-            var f = "Logs.txt";
+            const string f = "Logs.txt";
             if (File.Exists(f))
                 File.Delete(f);
             Trace.Listeners.Add(new TextWriterTraceListener(f));
 
             var settings = new PartitionSettings
             {
-                IsCenterPlacingTask = false,
                 SpaceSettings = new SpaceSettings
                 {
                     MinCorner = VectorUtils.CreateVector(0, 0),
@@ -172,25 +172,15 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
                     GradientEpsilon = 0.01,
                     GradientStep = 0.1,
                     MaxIterationsCount = 400
-                },
-                FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
-                {
-                    CentersDeltaEpsilon = 0.5,
-                    GaussLegendreIntegralOrder = 32
-                },
-                RAlgorithmSettings = new RAlgorithmSettings
-                {
-                    SpaceStretchFactor = 2,
-                    H0 = 1,
-                    MaxIterationsCount = 500
                 }
             };
 
             var calculator = new FuzzyPartitionFixedCentersAlgorithm(settings);
             var partition = calculator.BuildPartition();
+            var muValueGetters = partition.Select(v => new MuValueInterpolator(settings.SpaceSettings, new MuGridValueGetter(v))).ToList();
 
             var targetFunctionalCalculator = new TargetFunctionalCalculator(settings);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(partition);
+            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
             Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
 
             Trace.WriteLine("Center #1 mu matrix:");
@@ -204,13 +194,7 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
             MatrixUtils.TraceMatrix(sum);
             Trace.Flush();
 
-            var zeroTaus = new List<Vector<double>>
-            {
-                VectorUtils.CreateVector(3.33, 1),
-                VectorUtils.CreateVector(6.66, 1)
-            };
-
-            var v = VectorUtils.CreateVector(44, 4, 4, 4, 4);
+            var vec = VectorUtils.CreateVector(44, 4, 4, 4, 4);
             var x = 4;
         }
     }
