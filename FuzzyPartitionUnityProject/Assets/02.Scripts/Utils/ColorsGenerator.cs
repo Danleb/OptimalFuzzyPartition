@@ -32,7 +32,7 @@ namespace Utils
         {
             var colors = new Color[count];
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var c = Random.ColorHSV(hueRange.x, hueRange.y, saturationRange.x, saturationRange.y, valueRange.x, valueRange.y);
                 colors[i] = c;

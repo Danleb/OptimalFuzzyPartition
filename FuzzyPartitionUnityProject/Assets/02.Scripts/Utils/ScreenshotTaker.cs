@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace Utils
 {
@@ -9,6 +10,7 @@ namespace Utils
     {
         public string TakeAndSaveScreenshot(string path)
         {
+            Debug.WriteLine($"Screenshot saving path = {path}");
             ScreenCapture.CaptureScreenshot(path);
             return path;
         }
@@ -32,6 +34,7 @@ namespace Utils
                 path = Path.ChangeExtension(Path.Combine(folderPath, fileName + fileCount), "png");
             } while (File.Exists(path));
 
+            Debug.WriteLine($"Screenshot saving path = {path}");
             ScreenCapture.CaptureScreenshot(path);
 
             return path;

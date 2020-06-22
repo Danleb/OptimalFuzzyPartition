@@ -2,9 +2,9 @@
 {
     public enum CommandType
     {
-        CreateFuzzyPartitionWithoutCentersPlacing,
-        CreateFuzzyPartitionWithCentersPlacing,
-        AlwaysShowCentersValueChange,
-        ShowPartitionAtIterationIndex
+        CreateFuzzyPartition,
+        ShowPartitionAtIterationIndex,
+        ShowCurrentPartitionWithSettings,
+        SavePartitionImage
     }
 }

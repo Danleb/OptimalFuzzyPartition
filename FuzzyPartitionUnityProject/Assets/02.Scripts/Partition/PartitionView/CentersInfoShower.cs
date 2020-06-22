@@ -73,6 +73,8 @@ namespace FuzzyPartitionVisualizing
 
         private void SetCenterInfoPositions()
         {
+            if (_partitionSettings == null) return;
+
             for (int i = 0; i < _partitionSettings.CentersSettings.CentersCount; i++)
             {
                 var centerInfo = _centerInfos[i];

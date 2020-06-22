@@ -8,7 +8,6 @@ namespace FuzzyPartitionVisualizing
     {
         [SerializeField] private GameObject CenterInfoBlock;
         [SerializeField] private TMP_Text TextInfo;
-
         [SerializeField] private bool _alwaysShow;
 
         public void Init(PartitionSettings partitionSettings, int centerIndex)

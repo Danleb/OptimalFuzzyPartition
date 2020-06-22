@@ -15,6 +15,10 @@
     <PackageReference Include="MathNet.Numerics" Version="4.11.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Algorithm\MuFunction\" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="PostBuildCommand.bat $(SolutionDir) $(TargetDir) $(TargetFileName) $(TargetName)" />
   </Target>

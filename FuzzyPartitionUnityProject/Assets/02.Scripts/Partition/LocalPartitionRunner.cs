@@ -1,6 +1,7 @@
 ﻿using FuzzyPartitionVisualizing;
 using NaughtyAttributes;
 using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.Algorithm;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
@@ -16,10 +17,12 @@ namespace FuzzyPartitionComputing
 {
     public class LocalPartitionRunner : MonoBehaviour
     {
+        [SerializeField] private bool isCentersPlacingTask;
         [SerializeField] private FuzzyPartitionPlacingCentersComputer _partitionPlacingCentersComputer;
         [SerializeField] private FuzzyPartitionFixedCentersComputer _partitionFixedCentersComputer;
         [SerializeField] private FuzzyPartitionImageCreator _partitionDrawer;
         [SerializeField] private CentersInfoShower _centersInfoShower;
+        [SerializeField] private MuConverter _muConverter;
 
         [Header("Space settings:")]
         [SerializeField] private RAlgorithmSettings rAlgorithmSettings;
@@ -42,8 +45,6 @@ namespace FuzzyPartitionComputing
 
         [SerializeField] private bool autoStart;
         [SerializeField] private bool endlessComputing;
-
-        [SerializeField] private CommandType commandType;
 
         [SerializeField] private bool trace;
         [SerializeField] private bool debug;
@@ -69,10 +70,10 @@ namespace FuzzyPartitionComputing
 
             if (autoStart)
             {
-                if (commandType == CommandType.CreateFuzzyPartitionWithoutCentersPlacing)
-                    CreateFuzzyPartitionWithFixedCenters();
-                else if (commandType == CommandType.CreateFuzzyPartitionWithCentersPlacing)
+                if (isCentersPlacingTask)
                     CreateFuzzyWithPlacingCenters();
+                else
+                    CreateFuzzyPartitionWithFixedCenters();
             }
         }
 
@@ -114,6 +115,11 @@ namespace FuzzyPartitionComputing
             _partitionFixedCentersComputer.Init(settings);
             var muGridsRenderTexture = _partitionFixedCentersComputer.Run();
 
+            var muGrids = _muConverter.ConvertMuGridsTexture(muGridsRenderTexture, settings).Select(v => new GridValueInterpolator(settings.SpaceSettings, v)).ToList();
+            var targetFunctionalCalculator = new TargetFunctionalCalculator(settings);
+            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muGrids);
+            Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
+
             _partitionDrawer.Init(settings, _colorsGenerator.GetColors(settings.CentersSettings.CentersCount));
 
             _partitionDrawer.CreatePartitionAndShow(muGridsRenderTexture);
@@ -121,7 +127,6 @@ namespace FuzzyPartitionComputing
             _centersInfoShower.Init(settings);
 
             _partitionFixedCentersComputer.Release();
-            _partitionDrawer.Release();
         }
 
         private PartitionSettings GetPartitionSettings()
@@ -155,19 +160,6 @@ namespace FuzzyPartitionComputing
                 }
             };
             return partitionSettings;
-        }
-
-        [Button]
-        public void EnableTracing()
-        {
-            if (!Trace.Listeners.Contains(_unityConsoleListener))
-                Trace.Listeners.Add(_unityConsoleListener);
-        }
-
-        [Button]
-        public void DisableTracing()
-        {
-            Trace.Listeners.Remove(_unityConsoleListener);
         }
     }
 }

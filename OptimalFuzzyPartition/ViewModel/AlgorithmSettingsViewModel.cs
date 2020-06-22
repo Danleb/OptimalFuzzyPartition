@@ -26,12 +26,18 @@ namespace OptimalFuzzyPartition.ViewModel
 
             CreatePartitionCommand = new RelayCommand(obj =>
                 {
-                    if (_partitionCreationWindow == null)
+                    if (_partitionCreationWindow == null || !_partitionCreationWindow.IsLoaded)
                     {
                         _partitionCreationWindow = new PartitionCreationWindow(Settings);
+                        _partitionCreationWindow.Show();
+                    }
+                    else
+                    {
+                        _partitionCreationWindow.Activate();
+                        var vm = (PartitionCreationViewModel)_partitionCreationWindow.DataContext;
+                        vm.RunPartitionCreation();
                     }
 
-                    _partitionCreationWindow.Show();
                 },
                 obj =>
                 {

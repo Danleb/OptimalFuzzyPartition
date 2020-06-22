@@ -3,7 +3,7 @@ using Unity.Collections;
 
 namespace FuzzyPartitionComputing
 {
-    public class MuValueTextureCalculator : IMuValueGetter
+    public class MuValueTextureCalculator : IGridCellValueGetter
     {
         private readonly NativeArray<float> _muGrid;
         private readonly int _gridSizeX;
@@ -14,9 +14,9 @@ namespace FuzzyPartitionComputing
             _gridSizeX = gridSizeX;
         }
 
-        public double GetMuValue(int xIndex, int yIndex)
+        public double GetValue(int rowIndex, int columnIndex)
         {
-            float muValue = _muGrid[yIndex * _gridSizeX + xIndex];
+            float muValue = _muGrid[rowIndex * _gridSizeX + columnIndex];
             return muValue;
         }
     }

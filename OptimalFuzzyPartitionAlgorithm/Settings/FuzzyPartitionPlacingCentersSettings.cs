@@ -9,6 +9,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Settings
     public class FuzzyPartitionPlacingCentersSettings
     {
         public double CentersDeltaEpsilon;
-        public int GaussLegendreIntegralOrder;
+        public int GaussLegendreIntegralOrder;//TODO move out
     }
 }

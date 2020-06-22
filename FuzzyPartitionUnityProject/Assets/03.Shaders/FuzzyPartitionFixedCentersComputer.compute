@@ -27,7 +27,7 @@ float GetDistance(float2 a, float2 b)
 {
 	return GetEuclideanDistance(a, b);
 	//return GetManhattanDistance(a, b);
-	//return GetChebyshevDistance(a, b);
+	///return GetChebyshevDistance(a, b);
 }
 
 #pragma kernel ZeroIterationInit

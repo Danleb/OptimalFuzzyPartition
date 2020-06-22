@@ -1,6 +1,5 @@
 ﻿using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
-using OptimalFuzzyPartitionAlgorithm.Utils;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
@@ -183,7 +182,7 @@ namespace FuzzyPartitionComputing
 
             //var muGrids2 = new FuzzyPartitionFixedCentersAlgorithm(Settings).BuildPartition();
 
-            //var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings);
+            //var muGrids = _muConverter.ConvertMuGridsTexture(_muGridsTexture, Settings).Select(v => new MuValueInterpolator(Settings.SpaceSettings, v)).ToList();
 
             //for (var index = 0; index < muGrids.Count; index++)
             //{
@@ -199,7 +198,7 @@ namespace FuzzyPartitionComputing
             //var targetFunctionalCalculator = new TargetFunctionalCalculator(Settings);
             //var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muGrids);
             //Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
-           
+
             //var sum = muGrids.Aggregate((a, b) => a + b);
             //Trace.WriteLine("Sum mu matrix:");
             //MatrixUtils.TraceMatrix(sum);

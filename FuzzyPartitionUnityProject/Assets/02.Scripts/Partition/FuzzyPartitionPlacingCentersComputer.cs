@@ -19,7 +19,8 @@ namespace FuzzyPartitionComputing
 
         private Stopwatch _timer;
         private PartitionSettings _settings;
-        private FuzzyPartitionPlacingCentersAlgorithm _placingAlgorithm;
+
+        public FuzzyPartitionPlacingCentersAlgorithm PlacingAlgorithm { get; private set; }
 
         public void Init(PartitionSettings settings)
         {
@@ -36,7 +37,7 @@ namespace FuzzyPartitionComputing
 
             var muGrids = GetMuGrids(settings);
 
-            _placingAlgorithm = new FuzzyPartitionPlacingCentersAlgorithm(_settings, zeroTaus, muGrids);
+            PlacingAlgorithm = new FuzzyPartitionPlacingCentersAlgorithm(_settings, zeroTaus, muGrids);
             _timer.Stop();
         }
 
@@ -58,16 +59,16 @@ namespace FuzzyPartitionComputing
             return zeroTaus;
         }
 
-        private List<MuValueInterpolator> GetMuGrids(PartitionSettings settings)
+        private List<GridValueInterpolator> GetMuGrids(PartitionSettings settings)
         {
             //var muMatrices = new FuzzyPartitionFixedCentersAlgorithm(_settings).BuildPartition();
-            //var interpolators = muMatrices.Select(m => new MuValueInterpolator(settings.SpaceSettings, new MuGridValueGetter(m))).ToList();
+            //var interpolators = muMatrices.Select(m => new GridValueInterpolator(settings.SpaceSettings, new MatrixGridValueGetter(m))).ToList();
             //return interpolators;
 
             var partitionTexture = _partitionFixedCentersComputer.Run();
             //var muGrids = _muConverter.ConvertMuGridsTexture(partitionTexture, settings);
             var muGrids = _muConverter.ConvertMuGridsTexture(partitionTexture, settings);
-            var muValueInterpolators = muGrids.Select(v => new MuValueInterpolator(settings.SpaceSettings, v)).ToList();
+            var muValueInterpolators = muGrids.Select(v => new GridValueInterpolator(settings.SpaceSettings, v)).ToList();
             return muValueInterpolators;
         }
 
@@ -77,16 +78,16 @@ namespace FuzzyPartitionComputing
 
             do
             {
-                Trace.WriteLine($"Iteration number {_placingAlgorithm.PerformedIterationCount + 1}");
+                Trace.WriteLine($"Iteration number {PlacingAlgorithm.PerformedIterationCount + 1}");
 
-                var centers = _placingAlgorithm.GetCenters();
+                var centers = PlacingAlgorithm.GetCenters();
                 SetCentersPositions(centers);
 
                 var muGrids = GetMuGrids(_settings);
 
-                _placingAlgorithm.DoIteration(muGrids);
+                PlacingAlgorithm.DoIteration(muGrids);
 
-            } while (!_placingAlgorithm.IsStopConditionSatisfied());
+            } while (!PlacingAlgorithm.IsStopConditionSatisfied());
 
             _partitionFixedCentersComputer.Release();
             _timer.Stop();
@@ -96,7 +97,41 @@ namespace FuzzyPartitionComputing
             Debug.WriteLine($"Optimal placing partition global time: {timeString}");
             Debug.Flush();
 
-            return _placingAlgorithm.GetCenters();
+            return PlacingAlgorithm.GetCenters();
+        }
+
+        public (List<Vector<double>> centers, bool finished) DoIteration()
+        {
+            _timer.Start();
+
+            Trace.WriteLine($"Iteration number {PlacingAlgorithm.PerformedIterationCount + 1}");
+
+            var centers = PlacingAlgorithm.GetCenters();
+            SetCentersPositions(centers);
+
+            var muGrids = GetMuGrids(_settings);
+
+            PlacingAlgorithm.DoIteration(muGrids);
+
+            _timer.Stop();
+
+            var newCenters = PlacingAlgorithm.GetCenters();
+
+            if (PlacingAlgorithm.IsStopConditionSatisfied())
+            {
+                _partitionFixedCentersComputer.Release();
+
+                var t = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
+                var timeString = $"{t.Hours:D2}h:{t.Minutes:D2}m:{t.Seconds:D2}s:{t.Milliseconds:D3}ms";
+                Debug.WriteLine($"Optimal placing partition global time: {timeString}");
+                Debug.Flush();
+
+                return (newCenters, true);
+            }
+            else
+            {
+                return (newCenters, false);
+            }
         }
 
         private void SetCentersPositions(List<Vector<double>> centers)

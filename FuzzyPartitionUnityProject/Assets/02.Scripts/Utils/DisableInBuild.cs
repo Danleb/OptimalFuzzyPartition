@@ -1,18 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class DisableInBuild : MonoBehaviour
+namespace Utils
 {
-    // Start is called before the first frame update
-    void Start()
+    public class DisableInBuild : MonoBehaviour
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

@@ -86,6 +86,10 @@
     </Compile>
     <Compile Include="View\DensityConverter.cs" />
     <Compile Include="View\UnityWindowHost.cs" />
+    <Compile Include="View\ValidationRules\CornerPositionValidationRule.cs" />
+    <Compile Include="View\ValidationRules\GridSizeValidationRule.cs" />
+    <Compile Include="View\ValidationRules\PositiveIntValidationRule.cs" />
+    <Compile Include="View\ValidationRules\PositiveValueValidationRule.cs" />
     <Compile Include="View\VisibilityConverter.cs" />
     <Page Include="View\AlgorithmSettingsWindow.xaml">
       <SubType>Designer</SubType>
@@ -134,7 +138,9 @@
   <ItemGroup>
     <Resource Include="OptimalFuzzyPartitionIcon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="ErrorIcon.png" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OptimalFuzzyPartitionAlgorithm\OptimalFuzzyPartitionAlgorithm.csproj">
       <Project>{38196ac9-6a10-4e9b-a758-5c3985c6126e}</Project>

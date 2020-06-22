@@ -1,41 +1,108 @@
 ﻿using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using SimpleTCP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using OptimalFuzzyPartitionAlgorithm.Settings;
 
 namespace OptimalFuzzyPartition.ViewModel
 {
     public class PartitionCreationViewModel : INotifyPropertyChanged
     {
         public readonly PartitionSettings PartitionSettings;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private readonly DispatcherTimer _timer;
+        private readonly SimpleTcpServer _simpleTcpServer;
+        private int _performedIterationCount = 0;
+        private double _targetFunctionalValue;
+        private double _dualFunctionalValue;
+
+        private readonly CommandAndData _commandAndData = new CommandAndData();
+
         public TimeSpan TimePassed { get; set; }
+
+        //public bool CentersPlacingTask => PartitionSettings.IsCenterPlacingTask;
 
         public int PerformedIterationCount
         {
             get => _performedIterationCount;
-            set => _performedIterationCount = value;
+            set
+            {
+                _performedIterationCount = value;
+                OnPropertyChanged();
+            }
         }
 
-        public BitmapImage PartitionImage { get; set; }
+        public int IterationNumberToInspect
+        {
+            get => _commandAndData.IterationNumber;
+            set
+            {
+                _commandAndData.IterationNumber = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double TargetFunctionalValue
+        {
+            get => _targetFunctionalValue;
+            set
+            {
+                _targetFunctionalValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double DualFunctionalValue
+        {
+            get => _dualFunctionalValue;
+            set
+            {
+                _dualFunctionalValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DrawWithMistrust
+        {
+            get => _commandAndData.DrawWithMistrustCoefficient;
+            set
+            {
+                _commandAndData.DrawWithMistrustCoefficient = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double MistrustCoefficient
+        {
+            get => _commandAndData.MistrustCoefficient;
+            set
+            {
+                _commandAndData.MistrustCoefficient = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool AlwaysShowCentersInfo
+        {
+            get => _commandAndData.AlwaysShowCentersInfo;
+            set
+            {
+                _commandAndData.AlwaysShowCentersInfo = value;
+                OnPropertyChanged();
+            }
+        }
 
         public List<CenterData> CenterCoordinates { get; set; } = new List<CenterData>();
 
-        private readonly DispatcherTimer _timer;
+        public RelayCommand RunPartitionCreationCommand { get; set; }
 
-        private readonly SimpleTcpServer _simpleTcpServer;
-        private int _performedIterationCount = 0;
+        public RelayCommand SavePartitionImageCommand { get; set; }
 
         public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
         {
@@ -44,9 +111,19 @@ namespace OptimalFuzzyPartition.ViewModel
 
             PartitionSettings = partitionSettings;
 
+            RunPartitionCreationCommand = new RelayCommand(v => RunPartitionCreation());
+            SavePartitionImageCommand = new RelayCommand(v => SavePartitionImage());
+
             _timer = new DispatcherTimer();
             _timer.Tick += OnTimerTick;
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        }
+
+        private void SavePartitionImage()
+        {
+            _commandAndData.CommandType = CommandType.SavePartitionImage;
+            //path
+            _simpleTcpServer.Broadcast(_commandAndData.ToBytes());
         }
 
         private void OnDataReceived(object sender, Message e)
@@ -58,6 +135,14 @@ namespace OptimalFuzzyPartition.ViewModel
             else
             {
 
+                var data = e.Data.ConvertToCommandAndData();
+                TargetFunctionalValue = data.TargetFunctionalValue;
+                DualFunctionalValue = data.DualFunctionalValue;
+
+                if (data.WorkFinished)
+                {
+                    _timer.Stop();
+                }
             }
         }
 
@@ -65,39 +150,17 @@ namespace OptimalFuzzyPartition.ViewModel
         {
             _timer.Start();
 
-            var data = new CommandAndData
-            {
-                CommandType = CommandType.CreateFuzzyPartitionWithoutCentersPlacing,
-                PartitionSettings = PartitionSettings
-            };
+            _commandAndData.CommandType = CommandType.CreateFuzzyPartition;
+            _commandAndData.PartitionSettings = PartitionSettings;
 
-            var bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, data);
-                var bytes = ms.ToArray();
-                _simpleTcpServer.Broadcast(bytes);
-            }
+            _simpleTcpServer.Broadcast(_commandAndData.ToBytes());
+
         }
 
         private void OnTimerTick(object sender, EventArgs e)
         {
             TimePassed += _timer.Interval;
             OnPropertyChanged(nameof(TimePassed));
-        }
-
-        private void OnIterationPerformed()
-        {
-
-
-            OnPropertyChanged(nameof(PartitionImage));
-            OnPropertyChanged(nameof(PerformedIterationCount));
-            OnPropertyChanged(nameof(CenterCoordinates));
-        }
-
-        private void OnCalculationsEnd()
-        {
-
         }
 
         [NotifyPropertyChangedInvocator]

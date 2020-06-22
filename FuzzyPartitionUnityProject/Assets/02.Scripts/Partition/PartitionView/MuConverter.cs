@@ -1,7 +1,8 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using OptimalFuzzyPartitionAlgorithm;
-using System.Collections.Generic;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -16,9 +17,16 @@ namespace FuzzyPartitionComputing
     {
         [SerializeField] private Slicer _slicer;
 
-        public List<IMuValueGetter> GetMuGridsInterpolators(RenderTexture muGridsRenderTexture, PartitionSettings partitionSettings)
+        public List<GridValueInterpolator> GetMuGridValueInterpolators(RenderTexture muGridsRenderTexture, PartitionSettings partitionSettings)
         {
-            var list = new List<IMuValueGetter>();
+            var muGridValueGetters = GetMuGridCellsGetters(muGridsRenderTexture, partitionSettings);
+            var interpolators = muGridValueGetters.Select(v => new GridValueInterpolator(partitionSettings.SpaceSettings, v)).ToList();
+            return interpolators;
+        }
+
+        public List<IGridCellValueGetter> GetMuGridCellsGetters(RenderTexture muGridsRenderTexture, PartitionSettings partitionSettings)
+        {
+            var list = new List<IGridCellValueGetter>();
 
             for (var centerIndex = 0; centerIndex < partitionSettings.CentersSettings.CentersCount; centerIndex++)
             {
@@ -34,9 +42,9 @@ namespace FuzzyPartitionComputing
             return list;
         }
 
-        public List<IMuValueGetter> ConvertMuGridsTexture(RenderTexture muGridsRenderTexture, PartitionSettings partitionSettings)
+        public List<IGridCellValueGetter> ConvertMuGridsTexture(RenderTexture muGridsRenderTexture, PartitionSettings partitionSettings)
         {
-            var list = new List<IMuValueGetter>();
+            var list = new List<IGridCellValueGetter>();
 
             for (var centerIndex = 0; centerIndex < partitionSettings.CentersSettings.CentersCount; centerIndex++)
             {
@@ -54,7 +62,7 @@ namespace FuzzyPartitionComputing
                     }
                 }
 
-                var muGridValueGetter = new MuGridValueGetter(matrix);
+                var muGridValueGetter = new MatrixGridValueGetter(matrix);
 
                 list.Add(muGridValueGetter);
             }

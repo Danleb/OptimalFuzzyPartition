@@ -14,8 +14,8 @@ namespace FuzzyPartitionVisualizing
         [SerializeField] private Image _outputImage;
         [SerializeField] private ComputeShader _partitionDrawingShader;
 
-        [SerializeField] private bool DrawThresholdValue;
-        [SerializeField] private float MuThresholdValue;
+        [SerializeField] public bool DrawThresholdValue;
+        [SerializeField] public float MuThresholdValue;
         [SerializeField] private bool DrawOnlyMaxValue;
 
         private PartitionSettings _settings;
@@ -32,7 +32,9 @@ namespace FuzzyPartitionVisualizing
         public void Init(PartitionSettings partitionSettings, Color[] centersColors)
         {
             _settings = partitionSettings;
-            _centersColors = centersColors;            
+            _centersColors = centersColors;
+
+            _partitionDrawingKernel = _partitionDrawingShader.FindKernel(PartitionDrawingKernel);
 
             _partitionRenderTexture = new RenderTexture(_settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1], 0)
             {
@@ -41,7 +43,7 @@ namespace FuzzyPartitionVisualizing
             };
             _partitionRenderTexture.Create();
 
-            if(_colorsComputeBuffer != null && _colorsComputeBuffer.IsValid())
+            if (_colorsComputeBuffer != null && _colorsComputeBuffer.IsValid())
                 _colorsComputeBuffer.Release();
 
             _colorsComputeBuffer = new ComputeBuffer(centersColors.Length, sizeof(float) * 4, ComputeBufferType.Default);
@@ -86,9 +88,14 @@ namespace FuzzyPartitionVisualizing
         }
 
         [Button("Redraw image with current settings")]
-        public void ReDrawWithCurrentSettings()
+        public Texture2D ReDrawWithCurrentSettings()
         {
-            CreatePartitionAndShow();
+            return CreatePartitionAndShow();
+        }
+
+        public void Show()
+        {
+            _outputImage.gameObject.SetActive(true);
         }
 
         public void Hide()
@@ -98,7 +105,7 @@ namespace FuzzyPartitionVisualizing
 
         public void Release()
         {
-            //_colorsComputeBuffer.Release();
+            _colorsComputeBuffer.Release();
         }
     }
 }

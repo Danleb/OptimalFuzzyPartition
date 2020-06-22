@@ -17,7 +17,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             Settings = partitionSettings;
         }
 
-        public double CalculateFunctionalValue(List<MuValueInterpolator> muValueInterpolators)
+        public double CalculateFunctionalValue(List<GridValueInterpolator> muValueInterpolators)
         {
             var value = GaussLegendreRule.Integrate((x, y) =>
                 {
@@ -32,7 +32,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                         var a = centerData.A;
                         var point = VectorUtils.CreateVector(x, y);
                         var distanceValue = (point - center).L2Norm();
-                        var muValue = muValueInterpolators[centerIndex].GetMuValueAtPoint(x, y);
+                        var muValue = muValueInterpolators[centerIndex].GetGridValueAtPoint(x, y);
                         functionValue += Math.Pow(muValue, 2) * (distanceValue / w + a) * densityValue;
                     }
 

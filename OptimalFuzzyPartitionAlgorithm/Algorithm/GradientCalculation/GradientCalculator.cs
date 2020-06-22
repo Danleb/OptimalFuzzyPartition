@@ -25,7 +25,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// </summary>
         /// <param name="centerPosition">Current optimal center position, τ*.</param>
         /// <returns>Gradient vector</returns>
-        public Vector<double> CalculateGradientForCenter(Vector<double> centerPosition, MuValueInterpolator muValueInterpolator)
+        public Vector<double> CalculateGradientForCenter(Vector<double> centerPosition, GridValueInterpolator muValueInterpolator)
         {
             _centerPosition = centerPosition;
 
@@ -42,7 +42,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     (x, y) =>
                     {
                         var densityValue = 1d;
-                        var mu = muValueInterpolator.GetMuValueAtPoint(x, y);
+                        var mu = muValueInterpolator.GetGridValueAtPoint(x, y);
 
                         var point = VectorUtils.CreateVector(x, y);
                         var distanceGradientValue = CalculateDistanceGradientValue(point, dimensionIndex);

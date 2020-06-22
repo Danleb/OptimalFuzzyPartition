@@ -1,17 +1,17 @@
 ﻿namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
-    public class MuValueInterpolator
+    public class GridValueInterpolator
     {
         private readonly SpaceSettings _spaceSettings;
-        private readonly IMuValueGetter _muValueGetter;
+        private readonly IGridCellValueGetter _gridValueGetter;
 
-        public MuValueInterpolator(SpaceSettings spaceSettings, IMuValueGetter muValueGetter)
+        public GridValueInterpolator(SpaceSettings spaceSettings, IGridCellValueGetter gridValueGetter)
         {
             _spaceSettings = spaceSettings;
-            _muValueGetter = muValueGetter;
+            _gridValueGetter = gridValueGetter;
         }
 
-        public double GetMuValueAtPoint(double x, double y)
+        public double GetGridValueAtPoint(double x, double y)
         {
             var xGlobalRatio = (x - _spaceSettings.MinCorner[0]) /
                                (_spaceSettings.MaxCorner[0] - _spaceSettings.MinCorner[0]);
@@ -32,17 +32,17 @@
             var localYRatio = yIndexFractional - y1;
 
             //bilinear interpolation
-            var pX1Y1 = _muValueGetter.GetMuValue(x1, y1);
-            var pX1Y2 = _muValueGetter.GetMuValue(x1, y2);
-            var pX2Y1 = _muValueGetter.GetMuValue(x2, y1);
-            var pX2Y2 = _muValueGetter.GetMuValue(x2, y2);
+            var pX1Y1 = _gridValueGetter.GetValue(x1, y1);//TODO check
+            var pX1Y2 = _gridValueGetter.GetValue(x1, y2);
+            var pX2Y1 = _gridValueGetter.GetValue(x2, y1);
+            var pX2Y2 = _gridValueGetter.GetValue(x2, y2);
 
             var l1 = pX1Y1 * (1d - localXRatio) + pX2Y1 * localXRatio;
             var l2 = pX1Y2 * (1d - localXRatio) + pX2Y2 * localXRatio;
 
-            var muValue = l1 * (1d - localYRatio) + l2 * localYRatio;
+            var value = l1 * (1d - localYRatio) + l2 * localYRatio;
 
-            return muValue;
+            return value;
         }
     }
 }

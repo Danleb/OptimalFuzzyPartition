@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         xmlns:view="clr-namespace:OptimalFuzzyPartition.View"
+        xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
         Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closed="Window_Closed">
@@ -16,7 +16,7 @@
             <ScrollViewer>
                 <StackPanel>
                     <Label Content="{Binding TimePassed, Converter={StaticResource TimePassedConverter}}" ContentStringFormat="Часу пройшло: {0}" Margin="5"></Label>
-                    <Label Content="{Binding Path=PerformedIterationCount}" ContentStringFormat="Ітерацій виконано: {0}"></Label>
+                    <Label Margin="5" Content="{Binding Path=PerformedIterationCount}" ContentStringFormat="Ітерацій виконано: {0}"></Label>
 
                     <!--<Button Command="RunPartitionCreation" Content="Побудувати розбиття" Margin="5"></Button>-->
 
@@ -30,27 +30,37 @@
                         </DataGrid.Columns>
                     </DataGrid>-->
 
-                    <!--<StackPanel Margin="5" Orientation="Horizontal">
-                        <Label Content="Шлях:"></Label>
-                        <Label Content="Розбиття.png"></Label>
-                        <Button Content="Обрати"></Button>
-                    </StackPanel>
-                    <Button Margin="5" Content="Зберегти зображення"></Button>-->
 
-                    <CheckBox Content="Завжди показувати інформацію про центри" Margin="5"></CheckBox>
+                    <CheckBox Content="Завжди показувати інформацію про центри" Margin="5" IsChecked="{Binding AlwaysShowCentersInfo}"></CheckBox>
 
-                    <Label Content="Номер ітерації для дослідження:"></Label>
+                    <Label Margin="5" Content="{Binding IterationNumberToInspect}" ContentStringFormat="Номер ітерації для дослідження: {0}"></Label>
                     <TextBox Margin="5" Text="" Width="70" HorizontalAlignment="Left"></TextBox>
                     <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>
 
-                    <Label ></Label>
+                    <CheckBox Margin="5" Content="Малювати розбиття з коефіцієнтом недовіри" IsChecked="{Binding DrawWithMistrust}"></CheckBox>
+                    <Label Margin="5" Content="{Binding MistrustCoefficient}" ContentStringFormat="Коефіцієнт недовіри: {0}"></Label>
+                    <Slider Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
-                    <Button Content="Відкрити налаштування"></Button>
+                    <Button Margin="5" Content="Зробити розбиття" Command="{Binding RunPartitionCreationCommand}"></Button>
+
+                    <!--<Button Margin="5" Content="Відкрити налаштування"></Button>-->
+
+                    <Label Margin="5" Content="{Binding TargetFunctionalValue}" ContentStringFormat="Значення цільового функціоналу: {0}"></Label>
+                    <Label Margin="5" Content="{Binding DualFunctionalValue}" ContentStringFormat="Значення двоїстого функціоналу: {0}"></Label>
+
+
+                    <StackPanel Margin="5" Orientation="Horizontal">
+                        <Label Content="Шлях:"></Label>
+                        <Label Content="Розбиття.png"></Label>
+                        <Button Margin="5" Content="Обрати шлях"></Button>
+                        <CheckBox VerticalAlignment="Center" IsChecked="False"></CheckBox>
+                        <Label Content="Вручну"></Label>
+                    </StackPanel>
+                    <Button Margin="5" Content="Зберегти зображення" Command="{Binding SavePartitionImageCommand}"></Button>
 
                 </StackPanel>
             </ScrollViewer>
 
-            <!--<Image Stretch="Uniform"></Image>-->
             <view:UnityWindowHost x:Name="UnityWindowHost"></view:UnityWindowHost>
         </DockPanel>
     </Grid>

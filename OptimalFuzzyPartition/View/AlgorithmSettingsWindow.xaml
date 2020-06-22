@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:v="clr-namespace:OptimalFuzzyPartition.View"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
+        xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="816" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:AlgorithmSettingsViewModel></vm:AlgorithmSettingsViewModel>
     </Window.DataContext>
@@ -15,6 +16,14 @@
         <v:MetricsConverter x:Key="MetricsConverter"></v:MetricsConverter>
         <v:CenterDataConverter x:Key="CenterDataConverter"></v:CenterDataConverter>
         <v:VisibilityConverter x:Key="VisibilityConverter"></v:VisibilityConverter>
+        <ControlTemplate x:Key="ValidationFailed">
+            <StackPanel Orientation="Horizontal">
+                <Border BorderBrush="Red" BorderThickness="2">
+                    <AdornedElementPlaceholder Name="AdornedElementPlaceholder"></AdornedElementPlaceholder>
+                </Border>
+                <Image Margin="2" Stretch="Fill" Source="../ErrorIcon.png" Height="{Binding ElementName=AdornedElementPlaceholder, Path=ActualHeight}" ToolTip="{Binding Path=/ErrorContent}"></Image>
+            </StackPanel>
+        </ControlTemplate>
     </Window.Resources>
     <Grid>
         <ScrollViewer>
@@ -22,11 +31,27 @@
                 <Label Content="Налаштування простору, на якому буде проводитись розбиття:" FontWeight="Bold"></Label>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Label Content="Введіть меншу границю за X"></Label>
-                    <TextBox Text="{Binding MinX}"  Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <TextBox Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBox.Text>
+                            <Binding Path="MinX">
+                                <Binding.ValidationRules>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                     <Label Content="Введіть більшу границю за X"></Label>
                     <TextBox Text="{Binding MaxX}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+
                     <Label Content="Введіть кількість сегментів за Х"></Label>
-                    <TextBox Text="{Binding SegmentsCountX}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <TextBox Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center" Validation.ErrorTemplate="{StaticResource ValidationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="SegmentsCountX">
+                                <Binding.ValidationRules>
+                                    <vr:GridSizeValidationRule></vr:GridSizeValidationRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -63,7 +88,16 @@
                 <Label Content="Налаштування центрів (точок-генераторів):" FontWeight="Bold"></Label>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Кількість центрів"></Label>
-                    <TextBox Text="{Binding CentersCount}" Margin="5" Width="70" v:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"></TextBox>
+
+                    <TextBox Margin="5" Width="70" v:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" Validation.ErrorTemplate="{StaticResource ValidationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="CentersCount">
+                                <Binding.ValidationRules>
+                                    <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </StackPanel>
 
                 <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="Задача із оптимальним  розміщенням центрів" Margin="5"></CheckBox>

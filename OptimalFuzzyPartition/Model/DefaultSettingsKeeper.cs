@@ -34,14 +34,14 @@ namespace OptimalFuzzyPartition.Model
                             A = 0,
                             W = 1,
                             Position = VectorUtils.CreateVector(3.33, 5),
-                            IsFixed = true
+                            IsFixed = false
                         },
                         new CenterData
                         {
                             A = 0,
                             W = 1,
                             Position = VectorUtils.CreateVector(6.66, 5),
-                            IsFixed = true
+                            IsFixed = false
                         },
                     }
                 },
@@ -49,7 +49,7 @@ namespace OptimalFuzzyPartition.Model
                 {
                     GradientEpsilon = 0.01,
                     GradientStep = 0.01,
-                    MaxIterationsCount = 500
+                    MaxIterationsCount = 400
                 },
                 FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
                 {
@@ -59,8 +59,8 @@ namespace OptimalFuzzyPartition.Model
                 RAlgorithmSettings = new RAlgorithmSettings
                 {
                     SpaceStretchFactor = 2,
-                    H0 = 1,
-                    MaxIterationsCount = 100
+                    H0 = 9,
+                    MaxIterationsCount = 40
                 }
             };
         }

@@ -2,16 +2,16 @@
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
-    public class MuGridValueGetter : IMuValueGetter
+    public class MatrixGridValueGetter : IGridCellValueGetter
     {
         private readonly Matrix<double> _muGrid;
 
-        public MuGridValueGetter(Matrix<double> muGrid)
+        public MatrixGridValueGetter(Matrix<double> muGrid)
         {
             _muGrid = muGrid;
         }
 
-        public double GetMuValue(int rowIndex, int columnIndex)
+        public double GetValue(int rowIndex, int columnIndex)
         {
             return _muGrid[rowIndex, columnIndex];
         }
