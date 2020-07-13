@@ -34,7 +34,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         {
             for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
             {
-                if(_settings.CentersSettings.CenterDatas[centerIndex].IsFixed)
+                if (_settings.CentersSettings.CenterDatas[centerIndex].IsFixed)
                     continue;
 
                 var rAlgorithm = _rAlgorithmSolvers[centerIndex];
@@ -65,6 +65,11 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
         public bool IsStopConditionSatisfied()
         {
+            if (_settings.RAlgorithmSettings.MaxIterationsCount == 0)
+                return true;
+            if (PerformedIterationCount == 0)
+                return false;
+
             var tausDeltas = _previousTaus.Select((v, i) => (v - _rAlgorithmSolvers[i].CurrentX).L2Norm());
             var tausDelta = tausDeltas.Max();
 

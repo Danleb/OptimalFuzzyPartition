@@ -2,6 +2,7 @@
 using OptimalFuzzyPartition.ViewModel;
 using OptimalFuzzyPartitionAlgorithm;
 using System.Windows;
+using System.Windows.Input;
 
 namespace OptimalFuzzyPartition.View
 {
@@ -26,11 +27,17 @@ namespace OptimalFuzzyPartition.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = new PartitionCreationViewModel(_partitionSettings, UnityWindowHost.SimpleTcpServer);
+            Focus();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
             UnityWindowHost.Destroy();
+        }
+
+        private void UnityWindowHost_OnKeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

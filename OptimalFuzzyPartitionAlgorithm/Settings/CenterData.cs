@@ -1,5 +1,5 @@
-﻿using System;
-using MathNet.Numerics.LinearAlgebra;
+﻿using MathNet.Numerics.LinearAlgebra;
+using System;
 
 namespace OptimalFuzzyPartitionAlgorithm.Settings
 {
@@ -19,7 +19,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Settings
         /// <summary>
         /// Multiplicative coefficient w.
         /// </summary>
-        public double W;
+        public double W = 1;
 
         /// <summary>
         /// Is center position fixed or can be moved.

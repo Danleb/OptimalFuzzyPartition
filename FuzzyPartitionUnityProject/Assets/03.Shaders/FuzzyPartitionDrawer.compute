@@ -1,8 +1,4 @@
-﻿#if DEBUG
-#pragma enable_d3d11_debug_symbols
-#endif
-
-int CentersCount;
+﻿int CentersCount;
 RWStructuredBuffer<float4> CentersColors;
 
 Texture3D<float> MuGrids;
@@ -11,8 +7,6 @@ RWTexture2D<float4> Result;
 
 bool DrawThresholdValue;
 float MuThresholdValue;
-
-bool DrawOnlyMaxValue;
 
 #pragma kernel DrawPartition
 [numthreads(8,8,1)]
@@ -35,13 +29,16 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 
 		res += CentersColors[i] * muValue;
 	}
-
-	if(DrawOnlyMaxValue || DrawThresholdValue)
-		res = CentersColors[imax];
-
-	float q = 0.4;
-	if(DrawThresholdValue && max < MuThresholdValue)
-		res = float4(q,q,q,q);
+	
+	if(DrawThresholdValue)
+	{
+		const float gray = 0.4;
+		
+		if(max < MuThresholdValue)
+			res = float4(gray, gray, gray, gray);
+		else
+			res = CentersColors[imax];
+	}		
 
 	res.a = 1;
 

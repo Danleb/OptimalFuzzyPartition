@@ -46,13 +46,20 @@
     <Reference Include="MathNet.Numerics, Version=4.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.4.11.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleTCP, Version=1.0.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleTCP.1.0.24\lib\net45\SimpleTCP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -86,10 +93,15 @@
     </Compile>
     <Compile Include="View\DensityConverter.cs" />
     <Compile Include="View\UnityWindowHost.cs" />
+    <Compile Include="View\ValidationRules\BindingProxy.cs" />
     <Compile Include="View\ValidationRules\CornerPositionValidationRule.cs" />
+    <Compile Include="View\ValidationRules\CornerPositionWrapper.cs" />
+    <Compile Include="View\ValidationRules\CornerType.cs" />
     <Compile Include="View\ValidationRules\GridSizeValidationRule.cs" />
+    <Compile Include="View\ValidationRules\IntegerValidationRule.cs" />
+    <Compile Include="View\ValidationRules\NumberValidationRule.cs" />
     <Compile Include="View\ValidationRules\PositiveIntValidationRule.cs" />
-    <Compile Include="View\ValidationRules\PositiveValueValidationRule.cs" />
+    <Compile Include="View\ValidationRules\PositiveNumberValidationRule.cs" />
     <Compile Include="View\VisibilityConverter.cs" />
     <Page Include="View\AlgorithmSettingsWindow.xaml">
       <SubType>Designer</SubType>
@@ -126,6 +138,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Properties\Resources.ru-RU.resx" />
+    <EmbeddedResource Include="Properties\Resources.uk-UA.resx" />
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

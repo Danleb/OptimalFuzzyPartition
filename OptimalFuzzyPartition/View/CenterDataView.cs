@@ -1,6 +1,7 @@
 ﻿using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace OptimalFuzzyPartition.View
@@ -30,7 +31,7 @@ namespace OptimalFuzzyPartition.View
         public string ValueY
         {
             get => IsFixedCenter ?
-                CenterData.Position[0].ToString() :
+                CenterData.Position[0].ToString(CultureInfo.CurrentCulture) :
                 "---";
             set
             {
@@ -44,12 +45,7 @@ namespace OptimalFuzzyPartition.View
 
         public CenterData CenterData
         {
-            get
-            {
-                if(_centerData == null)
-                    _centerData = new CenterData();
-                return _centerData;
-            }
+            get => _centerData ?? (_centerData = new CenterData());
             set => _centerData = value;
         }
 

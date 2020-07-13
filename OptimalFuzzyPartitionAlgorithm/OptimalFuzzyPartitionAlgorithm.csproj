@@ -12,11 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics" Version="4.11.0" />
+    <Compile Remove="Algorithm\MuFunction\**" />
+    <EmbeddedResource Remove="Algorithm\MuFunction\**" />
+    <None Remove="Algorithm\MuFunction\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Algorithm\MuFunction\" />
+    <PackageReference Include="MathNet.Numerics" Version="4.11.0" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

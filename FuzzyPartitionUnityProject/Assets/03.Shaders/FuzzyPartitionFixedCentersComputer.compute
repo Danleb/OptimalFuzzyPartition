@@ -1,8 +1,4 @@
-﻿#if DEBUG
-#pragma enable_d3d11_debug_symbols
-#endif
-
-int CentersCount;
+﻿int CentersCount;
 
 StructuredBuffer<float2> CentersPositions;
 StructuredBuffer<float> AdditiveCoefficients;
@@ -21,13 +17,21 @@ float2 Diff;
 
 RWStructuredBuffer<int> StopConditions;
 
+int MetricsIndex;
+
 #include "Assets/03.Shaders/Common.compute"
 
 float GetDistance(float2 a, float2 b)
 {
+	switch(MetricsIndex)
+	{
+		default:
+		case 1: return GetEuclideanDistance(a, b);
+		case 2: return GetManhattanDistance(a, b);
+		case 3: return GetChebyshevDistance(a, b);		
+	}
+
 	return GetEuclideanDistance(a, b);
-	//return GetManhattanDistance(a, b);
-	///return GetChebyshevDistance(a, b);
 }
 
 #pragma kernel ZeroIterationInit
@@ -80,7 +84,6 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 		normalizedMuValue = 0.5 * (1 - signMuGradient);
 	}
 
-	//MuGrids[id] = id.x;
 	MuGrids[id] = normalizedMuValue;
 }
 
@@ -99,7 +102,7 @@ void UpdatePsi(uint3 id : SV_DispatchThreadID)
 
 	//check psi gradient value
 	//if(grad > GradientEpsilon)//reset if gradient too big
-	{
-		StopConditions[0] = 0;
-	}
+	//{
+	//	StopConditions[0] = 0;
+	//}
 }

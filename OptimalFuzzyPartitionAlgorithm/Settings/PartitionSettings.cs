@@ -6,6 +6,10 @@ namespace OptimalFuzzyPartitionAlgorithm
     [Serializable]
     public class PartitionSettings
     {
+        public bool CalculateTargetFunctionalValue;
+
+        public bool CalculateDualFunctionalValue;
+
         public bool IsCenterPlacingTask;
 
         public SpaceSettings SpaceSettings;

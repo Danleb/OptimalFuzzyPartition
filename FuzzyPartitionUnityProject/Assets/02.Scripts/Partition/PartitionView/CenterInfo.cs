@@ -6,7 +6,7 @@ namespace FuzzyPartitionVisualizing
 {
     public class CenterInfo : MonoBehaviour
     {
-        [SerializeField] private GameObject CenterInfoBlock;
+        [SerializeField] private GameObject _centerInfoBlock;
         [SerializeField] private TMP_Text TextInfo;
         [SerializeField] private bool _alwaysShow;
 
@@ -15,7 +15,7 @@ namespace FuzzyPartitionVisualizing
             var data = partitionSettings.CentersSettings.CenterDatas[centerIndex];
             TextInfo.text = $"№{centerIndex + 1}\n(X; Y) = ({data.Position[0]:0.00}; {data.Position[1]:0.00})\nA = {data.A}\nW = {data.W}";
             gameObject.SetActive(true);
-            CenterInfoBlock.SetActive(false);
+            _centerInfoBlock.SetActive(false);
         }
 
         public void Hide()
@@ -30,25 +30,25 @@ namespace FuzzyPartitionVisualizing
 
         public void OnHover()
         {
-            CenterInfoBlock.SetActive(true);
+            _centerInfoBlock.SetActive(true);
         }
 
         public void OnUnhover()
         {
             if (!_alwaysShow)
-                CenterInfoBlock.SetActive(false);
+                _centerInfoBlock.SetActive(false);
         }
 
         public void EnableAlwaysShow()
         {
             _alwaysShow = true;
-            CenterInfoBlock.SetActive(true);
+            _centerInfoBlock.SetActive(true);
         }
 
         public void DisableAlwaysShow()
         {
             _alwaysShow = false;
-            CenterInfoBlock.SetActive(false);
+            _centerInfoBlock.SetActive(false);
         }
     }
 }

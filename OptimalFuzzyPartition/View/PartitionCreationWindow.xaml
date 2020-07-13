@@ -7,7 +7,12 @@
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
-        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
+        KeyDown="UnityWindowHost_OnKeyDown"
+        >
     <Window.Resources>
         <view:TimePassedConverter x:Key="TimePassedConverter"></view:TimePassedConverter>
     </Window.Resources>
@@ -31,14 +36,23 @@
                     </DataGrid>-->
 
 
-                    <CheckBox Content="Завжди показувати інформацію про центри" Margin="5" IsChecked="{Binding AlwaysShowCentersInfo}"></CheckBox>
+                    <CheckBox x:Name="CheckBoxAlwaysShowInfo" Content="Завжди показувати інформацію про центри" Margin="5" IsChecked="{Binding AlwaysShowCentersInfo}"></CheckBox>
 
                     <Label Margin="5" Content="{Binding IterationNumberToInspect}" ContentStringFormat="Номер ітерації для дослідження: {0}"></Label>
-                    <TextBox Margin="5" Text="" Width="70" HorizontalAlignment="Left"></TextBox>
+                    <TextBox Margin="5" Width="70" HorizontalAlignment="Left">
+                        <TextBox.Text>
+                            <Binding Path="IterationNumberToInspect">
+
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                     <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>
 
                     <CheckBox Margin="5" Content="Малювати розбиття з коефіцієнтом недовіри" IsChecked="{Binding DrawWithMistrust}"></CheckBox>
-                    <Label Margin="5" Content="{Binding MistrustCoefficient}" ContentStringFormat="Коефіцієнт недовіри: {0}"></Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Коефіцієнт недовіри: "></Label>
+                        <TextBox VerticalAlignment="Center" MinWidth="50" Margin="5" Text="{Binding MistrustCoefficient}"></TextBox>
+                    </StackPanel>
                     <Slider Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
                     <Button Margin="5" Content="Зробити розбиття" Command="{Binding RunPartitionCreationCommand}"></Button>
@@ -49,19 +63,20 @@
                     <Label Margin="5" Content="{Binding DualFunctionalValue}" ContentStringFormat="Значення двоїстого функціоналу: {0}"></Label>
 
 
-                    <StackPanel Margin="5" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <Label Content="Шлях:"></Label>
-                        <Label Content="Розбиття.png"></Label>
                         <Button Margin="5" Content="Обрати шлях"></Button>
                         <CheckBox VerticalAlignment="Center" IsChecked="False"></CheckBox>
                         <Label Content="Вручну"></Label>
                     </StackPanel>
+                    <Label Content="Розбиття.png"></Label>
+
                     <Button Margin="5" Content="Зберегти зображення" Command="{Binding SavePartitionImageCommand}"></Button>
 
                 </StackPanel>
             </ScrollViewer>
 
-            <view:UnityWindowHost x:Name="UnityWindowHost"></view:UnityWindowHost>
+            <view:UnityWindowHost x:Name="UnityWindowHost" KeyDown="UnityWindowHost_OnKeyDown"></view:UnityWindowHost>
         </DockPanel>
     </Grid>
 </Window>

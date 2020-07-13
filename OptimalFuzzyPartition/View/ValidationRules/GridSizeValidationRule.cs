@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Controls;
 
 namespace OptimalFuzzyPartition.View.ValidationRules
@@ -8,16 +7,20 @@ namespace OptimalFuzzyPartition.View.ValidationRules
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            var s = (string) value;
+            var s = (string)value;
 
-            if(!int.TryParse(s, out var result))
-                return new ValidationResult(false, "Введено нечислове значення. Введіть число.");
+            var res = new IntegerValidationRule().Validate(value, cultureInfo);
 
-            if(result <= 0)
-                return new ValidationResult(false, "Розмір сітки повинен бути цілим числом більше нуля.");
+            if (!res.IsValid)
+                return res;
 
-            //if(result % 8 != 0)
-                //return new ValidationResult("Через особливості реалізації");
+            var result = int.Parse(s);
+
+            if (result <= 0)
+                return new ValidationResult(false, "Розмір сітки повинен бути додатнім числом кратним 8.");
+
+            if (result % 8 != 0)
+                return new ValidationResult(false, "Через особливості реалізації, розмір сітки повинен бути кратним 8.");
 
             return ValidationResult.ValidResult;
         }

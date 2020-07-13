@@ -1,5 +1,6 @@
 ﻿using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using SimpleTCP;
@@ -122,7 +123,7 @@ namespace OptimalFuzzyPartition.ViewModel
         private void SavePartitionImage()
         {
             _commandAndData.CommandType = CommandType.SavePartitionImage;
-            //path
+            //TOD set path
             _simpleTcpServer.Broadcast(_commandAndData.ToBytes());
         }
 
@@ -134,8 +135,7 @@ namespace OptimalFuzzyPartition.ViewModel
             }
             else
             {
-
-                var data = e.Data.ConvertToCommandAndData();
+                var data = e.Data.ConvertTo<PartitionResult>();
                 TargetFunctionalValue = data.TargetFunctionalValue;
                 DualFunctionalValue = data.DualFunctionalValue;
 

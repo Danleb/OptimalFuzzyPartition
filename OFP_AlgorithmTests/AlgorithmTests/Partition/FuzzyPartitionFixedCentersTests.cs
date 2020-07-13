@@ -71,16 +71,16 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
             var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
             Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
 
-            Trace.WriteLine("Center #1 mu matrix:");
-            MatrixUtils.TraceMatrix(partition[0]);
+            //Trace.WriteLine("Center #1 mu matrix:");
+            //MatrixUtils.WriteMatrix(partition[0]);
 
-            Trace.WriteLine("Center #2 mu matrix:");
-            MatrixUtils.TraceMatrix(partition[1]);
+            //Trace.WriteLine("Center #2 mu matrix:");
+            //MatrixUtils.WriteMatrix(partition[1], );
 
-            var sum = partition.Aggregate((a, b) => a + b);
-            Trace.WriteLine("Sum mu matrix:");
-            MatrixUtils.TraceMatrix(sum);
-            Trace.Flush();
+            //var sum = partition.Aggregate((a, b) => a + b);
+            //Trace.WriteLine("Sum mu matrix:");
+            //MatrixUtils.WriteMatrix(sum);
+            //Trace.Flush();
 
             var vec = VectorUtils.CreateVector(0, 0);
         }

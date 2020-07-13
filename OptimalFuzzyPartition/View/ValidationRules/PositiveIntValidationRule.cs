@@ -9,8 +9,12 @@ namespace OptimalFuzzyPartition.View.ValidationRules
         {
             var s = (string)value;
 
-            if (!int.TryParse(s, out var result))
-                return new ValidationResult(false, "Введено не ціле число. Введіть ціле число більше нуля.");
+            var res = new IntegerValidationRule().Validate(value, cultureInfo);
+
+            if (!res.IsValid)
+                return res;
+
+            var result = int.Parse(s);
 
             if(result <= 0)
                 return new ValidationResult(false, "Введене число не більше нуля. Введіть ціле число більше нуля");

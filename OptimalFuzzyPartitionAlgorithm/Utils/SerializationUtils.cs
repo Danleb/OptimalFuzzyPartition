@@ -16,13 +16,13 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
             }
         }
 
-        public static CommandAndData ConvertToCommandAndData(this byte[] bytes)
+        public static T ConvertTo<T>(this byte[] bytes)
         {
             var bf = new BinaryFormatter();
             using (var ms = new MemoryStream(bytes))
             {
                 var obj = bf.Deserialize(ms);
-                var data = (CommandAndData)obj;
+                var data = (T)obj;
                 return data;
             }
         }

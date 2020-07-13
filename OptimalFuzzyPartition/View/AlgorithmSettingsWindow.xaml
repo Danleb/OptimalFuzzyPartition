@@ -4,18 +4,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:v="clr-namespace:OptimalFuzzyPartition.View"
-        xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
+        xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="816" WindowStartupLocation="CenterScreen">
+        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="837.778" WindowStartupLocation="CenterScreen">
+
     <Window.DataContext>
         <vm:AlgorithmSettingsViewModel></vm:AlgorithmSettingsViewModel>
     </Window.DataContext>
+
     <Window.Resources>
         <v:DensityConverter x:Key="DensityConverter"></v:DensityConverter>
         <v:MetricsConverter x:Key="MetricsConverter"></v:MetricsConverter>
         <v:CenterDataConverter x:Key="CenterDataConverter"></v:CenterDataConverter>
         <v:VisibilityConverter x:Key="VisibilityConverter"></v:VisibilityConverter>
+
         <ControlTemplate x:Key="ValidationFailed">
             <StackPanel Orientation="Horizontal">
                 <Border BorderBrush="Red" BorderThickness="2">
@@ -24,29 +27,78 @@
                 <Image Margin="2" Stretch="Fill" Source="../ErrorIcon.png" Height="{Binding ElementName=AdornedElementPlaceholder, Path=ActualHeight}" ToolTip="{Binding Path=/ErrorContent}"></Image>
             </StackPanel>
         </ControlTemplate>
+
+        <ControlTemplate x:Key="TextBoxTemplate" TargetType="TextBox">
+            <TextBox Validation.ErrorTemplate="{StaticResource ValidationFailed}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="5,0,20,0" Validation.Error="OnTextBoxValidationError">
+                <TextBox.Resources>
+                    <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
+                </TextBox.Resources>
+                <TextBox.Text>
+                    <Binding  Path="{Binding MinX}">
+                        <Binding.ValidationRules>
+
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </ControlTemplate>
+
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ValidationFailed}"></Setter>
+            <Setter Property="Width" Value="70"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Margin" Value="5,0,20,0"></Setter>
+        </Style>
     </Window.Resources>
+
     <Grid>
         <ScrollViewer>
             <StackPanel>
                 <Label Content="Налаштування простору, на якому буде проводитись розбиття:" FontWeight="Bold"></Label>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Label Content="Введіть меншу границю за X"></Label>
-                    <TextBox Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Resources>
+                            <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
+                        </TextBox.Resources>
                         <TextBox.Text>
-                            <Binding Path="MinX">
+                            <Binding Path="MinX" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
+                                    <vr:CornerPositionValidationRule CornerType="MinCorner">
+                                        <vr:CornerPositionValidationRule.Wrapper>
+                                            <vr:CornerPositionWrapper AnotherCornerValue="{Binding Data.MaxX, Source={StaticResource Proxy}}"></vr:CornerPositionWrapper>
+                                        </vr:CornerPositionValidationRule.Wrapper>
+                                    </vr:CornerPositionValidationRule>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
+
                     <Label Content="Введіть більшу границю за X"></Label>
-                    <TextBox Text="{Binding MaxX}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Resources>
+                            <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
+                        </TextBox.Resources>
+                        <TextBox.Text>
+                            <Binding Path="MaxX" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:CornerPositionValidationRule CornerType="MaxCorner">
+                                        <vr:CornerPositionValidationRule.Wrapper>
+                                            <vr:CornerPositionWrapper AnotherCornerValue="{Binding Data.MinX, Source={StaticResource Proxy}}" />
+                                        </vr:CornerPositionValidationRule.Wrapper>
+                                    </vr:CornerPositionValidationRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
 
                     <Label Content="Введіть кількість сегментів за Х"></Label>
-                    <TextBox Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center" Validation.ErrorTemplate="{StaticResource ValidationFailed}">
+                    <TextBox Style="{StaticResource TextBoxStyle}">
                         <TextBox.Text>
-                            <Binding Path="SegmentsCountX">
+                            <Binding Path="SegmentsCountX" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
+                                    <vr:NumberValidationRule></vr:NumberValidationRule>
                                     <vr:GridSizeValidationRule></vr:GridSizeValidationRule>
                                 </Binding.ValidationRules>
                             </Binding>
@@ -56,11 +108,49 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Label Content="Введіть меншу границю за Y"></Label>
-                    <TextBox Text="{Binding MinY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Resources>
+                            <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
+                        </TextBox.Resources>
+                        <TextBox.Text>
+                            <Binding Path="MinY" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:CornerPositionValidationRule CornerType="MinCorner">
+                                        <vr:CornerPositionValidationRule.Wrapper>
+                                            <vr:CornerPositionWrapper AnotherCornerValue="{Binding Data.MaxY, Source={StaticResource Proxy}}"></vr:CornerPositionWrapper>
+                                        </vr:CornerPositionValidationRule.Wrapper>
+                                    </vr:CornerPositionValidationRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                     <Label Content="Введіть більшу границю за Y"></Label>
-                    <TextBox Text="{Binding MaxY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Resources>
+                            <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
+                        </TextBox.Resources>
+                        <TextBox.Text>
+                            <Binding Path="MaxY" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:CornerPositionValidationRule CornerType="MaxCorner">
+                                        <vr:CornerPositionValidationRule.Wrapper>
+                                            <vr:CornerPositionWrapper AnotherCornerValue="{Binding Data.MinY, Source={StaticResource Proxy}}"></vr:CornerPositionWrapper>
+                                        </vr:CornerPositionValidationRule.Wrapper>
+                                    </vr:CornerPositionValidationRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                     <Label Content="Введіть кількість сегментів за Y"></Label>
-                    <TextBox Text="{Binding SegmentsCountY}" Margin="5,0" Width="70" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="SegmentsCountY" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:NumberValidationRule></vr:NumberValidationRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </StackPanel>
 
                 <Label Content="Функція щільності (попиту) ρ(x,y):"></Label>
@@ -89,9 +179,9 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Кількість центрів"></Label>
 
-                    <TextBox Margin="5" Width="70" v:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text" Validation.ErrorTemplate="{StaticResource ValidationFailed}">
+                    <TextBox Style="{StaticResource TextBoxStyle}" v:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text">
                         <TextBox.Text>
-                            <Binding Path="CentersCount">
+                            <Binding Path="CentersCount" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
                                 </Binding.ValidationRules>
@@ -118,31 +208,86 @@
 
                 <Label Content="Налаштування нечіткого розбиття з розміщенням центрів:" FontWeight="Bold"></Label>
                 <Label Content="Кількість коефіцієнтів Гауса-Лежадра для рахування інтеграла:"></Label>
-                <TextBox Margin="5" Text="{Binding GaussLegendreIntegralOrder}" Width="70" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}" >
+                    <TextBox.Text>
+                        <Binding Path="GaussLegendreIntegralOrder" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Label Content="Параметри r-алгоритму:" FontWeight="Bold"></Label>
 
                 <Label Content="Максимальна кількість ітерацій:"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding RAlgorithmMaxIterationsCount}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="RAlgorithmMaxIterationsCount" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Label Content="Початковий крок H0:"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding InitialStepH0}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="InitialStepH0" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Label Content="Коефіцієнт розтягу простору:"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding SpaceStretchFactor}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Label Content="Налаштування нечіткого розбиття з закріпленими центрами:" FontWeight="Bold"></Label>
 
                 <Label Content="Крок градієнтного спуску"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding FixedPartitionGradientStep}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="FixedPartitionGradientStep" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Label Content="Мінімальне граничне значення градієнту для закінчення ітерацій:"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding FixedPartitionGradientThreshold}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="FixedPartitionGradientThreshold" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Label Content="Максимальна кількість ітерацій:"></Label>
-                <TextBox Margin="5" Width="70" Text="{Binding FixedPartitionMaxIteration}" HorizontalAlignment="Left"></TextBox>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="FixedPartitionMaxIteration" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-                <!--IsDefault="True"-->
                 <Button Margin="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}" ></Button>
             </StackPanel>
         </ScrollViewer>

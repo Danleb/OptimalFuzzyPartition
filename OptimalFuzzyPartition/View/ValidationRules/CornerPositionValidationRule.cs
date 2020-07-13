@@ -5,9 +5,26 @@ namespace OptimalFuzzyPartition.View.ValidationRules
 {
     public class CornerPositionValidationRule : ValidationRule
     {
-        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        public CornerType CornerType { get; set; }
+
+        public CornerPositionWrapper Wrapper { get; set; }
+
+        public override ValidationResult Validate(object data, CultureInfo cultureInfo)
         {
-            throw new System.NotImplementedException();
+            var res = new NumberValidationRule().Validate(data, cultureInfo, out var number);
+
+            if (!res.IsValid)
+                return res;
+
+            switch (CornerType)
+            {
+                case CornerType.MinCorner when number > Wrapper.AnotherCornerValue:
+                    return new ValidationResult(false, $"Ліва границя повинна бути меншою за праву. Ліва = {number}, права = {Wrapper.AnotherCornerValue}");
+                case CornerType.MaxCorner when number < Wrapper.AnotherCornerValue:
+                    return new ValidationResult(false, $"Права границя повинна бути більшою за ліву. Ліва = {Wrapper.AnotherCornerValue}, права = {number}");
+                default:
+                    return ValidationResult.ValidResult;
+            }
         }
     }
 }
