@@ -3,6 +3,7 @@ using OptimalFuzzyPartition.ViewModel;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm.Common;
+using OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
     public class FuzzyPartitionFixedCentersTests
     {
         [Test]
-        public void MuGridsFixedPartition3x3Test()
+        public void MuGridsFixedPartition8x8Test()
         {
             const string f = "Logs.txt";
             if (File.Exists(f))
@@ -28,7 +29,7 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
                 {
                     MinCorner = VectorUtils.CreateVector(0, 0),
                     MaxCorner = VectorUtils.CreateVector(10, 10),
-                    GridSize = new List<int> { 8, 8 },
+                    GridSize = new List<int> { 80, 80 },
                     DensityType = DensityType.Everywhere1,
                     MetricsType = MetricsType.Euclidean,
                     CustomDensityFunction = null,
@@ -43,46 +44,60 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
                         {
                             A = 0,
                             W = 1,
-                            Position = VectorUtils.CreateVector(3.33, 5),
+                            Position = VectorUtils.CreateVector(1, 1),
                             IsFixed = true
                         },
                         new CenterData
                         {
                             A = 0,
                             W = 1,
-                            Position = VectorUtils.CreateVector(6.66, 5),
+                            //Position = VectorUtils.CreateVector(2, 4),
+                            Position = VectorUtils.CreateVector(9, 1),
                             IsFixed = true
                         },
                     }
                 },
                 FuzzyPartitionFixedCentersSettings = new FuzzyPartitionFixedCentersSettings
                 {
-                    GradientEpsilon = 0.01,
-                    GradientStep = 0.1,
+                    GradientEpsilon = 0.001,
+                    GradientStep = 10,
                     MaxIterationsCount = 400
+                },
+                FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
+                {
+                    GaussLegendreIntegralOrder = 4
                 }
             };
 
             var calculator = new FuzzyPartitionFixedCentersAlgorithm(settings);
-            var partition = calculator.BuildPartition();
+            var partition = calculator.BuildPartition(out var psiGrid);
+            Trace.WriteLine($"PerformedIterationsCount = {calculator.PerformedIterationsCount}");
             var muValueGetters = partition.Select(v => new GridValueInterpolator(settings.SpaceSettings, new MatrixGridValueGetter(v))).ToList();
 
             var targetFunctionalCalculator = new TargetFunctionalCalculator(settings);
             var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
             Trace.WriteLine($"Target functional value = {targetFunctionalValue}\n");
 
-            //Trace.WriteLine("Center #1 mu matrix:");
-            //MatrixUtils.WriteMatrix(partition[0]);
+            var dualFunctionalCalculator = new DualFunctionalCalculator(settings, psiGrid.ToGridValueInterpolator(settings));
+            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
+            Trace.WriteLine($"Dual functional value = {dualFunctionalValue}\n");
 
-            //Trace.WriteLine("Center #2 mu matrix:");
-            //MatrixUtils.WriteMatrix(partition[1], );
+            Trace.WriteLine("Center #1 Mu matrix:");
+            MatrixUtils.WriteMatrix(partition[0], WriteLine, 3);
 
-            //var sum = partition.Aggregate((a, b) => a + b);
-            //Trace.WriteLine("Sum mu matrix:");
-            //MatrixUtils.WriteMatrix(sum);
-            //Trace.Flush();
+            Trace.WriteLine("Center #2 Mu matrix:");
+            MatrixUtils.WriteMatrix(partition[1], WriteLine, 3);
 
-            var vec = VectorUtils.CreateVector(0, 0);
+            var sum = partition.Aggregate((a, b) => a + b);
+            Trace.WriteLine("Sum mu matrix:");
+            MatrixUtils.WriteMatrix(sum, WriteLine, 3);
+            Trace.Flush();
+
+            Assert.AreEqual(targetFunctionalValue, dualFunctionalValue, 1d);
+
+            var q = 5;
         }
+
+        private void WriteLine(string s) => Trace.WriteLine(s);
     }
 }

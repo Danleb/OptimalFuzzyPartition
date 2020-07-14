@@ -16,11 +16,18 @@ namespace FuzzyPartitionComputing
     {
         [SerializeField] private Slicer _slicer;
 
-        public GridValueInterpolator GetGridValueInterpolator(RenderTexture renderTexture2d, PartitionSettings partitionSettings)
+        public GridValueTextureCalculator GetGridValueTextureCalculator(RenderTexture renderTexture2d, PartitionSettings partitionSettings)
         {
             var gridSizeX = partitionSettings.SpaceSettings.GridSize[0];
             var textureArray = GetTextureNativeArray(renderTexture2d);
-            var interpolator = new GridValueInterpolator(partitionSettings.SpaceSettings, new GridValueTextureCalculator(textureArray, gridSizeX));
+            var calculator = new GridValueTextureCalculator(textureArray, gridSizeX);
+            return calculator;
+        }
+
+        public GridValueInterpolator GetGridValueInterpolator(RenderTexture renderTexture2d, PartitionSettings partitionSettings)
+        {
+            var calculator = GetGridValueTextureCalculator(renderTexture2d, partitionSettings);
+            var interpolator = new GridValueInterpolator(partitionSettings.SpaceSettings, calculator);
             return interpolator;
         }
 

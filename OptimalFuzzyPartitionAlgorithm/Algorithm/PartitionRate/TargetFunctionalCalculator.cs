@@ -23,6 +23,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 {
                     var functionValue = 0d;
                     var densityValue = 1d;
+                    var point = VectorUtils.CreateVector(x, y);
 
                     for (var centerIndex = 0; centerIndex < Settings.CentersSettings.CentersCount; centerIndex++)
                     {
@@ -30,7 +31,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                         var center = centerData.Position;
                         var w = centerData.W;
                         var a = centerData.A;
-                        var point = VectorUtils.CreateVector(x, y);
                         var distanceValue = (point - center).L2Norm();
                         var muValue = muValueInterpolators[centerIndex].GetGridValueAtPoint(x, y);
                         functionValue += Math.Pow(muValue, 2) * (distanceValue / w + a) * densityValue;

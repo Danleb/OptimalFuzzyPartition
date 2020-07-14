@@ -1,6 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
+using OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,7 +19,7 @@ namespace FuzzyPartitionComputing
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [SerializeField] private ComputeShader _fuzzyPartitionShader;
-        [SerializeField] private TextureToGridConverter _muConverter;
+        [SerializeField] private TextureToGridConverter _textureToGridConverter;
 
         [SerializeField] private Vector3Int _zeroInitNumThreads;
         [SerializeField] private Vector3Int _muUpdateNumThreads;
@@ -125,8 +126,7 @@ namespace FuzzyPartitionComputing
             var epsilon = (float)Settings.FuzzyPartitionFixedCentersSettings.GradientEpsilon;
             _fuzzyPartitionShader.SetFloat("GradientEpsilon", epsilon);
 
-            var lambda = (float)Settings.FuzzyPartitionFixedCentersSettings.GradientStep;
-            _fuzzyPartitionShader.SetFloat("GradientLambdaStep", lambda);
+
 
             _fuzzyPartitionShader.SetInt("CentersCount", Settings.CentersSettings.CentersCount);
 
@@ -153,14 +153,22 @@ namespace FuzzyPartitionComputing
             for (var i = 0; i < Settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount; i++)
             {
                 _iterationTimer.Reset();
-                _fuzzyPartitionShader.Dispatch(_updateMuKernelHandle, _muUpdateGroups.x, _muUpdateGroups.y, _muUpdateGroups.z);
+                _fuzzyPartitionShader.Dispatch(_updateMuKernelHandle, _muUpdateGroups.x, _muUpdateGroups.y,
+                    _muUpdateGroups.z);
 
                 //_stopConditionsArray[0] = 999;
                 //_stopConditionComputeBuffer.SetData(_stopConditionsArray);
                 //_fuzzyPartitionShader.SetBuffer(_updatePsiKernelHandle, "StopConditions", _stopConditionComputeBuffer);
 
                 if (i != Settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount - 1)
-                    _fuzzyPartitionShader.Dispatch(_updatePsiKernelHandle, _psiUpdateGroups.x, _psiUpdateGroups.y, _psiUpdateGroups.z);
+                {
+                    var lambda = (float)Settings.FuzzyPartitionFixedCentersSettings.GradientStep;
+                    var step = lambda / (PerformedIterationsCount + 1f);
+                    //_fuzzyPartitionShader.SetFloat("GradientLambdaStep", lambda);
+                    _fuzzyPartitionShader.SetFloat("GradientLambdaStep", step);
+                    _fuzzyPartitionShader.Dispatch(_updatePsiKernelHandle, _psiUpdateGroups.x, _psiUpdateGroups.y,
+                        _psiUpdateGroups.z);
+                }
 
                 PerformedIterationsCount++;
 
@@ -174,39 +182,55 @@ namespace FuzzyPartitionComputing
 
             Logger.Debug($"Partition execution time: {_globalTimer.ElapsedMilliseconds}");
 
-            ShowMuGridsInfo(_muGridsTexture);
+            ShowMuGridsInfo();
 
             psiGridTexture = _psiGridTexture;
 
             return _muGridsTexture;
+
         }
 
-        private void ShowMuGridsInfo(RenderTexture muGridsTexture)
+        private void ShowMuGridsInfo()//IList<IGridCellValueGetter> muGrids, IGridCellValueGetter psiGrid)
         {
             if (!_showMuGridsInfo)
                 return;
 
-            List<Matrix<double>> muGrids2 = null;
+            List<Matrix<double>> muGridsCPU = null;
             if (_compareWithCpuMuGrid)
-                muGrids2 = new FuzzyPartitionFixedCentersAlgorithm(Settings).BuildPartition();
+            {
+                muGridsCPU = new FuzzyPartitionFixedCentersAlgorithm(Settings).BuildPartition(out var psiGrid);
+                //var muGrids2 = algorithm.BuildPartition().Select(v => new MatrixGridValueGetter(v)).ToList();rg
 
-            //var muGrids = _muConverter.GetGridValueInterpolators(muGridsTexture, Settings);
-            var muGrids = _muConverter.GetGridCellsGetters(muGridsTexture, Settings);
+                var targetFunctionalValueFromCpu = new TargetFunctionalCalculator(Settings)
+                    .CalculateFunctionalValue(muGridsCPU.Select(v => new GridValueInterpolator(Settings.SpaceSettings, new MatrixGridValueGetter(v))).ToList());
+                Logger.Trace($"Target functional value by CPU: {targetFunctionalValueFromCpu}");
+
+                var dualFunctionalValueFromCpu = new DualFunctionalCalculator(Settings, new GridValueInterpolator(Settings.SpaceSettings, new MatrixGridValueGetter(psiGrid))).CalculateFunctionalValue();
+                Logger.Trace($"Dual functional value by CPU: {dualFunctionalValueFromCpu}");
+            }
+
+            var muGrids = _textureToGridConverter.GetGridCellsGetters(_muGridsTexture, Settings);
 
             for (var index = 0; index < muGrids.Count; index++)
             {
-                var muGrid = muGrids[index];
-
                 if (_compareWithCpuMuGrid)
                 {
-                    var muGrid2 = muGrids2[index];
+                    var muGridCPU = muGridsCPU[index];
+                    Logger.Trace($"Mu Matrix by CPU for the center #{index + 1}");
+                    MatrixUtils.WriteMatrix(
+                        Settings.SpaceSettings.GridSize[0],
+                        Settings.SpaceSettings.GridSize[1],
+                        (i, i1) => muGridCPU[i, i1],
+                        Logger.Trace,
+                        3);
                 }
 
-                Logger.Trace($"Mu Matrix for the center #{index + 1}");
+                var muGrid = muGrids[index];
+
+                Logger.Trace($"Mu Matrix by GPU for the center #{index + 1}");
                 MatrixUtils.WriteMatrix(
                     Settings.SpaceSettings.GridSize[0],
                     Settings.SpaceSettings.GridSize[1],
-                    //(i, i1) => muGrid.GetGridValueAtPoint(i, i1),
                     (i, i1) => muGrid.GetValue(i, i1),
                     Logger.Trace,
                     3);
@@ -220,14 +244,43 @@ namespace FuzzyPartitionComputing
                 {
                     var v = 0d;
                     foreach (var t in muGrids)
-                    {
                         v += t.GetValue(i, i1);
-                        //v += t.GetGridValueAtPoint(i, i1);
-                    }
                     return v;
                 },
                 Logger.Trace,
                 3);
+
+            var psiGridCalculator = _textureToGridConverter.GetGridValueTextureCalculator(_psiGridTexture, Settings);
+
+            Logger.Trace("Psi matrix:");
+            MatrixUtils.WriteMatrix(
+                Settings.SpaceSettings.GridSize[0],
+                Settings.SpaceSettings.GridSize[1],
+                (i, i1) => psiGridCalculator.GetValue(i, i1),
+                Logger.Trace,
+                3);
+
+            for (var i = 0; i < Settings.CentersSettings.CentersCount; i++)
+            {
+                Logger.Trace($"Computed Mu grid #{i + 1} from Psi grid:");
+                MatrixUtils.WriteMatrix(
+                    Settings.SpaceSettings.GridSize[0],
+                    Settings.SpaceSettings.GridSize[1],
+                    (xIndex, yIndex) =>
+                    {
+                        var psiValue = psiGridCalculator.GetValue(xIndex, yIndex);
+                        var xRatio = (double)xIndex / (Settings.SpaceSettings.GridSize[0] - 1d);
+                        var yRatio = (double)yIndex / (Settings.SpaceSettings.GridSize[1] - 1d);
+                        var ratioPoint = VectorUtils.CreateVector(xRatio, yRatio);
+                        var point = Settings.SpaceSettings.MinCorner + ratioPoint.PointwiseMultiply(Settings.SpaceSettings.MaxCorner - Settings.SpaceSettings.MinCorner);
+                        var densityValue = 1d;
+                        var distance = (Settings.CentersSettings.CenterDatas[i].Position - point).L2Norm();
+                        var newMuValue = -psiValue / (2d * densityValue * (distance / 1d + 0d));
+                        return newMuValue;
+                    },
+                    Logger.Trace,
+                    3);
+            }
         }
 
         private void SetGroupSizes()

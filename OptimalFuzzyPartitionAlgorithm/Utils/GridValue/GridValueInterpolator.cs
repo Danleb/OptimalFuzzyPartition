@@ -32,10 +32,10 @@
             var localYRatio = yIndexFractional - y1;
 
             //bilinear interpolation
-            var pX1Y1 = _gridValueGetter.GetValue(x1, y1);//TODO check
-            var pX1Y2 = _gridValueGetter.GetValue(x1, y2);
-            var pX2Y1 = _gridValueGetter.GetValue(x2, y1);
-            var pX2Y2 = _gridValueGetter.GetValue(x2, y2);
+            var pX1Y1 = _gridValueGetter.GetValue(y1, x1);
+            var pX1Y2 = _gridValueGetter.GetValue(y2, x1);
+            var pX2Y1 = _gridValueGetter.GetValue(y1, x2);
+            var pX2Y2 = _gridValueGetter.GetValue(y2, x2);
 
             var l1 = pX1Y1 * (1d - localXRatio) + pX2Y1 * localXRatio;
             var l2 = pX1Y2 * (1d - localXRatio) + pX2Y2 * localXRatio;

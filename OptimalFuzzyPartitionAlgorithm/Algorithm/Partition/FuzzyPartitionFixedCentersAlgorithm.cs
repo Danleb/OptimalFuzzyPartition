@@ -22,6 +22,13 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             _settings = partitionSettings;
         }
 
+        public List<Matrix<double>> BuildPartition(out Matrix<double> psiGrid)
+        {
+            var muGrids = BuildPartition();
+            psiGrid = _psiGrid;
+            return muGrids;
+        }
+
         public List<Matrix<double>> BuildPartition()
         {
             Init();
@@ -36,6 +43,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 if (IsStopConditionSatisfied())
                     break;
             }
+
+            UpdateMuValues();
 
             return _muGrids;
         }
@@ -62,13 +71,13 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 _muGrids.Add(m);
             }
 
-            _psiGrid = Matrix<double>.Build.Sparse(WidthX, WidthY);
+            _psiGrid = Matrix<double>.Build.Sparse(WidthY, WidthX);
 
             for (var xIndex = 0; xIndex < WidthX; xIndex++)
             {
                 for (var yIndex = 0; yIndex < WidthY; yIndex++)
                 {
-                    _psiGrid[xIndex, yIndex] = 1d;
+                    _psiGrid[yIndex, xIndex] = 1d;
                 }
             }
         }
@@ -89,8 +98,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                         var centerPosition = data.Position;
                         var point = GetPoint(xIndex, yIndex);
                         var distance = (point - centerPosition).L2Norm();
-                        var psiValue = _psiGrid[xIndex, yIndex];
-                        var oldMuValue = _muGrids[centerIndex][xIndex, yIndex];
+                        var psiValue = _psiGrid[yIndex, xIndex];
+                        var oldMuValue = _muGrids[centerIndex][yIndex, xIndex];
 
                         var newMuValue = -psiValue / (m * densityValue * (distance / w + a));
 
@@ -100,7 +109,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                             newMuValue = 0.5d * (1d - Math.Sign(muGradient));
                         }
 
-                        _muGrids[centerIndex][xIndex, yIndex] = newMuValue;
+                        _muGrids[centerIndex][yIndex, xIndex] = newMuValue;
                     }
                 }
             }
@@ -118,15 +127,15 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
                     for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
                     {
-                        psiGradient += _muGrids[centerIndex][xIndex, yIndex];
+                        psiGradient += _muGrids[centerIndex][yIndex, xIndex];
                     }
 
                     psiGradient -= 1;
 
-                    var oldPsi = _psiGrid[xIndex, yIndex];
+                    var oldPsi = _psiGrid[yIndex, xIndex];
                     var newPsi = oldPsi + GetGradientStep() * psiGradient;
 
-                    _psiGrid[xIndex, yIndex] = newPsi;
+                    _psiGrid[yIndex, xIndex] = newPsi;
 
                     if (Math.Abs(psiGradient) > _maxGradientValue)
                     {
@@ -141,8 +150,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             if (PerformedIterationsCount >= _settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount)
                 return true;
 
-            //if (_maxGradientValue <= _settings.FuzzyPartitionFixedCentersSettings.GradientEpsilon)
-                //return true;
+            if (_maxGradientValue <= _settings.FuzzyPartitionFixedCentersSettings.GradientEpsilon)
+                return true;
 
             return false;
         }
@@ -158,8 +167,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
         private double GetGradientStep()
         {
-            const double c = 1d;
-            return 0.1;//c / (PerformedIterationsCount + 1);
+            return _settings.FuzzyPartitionFixedCentersSettings.GradientStep / (PerformedIterationsCount + 1);
         }
     }
 }

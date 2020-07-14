@@ -23,7 +23,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate
                 {
                     var functionValue = 0d;
                     var densityValue = 1d;
-                    var psi = -_psiGridValueGetter.GetGridValueAtPoint(x, y);
+                    var psi = _psiGridValueGetter.GetGridValueAtPoint(x, y);
                     var point = VectorUtils.CreateVector(x, y);
 
                     for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
@@ -50,6 +50,5 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate
 
             return functionalValue;
         }
-
     }
 }

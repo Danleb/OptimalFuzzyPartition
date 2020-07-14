@@ -2,15 +2,16 @@
 using System;
 using System.Linq;
 using System.Text;
+using OptimalFuzzyPartitionAlgorithm.Algorithm;
 
 namespace OptimalFuzzyPartitionAlgorithm.Utils
 {
-    public class MatrixUtils
+    public static class MatrixUtils
     {
         public static void WriteMatrix(Matrix<double> matrix, Action<string> writeLine, int decimals = 2)
         {
             var sb = new StringBuilder();
-            var format = "0." + Enumerable.Range(0, decimals).Select(v => "0").Aggregate((a, b) => a + b);
+            var format = "0." + Enumerable.Range(0, decimals).Select(v => "0").Aggregate(string.Concat);
 
             foreach (var (i, vector) in matrix.EnumerateRowsIndexed())
             {
@@ -43,6 +44,16 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
 
                 writeLine(sb.ToString());
             }
+        }
+
+        public static IGridCellValueGetter ToGridCellValueGetter(this Matrix<double> matrix)
+        {
+            return new MatrixGridValueGetter(matrix);
+        }
+
+        public static GridValueInterpolator ToGridValueInterpolator(this Matrix<double> matrix, PartitionSettings partitionSettings)
+        {
+            return new GridValueInterpolator(partitionSettings.SpaceSettings, new MatrixGridValueGetter(matrix));
         }
     }
 }

@@ -389,7 +389,7 @@ MonoBehaviour:
     MaxIterationsCount: 2
   _fuzzyPartitionFixedCentersSettings:
     MaxIterationsCount: 400
-    GradientStep: 0.1
+    GradientStep: 10
     GradientEpsilon: 0.1
   _fuzzyPartitionPlacingCentersSettings:
     CentersDeltaEpsilon: 0.1
@@ -1162,11 +1162,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fuzzyPartitionShader: {fileID: 7200000, guid: 4386990bb7c8ca04d9362aab55abeebb,
     type: 3}
-  _muConverter: {fileID: 1915549119}
+  _textureToGridConverter: {fileID: 1915549119}
   _zeroInitNumThreads: {x: 8, y: 8, z: 1}
   _muUpdateNumThreads: {x: 8, y: 8, z: 1}
   _psiUpdateNumThreads: {x: 8, y: 8, z: 1}
-  _showMuGridsInfo: 1
+  _showMuGridsInfo: 0
   _compareWithCpuMuGrid: 0
 --- !u!1 &722078894
 GameObject:
