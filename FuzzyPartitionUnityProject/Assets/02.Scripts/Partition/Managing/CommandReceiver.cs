@@ -93,6 +93,18 @@ namespace Partition.Managing
 
         private void Update()
         {
+            try
+            {
+                ProcessReceivedCommands();
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error on command processing: " + e + " " + e.StackTrace + " " + e + " " + e.Message);
+            }
+        }
+
+        private void ProcessReceivedCommands()
+        {
             if (!_commandsAndDatas.Any()) return;
             if (_currentData != null) return;
 
@@ -108,19 +120,22 @@ namespace Partition.Managing
                     {
                         if (_currentData.PartitionSettings.IsCenterPlacingTask)
                         {
-                            var result = _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(settings, _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient, _currentData.AlwaysShowCentersInfo);
+                            var result = _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(settings,
+                                _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient,
+                                _currentData.AlwaysShowCentersInfo);
                             _client.Write(result.ToBytes());
                         }
                         else
                         {
-                            var result = _partitionRunner.CreateFuzzyPartitionWithFixedCenters(settings, _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient, _currentData.AlwaysShowCentersInfo);
+                            var result = _partitionRunner.CreateFuzzyPartitionWithFixedCenters(settings,
+                                _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient,
+                                _currentData.AlwaysShowCentersInfo);
                             _client.Write(result.ToBytes());
 
                             _currentData = null;
                         }
-
-                        break;
                     }
+                    break;
 
                 case CommandType.ShowPartitionAtIterationIndex:
                     {
@@ -133,8 +148,8 @@ namespace Partition.Managing
                         //_partitionRunner.show
 
                         _partitionRunner.DrawPartitionAtIteration(_currentData.IterationNumber);
-                        break;
                     }
+                    break;
 
                 case CommandType.SavePartitionImage:
                     {
@@ -147,15 +162,17 @@ namespace Partition.Managing
                         }
 
                         _currentData = null;
-                        break;
                     }
+                    break;
 
                 case CommandType.ShowCurrentPartitionWithSettings:
                     {
-                        _partitionRunner.RedrawPartitionWithSettings(_currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient);
+                        _partitionRunner.RedrawPartitionWithSettings(_currentData.DrawWithMistrustCoefficient,
+                            _currentData.MistrustCoefficient);
                         _currentData = null;
-                        break;
+
                     }
+                    break;
             }
         }
     }

@@ -93,16 +93,16 @@ namespace OptimalFuzzyPartition.View
             Destroy();
         }
 
-        protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            if ((int)wParam == 0x100) /*WM_KEYDOWN*/
-            {
-                Debug.WriteLine("WM_KEYDOWN");
-                ProcessKeyDown(wParam);
-            }
+        //protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        //{
+        //    if ((int)wParam == 0x100) /*WM_KEYDOWN*/
+        //    {
+        //        Debug.WriteLine("WM_KEYDOWN");
+        //        ProcessKeyDown(wParam);
+        //    }
 
-            return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
-        }
+        //    return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
+        //}
 
         private void ProcessKeyDown(IntPtr wParam)
         {
@@ -116,26 +116,36 @@ namespace OptimalFuzzyPartition.View
             //}
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        public void KeyDown(Key key)
         {
-            base.OnKeyDown(e);
-            var key = e.Key;
-            Trace.WriteLine(e.Key);
-            var lParam = GeKeyCode(key, false);
+            Trace.WriteLine(key);
+            var lParam = GetKeyCode(key, false);
             PostMessage(_unityPlayerHwnd, WM_KEYDOWN, (IntPtr)key, (IntPtr)lParam);
+            PostMessage(_unityPlayerHwnd, WM_CHAR, (IntPtr)key, new IntPtr(0));
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            base.OnKeyUp(e);
-            var key = e.Key;
-            Trace.WriteLine(e.Key);
-            var lParam = GeKeyCode(key, false);
-            PostMessage(_unityPlayerHwnd, WM_KEYUP, (IntPtr)key, (IntPtr)lParam);
-        }
+        //protected override void OnKeyDown(KeyEventArgs e)
+        //{
+        //    base.OnKeyDown(e);
+        //    var key = e.Key;
+        //    Trace.WriteLine(e.Key);
+        //    var lParam = GeKeyCode(key, false);
+        //    PostMessage(_unityPlayerHwnd, WM_KEYDOWN, (IntPtr)key, (IntPtr)lParam);
+        //}
+
+        //protected override void OnKeyUp(KeyEventArgs e)
+        //{
+        //    base.OnKeyUp(e);
+        //    var key = e.Key;
+        //    Trace.WriteLine(e.Key);
+        //    var lParam = GeKeyCode(key, false);
+        //    PostMessage(_unityPlayerHwnd, WM_KEYUP, (IntPtr)key, (IntPtr)lParam);
+
+        //}
 
         private const int WM_KEYDOWN = 0x0100;
         private const int WM_KEYUP = 0x0101;
+        private const int WM_CHAR = 0x0102;
 
         private int WindowEnum(IntPtr hwnd, IntPtr lparam)
         {
@@ -144,7 +154,7 @@ namespace OptimalFuzzyPartition.View
             return 0;
         }
 
-        private static uint GeKeyCode(Key keyCode, bool extended)
+        private static uint GetKeyCode(Key keyCode, bool extended)
         {
             uint scanCode = MapVirtualKey((uint)keyCode, 0);
             var lParam = (0x00000001 | (scanCode << 16));

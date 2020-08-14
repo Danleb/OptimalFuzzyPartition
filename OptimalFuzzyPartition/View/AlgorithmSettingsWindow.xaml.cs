@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using OptimalFuzzyPartition.ViewModel;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace OptimalFuzzyPartition.View
@@ -16,6 +18,11 @@ namespace OptimalFuzzyPartition.View
         private void OnTextBoxValidationError(object sender, ValidationErrorEventArgs e)
         {
             throw new System.NotImplementedException();
+        }
+
+        private void AlgorithmSettingsWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            ((AlgorithmSettingsViewModel)DataContext).OnClosing.Execute(null);
         }
     }
 }

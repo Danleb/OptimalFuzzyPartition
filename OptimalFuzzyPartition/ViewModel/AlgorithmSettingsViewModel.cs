@@ -24,7 +24,7 @@ namespace OptimalFuzzyPartition.ViewModel
         {
             Settings = DefaultSettingsKeeper.GetPartitionSettings();
 
-            CreatePartitionCommand = new RelayCommand(obj =>
+            CreatePartitionCommand = new RelayCommand(_ =>
                 {
                     if (_partitionCreationWindow == null || !_partitionCreationWindow.IsLoaded)
                     {
@@ -41,8 +41,7 @@ namespace OptimalFuzzyPartition.ViewModel
                 },
                 obj =>
                 {
-                    //#TODO add validation check
-                    var valid = true;
+                    var valid = true;//Utils.IsValid();
 
                     if (!valid)
                     {
@@ -52,6 +51,11 @@ namespace OptimalFuzzyPartition.ViewModel
 
                     return true;
                 });
+
+            OnClosing = new RelayCommand(_ =>
+            {
+                _partitionCreationWindow?.Close();
+            });
         }
 
         #region Settings for the: space
@@ -271,6 +275,8 @@ namespace OptimalFuzzyPartition.ViewModel
         #region Commands
 
         public RelayCommand CreatePartitionCommand { get; }
+
+        public RelayCommand OnClosing { get; }
 
         #endregion
 

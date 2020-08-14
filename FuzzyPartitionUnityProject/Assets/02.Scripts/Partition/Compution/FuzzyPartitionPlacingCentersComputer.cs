@@ -101,37 +101,37 @@ namespace FuzzyPartitionComputing
             return PlacingAlgorithm.GetCenters();
         }
 
-        public (List<Vector<double>> centers, bool finished) DoIteration()
-        {
-            _timer.Start();
+        //public (List<Vector<double>> centers, bool finished) DoIteration()
+        //{
+        //    _timer.Start();
 
-            Trace.WriteLine($"Iteration number {PlacingAlgorithm.PerformedIterationCount + 1}");
+        //    Trace.WriteLine($"Iteration number {PlacingAlgorithm.PerformedIterationCount + 1}");
 
-            var centers = PlacingAlgorithm.GetCenters();
-            SetCentersPositions(centers);
+        //    var centers = PlacingAlgorithm.GetCenters();
+        //    SetCentersPositions(centers);
 
-            var muGrids = GetMuGrids(_settings);
+        //    var muGrids = GetMuGrids(_settings);
 
-            PlacingAlgorithm.DoIteration(muGrids);
+        //    PlacingAlgorithm.DoIteration(muGrids);
 
-            _timer.Stop();
+        //    _timer.Stop();
 
-            var newCenters = PlacingAlgorithm.GetCenters();
+        //    var newCenters = PlacingAlgorithm.GetCenters();
 
-            if (PlacingAlgorithm.IsStopConditionSatisfied())
-            {
-                var t = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
-                var timeString = $"{t.Hours:D2}h:{t.Minutes:D2}m:{t.Seconds:D2}s:{t.Milliseconds:D3}ms";
-                Debug.WriteLine($"Optimal placing partition global time: {timeString}");
-                Debug.Flush();
+        //    if (PlacingAlgorithm.IsStopConditionSatisfied())
+        //    {
+        //        var t = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
+        //        var timeString = $"{t.Hours:D2}h:{t.Minutes:D2}m:{t.Seconds:D2}s:{t.Milliseconds:D3}ms";
+        //        Debug.WriteLine($"Optimal placing partition global time: {timeString}");
+        //        Debug.Flush();
 
-                return (newCenters, true);
-            }
-            else
-            {
-                return (newCenters, false);
-            }
-        }
+        //        return (newCenters, true);
+        //    }
+        //    else
+        //    {
+        //        return (newCenters, false);
+        //    }
+        //}
 
         private void SetCentersPositions(IReadOnlyList<Vector<double>> centers)
         {

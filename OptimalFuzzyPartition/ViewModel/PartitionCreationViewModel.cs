@@ -123,7 +123,7 @@ namespace OptimalFuzzyPartition.ViewModel
         private void SavePartitionImage()
         {
             _commandAndData.CommandType = CommandType.SavePartitionImage;
-            //TOD set path
+            _commandAndData.ImageSavePath = null;
             _simpleTcpServer.Broadcast(_commandAndData.ToBytes());
         }
 

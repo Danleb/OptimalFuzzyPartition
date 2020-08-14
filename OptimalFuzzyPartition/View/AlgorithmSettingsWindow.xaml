@@ -7,7 +7,9 @@
         xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="837.778" WindowStartupLocation="CenterScreen">
+        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="837.778" WindowStartupLocation="CenterScreen"
+        Closing="AlgorithmSettingsWindow_OnClosing"
+        >
 
     <Window.DataContext>
         <vm:AlgorithmSettingsViewModel></vm:AlgorithmSettingsViewModel>
@@ -28,21 +30,6 @@
             </StackPanel>
         </ControlTemplate>
 
-        <ControlTemplate x:Key="TextBoxTemplate" TargetType="TextBox">
-            <TextBox Validation.ErrorTemplate="{StaticResource ValidationFailed}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="5,0,20,0" Validation.Error="OnTextBoxValidationError">
-                <TextBox.Resources>
-                    <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
-                </TextBox.Resources>
-                <TextBox.Text>
-                    <Binding  Path="{Binding MinX}">
-                        <Binding.ValidationRules>
-
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-            </TextBox>
-        </ControlTemplate>
-
         <Style x:Key="TextBoxStyle" TargetType="TextBox">
             <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ValidationFailed}"></Setter>
             <Setter Property="Width" Value="70"></Setter>
@@ -50,6 +37,11 @@
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
             <Setter Property="Margin" Value="5,0,20,0"></Setter>
         </Style>
+
+        <ControlTemplate x:Key="TextBoxTemplate" TargetType="TextBox">
+            <TextBox Validation.Error="OnTextBoxValidationError" Style="{StaticResource TextBoxStyle}">
+            </TextBox>
+        </ControlTemplate>
     </Window.Resources>
 
     <Grid>

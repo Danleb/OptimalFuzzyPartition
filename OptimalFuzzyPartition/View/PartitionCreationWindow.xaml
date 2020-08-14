@@ -11,7 +11,6 @@
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
-        KeyDown="UnityWindowHost_OnKeyDown"
         >
     <Window.Resources>
         <view:TimePassedConverter x:Key="TimePassedConverter"></view:TimePassedConverter>
@@ -55,7 +54,7 @@
                     </StackPanel>
                     <Slider Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
-                    <Button Margin="5" Content="Зробити розбиття" Command="{Binding RunPartitionCreationCommand}"></Button>
+                    <Button Name="Button" Margin="5" Content="Зробити розбиття" Command="{Binding RunPartitionCreationCommand}"></Button>
 
                     <!--<Button Margin="5" Content="Відкрити налаштування"></Button>-->
 
@@ -79,7 +78,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <view:UnityWindowHost x:Name="UnityWindowHost" KeyDown="UnityWindowHost_OnKeyDown"></view:UnityWindowHost>
+            <view:UnityWindowHost x:Name="UnityWindowHost"></view:UnityWindowHost>
         </DockPanel>
     </Grid>
 </Window>

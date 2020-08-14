@@ -13,13 +13,11 @@
 
         public double GetGridValueAtPoint(double x, double y)
         {
-            var xGlobalRatio = (x - _spaceSettings.MinCorner[0]) /
-                               (_spaceSettings.MaxCorner[0] - _spaceSettings.MinCorner[0]);
+            var xGlobalRatio = (x - _spaceSettings.MinCorner[0]) / (_spaceSettings.MaxCorner[0] - _spaceSettings.MinCorner[0]);
 
             var xIndexFractional = (_spaceSettings.GridSize[0] - 1) * xGlobalRatio;
 
-            var yGlobalRatio = (y - _spaceSettings.MinCorner[1]) /
-                               (_spaceSettings.MaxCorner[1] - _spaceSettings.MinCorner[1]);
+            var yGlobalRatio = (y - _spaceSettings.MinCorner[1]) / (_spaceSettings.MaxCorner[1] - _spaceSettings.MinCorner[1]);
 
             var yIndexFractional = (_spaceSettings.GridSize[1] - 1) * yGlobalRatio;
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  
+	autoReload="True"
+    throwExceptions="True"
+    
+	globalThreshold="Trace"	  
+>
+	<!-- *as nlog attribute* internalLogLevel="Trace" internalLogFile="c:/temp/nlog-internal.log" -->	
+	
+	<extensions> 
+		<add assembly="NlogExtension"/> 
+	</extensions>
+
+    <targets>
+		<target name="unityLogger" type="UnityConsole" layout="${logger}|${message} ${newline}${newline}" />
+        <target name="logfile" xsi:type="File" fileName="C:/temp/FuzzyPartition.log" layout="${logger}|${message}" />
+    </targets>
+
+    <rules>
+        <logger name="*" minlevel="Trace" writeTo="logfile" />		
+		<logger name="*" minlevel="Debug" writeTo="unityLogger" />		
+    </rules>
+</nlog>

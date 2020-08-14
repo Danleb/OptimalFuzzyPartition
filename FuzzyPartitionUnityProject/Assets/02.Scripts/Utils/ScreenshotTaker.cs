@@ -2,16 +2,29 @@
 using System;
 using System.IO;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
 namespace Utils
 {
     public class ScreenshotTaker : MonoBehaviour
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public string TakeAndSaveScreenshot(string path)
         {
-            Debug.WriteLine($"Screenshot saving path = {path}");
+            Logger.Info($"Screenshot saving path = {path}");
+
+            var directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
             ScreenCapture.CaptureScreenshot(path);
+
+            //var texture = ScreenCapture.CaptureScreenshotAsTexture();
+            //byte[] bytes = texture.EncodeToPNG();
+            //Logger.Info(bytes.Length);
+            //File.WriteAllBytes(path, bytes);
+            //Logger.Info(bytes.Length / 1024 + "Kb was saved as: " + path);
+
             return path;
         }
 
@@ -21,12 +34,12 @@ namespace Utils
 #if UNITY_EDITOR
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 #else
-            var folderPath = Path.Combine(Application.dataPath, "PartitionImages");
+            var folderPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "PartitionImages");
 #endif
 
             const string fileName = "PartitionImage_";
             var fileCount = 0;
-            var path = "";
+            string path;
 
             do
             {
@@ -34,8 +47,7 @@ namespace Utils
                 path = Path.ChangeExtension(Path.Combine(folderPath, fileName + fileCount), "png");
             } while (File.Exists(path));
 
-            Debug.WriteLine($"Screenshot saving path = {path}");
-            ScreenCapture.CaptureScreenshot(path);
+            TakeAndSaveScreenshot(path);
 
             return path;
         }

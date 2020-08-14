@@ -50,7 +50,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     return gradientVector;
                 };
 
-                rAlgorithm.h = _settings.RAlgorithmSettings.H0 / (PerformedIterationCount + 1);// 0.5;//TODO adaptive step
+                rAlgorithm.h = _settings.RAlgorithmSettings.H0;// / (PerformedIterationCount + 1);// 0.5;//TODO adaptive step
 
                 rAlgorithm.DoIteration();
             }
