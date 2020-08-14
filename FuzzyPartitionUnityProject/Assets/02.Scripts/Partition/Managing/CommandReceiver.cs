@@ -108,12 +108,12 @@ namespace Partition.Managing
                     {
                         if (_currentData.PartitionSettings.IsCenterPlacingTask)
                         {
-                            var result = _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(settings, _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient);
+                            var result = _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(settings, _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient, _currentData.AlwaysShowCentersInfo);
                             _client.Write(result.ToBytes());
                         }
                         else
                         {
-                            var result = _partitionRunner.CreateFuzzyPartitionWithFixedCenters(settings, _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient);
+                            var result = _partitionRunner.CreateFuzzyPartitionWithFixedCenters(settings, _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient, _currentData.AlwaysShowCentersInfo);
                             _client.Write(result.ToBytes());
 
                             _currentData = null;

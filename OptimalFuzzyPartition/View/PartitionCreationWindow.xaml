@@ -62,14 +62,17 @@
                     <Label Margin="5" Content="{Binding TargetFunctionalValue}" ContentStringFormat="Значення цільового функціоналу: {0}"></Label>
                     <Label Margin="5" Content="{Binding DualFunctionalValue}" ContentStringFormat="Значення двоїстого функціоналу: {0}"></Label>
 
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Шлях:"></Label>
-                        <Button Margin="5" Content="Обрати шлях"></Button>
-                        <CheckBox VerticalAlignment="Center" IsChecked="False"></CheckBox>
-                        <Label Content="Вручну"></Label>
-                    </StackPanel>
-                    <Label Content="Розбиття.png"></Label>
+                    <CheckBox Margin="5" Content="Вибрати шлях вручну:" VerticalAlignment="Center" IsChecked="False"></CheckBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Шлях:" VerticalAlignment="Center"></Label>
+                        <TextBox Grid.Column="1" Text="Розбиття.png" VerticalAlignment="Center"></TextBox>
+                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="5" Content="Обрати шлях" VerticalAlignment="Center"></Button>
+                    </Grid>
 
                     <Button Margin="5" Content="Зберегти зображення" Command="{Binding SavePartitionImageCommand}"></Button>
 

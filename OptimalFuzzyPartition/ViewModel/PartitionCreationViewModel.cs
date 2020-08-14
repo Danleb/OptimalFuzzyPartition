@@ -148,13 +148,13 @@ namespace OptimalFuzzyPartition.ViewModel
 
         public void RunPartitionCreation()
         {
+            TimePassed = TimeSpan.Zero;
             _timer.Start();
 
             _commandAndData.CommandType = CommandType.CreateFuzzyPartition;
             _commandAndData.PartitionSettings = PartitionSettings;
 
             _simpleTcpServer.Broadcast(_commandAndData.ToBytes());
-
         }
 
         private void OnTimerTick(object sender, EventArgs e)

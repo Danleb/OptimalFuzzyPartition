@@ -14,10 +14,10 @@ namespace OptimalFuzzyPartition.View
 
         public string ValueX
         {
-            get =>
-                IsFixedCenter ?
-                    CenterData.Position[0].ToString() :
-                    "---";
+            get => CenterData.Position[0].ToString();
+                //IsFixedCenter ?
+                //    CenterData.Position[0].ToString() :
+                //    "---";
             set
             {
                 if (double.TryParse(value, out var val))
@@ -30,9 +30,10 @@ namespace OptimalFuzzyPartition.View
 
         public string ValueY
         {
-            get => IsFixedCenter ?
-                CenterData.Position[0].ToString(CultureInfo.CurrentCulture) :
-                "---";
+            get => CenterData.Position[0].ToString(CultureInfo.CurrentCulture);
+                //IsFixedCenter ?
+                //    CenterData.Position[0].ToString(CultureInfo.CurrentCulture) :
+                //    "---";
             set
             {
                 if (double.TryParse(value, out var val))

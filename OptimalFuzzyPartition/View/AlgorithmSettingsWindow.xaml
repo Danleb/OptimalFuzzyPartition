@@ -255,7 +255,7 @@
 
                 <Label Content="Налаштування нечіткого розбиття з закріпленими центрами:" FontWeight="Bold"></Label>
 
-                <Label Content="Крок градієнтного спуску"></Label>
+                <Label Content="Константа C для кроку градієнтного спуску λ = C / (k + 1):"></Label>
                 <TextBox Style="{StaticResource TextBoxStyle}">
                     <TextBox.Text>
                         <Binding Path="FixedPartitionGradientStep" UpdateSourceTrigger="PropertyChanged">

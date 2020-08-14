@@ -52,7 +52,10 @@ namespace Partition.Managing
             var commandAndData = new CommandAndData
             {
                 CommandType = CommandType.CreateFuzzyPartition,
-                PartitionSettings = _partitionSettingsHolder.GetPartitionSettings()
+                PartitionSettings = _partitionSettingsHolder.GetPartitionSettings(),
+                AlwaysShowCentersInfo = _alwaysShowCentersInfo,
+                DrawWithMistrustCoefficient = _drawWithMistrustCoefficient,
+                MistrustCoefficient = _mistrustCoefficient
             };
 
             SendToClient(commandAndData);
@@ -64,10 +67,10 @@ namespace Partition.Managing
             var commandAndData = new CommandAndData
             {
                 CommandType = CommandType.ShowPartitionAtIterationIndex,
-                IterationNumber = _iterationNumber,
                 AlwaysShowCentersInfo = _alwaysShowCentersInfo,
                 DrawWithMistrustCoefficient = _drawWithMistrustCoefficient,
-                MistrustCoefficient = _mistrustCoefficient
+                MistrustCoefficient = _mistrustCoefficient,
+                IterationNumber = _iterationNumber
             };
 
             SendToClient(commandAndData);

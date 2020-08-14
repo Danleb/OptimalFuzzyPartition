@@ -15,9 +15,16 @@ namespace PartitionView
         [SerializeField] private ColorsGenerator _colorsGenerator;
         [SerializeField] public bool _drawWithMistrustRate;
         [SerializeField] public float _mistrustRateValue;
+        [SerializeField] public bool _alwaysShowCentersInfo;
 
         private RenderTexture _muRenderTexture;
         private PartitionSettings _partitionSettings;
+
+        public bool AlwaysShowCentersInfo
+        {
+            get => _alwaysShowCentersInfo;
+            set => _alwaysShowCentersInfo = value;
+        }
 
         public bool DrawWithMistrustRate
         {
@@ -61,6 +68,11 @@ namespace PartitionView
             partitionTexture2D.Apply();
             var sprite = partitionTexture2D.ToSprite();
             _image.sprite = sprite;
+
+            if (AlwaysShowCentersInfo)
+                _centersInfoShower.EnableShowAlways();
+            else
+                _centersInfoShower.DisableShowAlways();
 
             return partitionTexture2D;
         }

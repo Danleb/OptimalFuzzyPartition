@@ -21,7 +21,7 @@ namespace FuzzyPartitionComputing
         [SerializeField] private bool _calculateTargetFunctionalValue;
         [SerializeField] private bool _calculateDualFunctionalValue;
 
-        public PartitionResult CreateFuzzyPartitionWithFixedCenters(PartitionSettings partitionSettings, bool drawMistrustRate, double mistrustRate)
+        public PartitionResult CreateFuzzyPartitionWithFixedCenters(PartitionSettings partitionSettings, bool drawMistrustRate, double mistrustRate, bool alwaysShowCentersInfo)
         {
             _partitionFixedCentersComputer.Init(partitionSettings);
 
@@ -30,9 +30,11 @@ namespace FuzzyPartitionComputing
             var result = new PartitionResult
             {
                 TargetFunctionalValue = CalculateTargetFunctionalValue(partitionSettings, muRenderTexture),
-                DualFunctionalValue = CalculateDualFunctionalValue(partitionSettings, psiGridTexture)
+                DualFunctionalValue = CalculateDualFunctionalValue(partitionSettings, psiGridTexture),
+                WorkFinished = true
             };
 
+            _partitionImageShower.AlwaysShowCentersInfo = alwaysShowCentersInfo;
             _partitionImageShower.DrawWithMistrustRate = drawMistrustRate;
             _partitionImageShower.MistrustRate = (float)mistrustRate;
             _partitionImageShower.CreatePartitionAndShow(partitionSettings, muRenderTexture);
@@ -40,7 +42,7 @@ namespace FuzzyPartitionComputing
             return result;
         }
 
-        public PartitionResult CreateFuzzyPartitionWithCentersPlacing(PartitionSettings partitionSettings, bool drawMistrustRate, double mistrustRate)
+        public PartitionResult CreateFuzzyPartitionWithCentersPlacing(PartitionSettings partitionSettings, bool drawMistrustRate, double mistrustRate, bool alwaysShowCentersInfo)
         {
             _partitionPlacingCentersComputer.Init(partitionSettings);
 
@@ -49,7 +51,7 @@ namespace FuzzyPartitionComputing
             for (var i = 0; i < centersPositions.Count; i++)
                 partitionSettings.CentersSettings.CenterDatas[i].Position = centersPositions[i];
 
-            var result = CreateFuzzyPartitionWithFixedCenters(partitionSettings, drawMistrustRate, mistrustRate);
+            var result = CreateFuzzyPartitionWithFixedCenters(partitionSettings, drawMistrustRate, mistrustRate, alwaysShowCentersInfo);
             result.CentersPositions = centersPositions.ToArray();
             result.WorkFinished = true;
 

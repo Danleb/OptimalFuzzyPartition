@@ -47,8 +47,8 @@ namespace OptimalFuzzyPartition.Model
                 },
                 FuzzyPartitionFixedCentersSettings = new FuzzyPartitionFixedCentersSettings
                 {
-                    GradientEpsilon = 0.01,
-                    GradientStep = 0.01,
+                    GradientEpsilon = 0.001,
+                    GradientStep = 10,
                     MaxIterationsCount = 400
                 },
                 FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
