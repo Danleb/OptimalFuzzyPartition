@@ -13,7 +13,7 @@ namespace OptimalFuzzyPartition.Model
         {
             return new PartitionSettings
             {
-                IsCenterPlacingTask = false,
+                IsCenterPlacingTask = true,
                 SpaceSettings = new SpaceSettings
                 {
                     MinCorner = VectorUtils.CreateVector(0, 0),
@@ -63,6 +63,19 @@ namespace OptimalFuzzyPartition.Model
                     MaxIterationsCount = 40
                 }
             };
+        }
+
+        public static CenterData GetDefaultCenterData(PartitionSettings settings)
+        {
+            var data = new CenterData
+            {
+                IsFixed = false,
+                Position = (settings.SpaceSettings.MaxCorner + settings.SpaceSettings.MinCorner) / 2,
+                A = 0,
+                W = 1
+            };
+
+            return data;
         }
     }
 }

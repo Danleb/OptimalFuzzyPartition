@@ -171,7 +171,7 @@ namespace FuzzyPartitionComputing
                 }
 
                 PerformedIterationsCount++;
-
+                SetCentersPositionsToBuffer();//to init
                 //_stopConditionComputeBuffer.GetData(_stopConditionsArray);
                 //if (_stopConditionsArray[0] > 100)
                 //    break;

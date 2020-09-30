@@ -234,7 +234,7 @@
                     </TextBox.Text>
                 </TextBox>
 
-                <Label Content="Коефіцієнт розтягу простору:"></Label>
+                <!--<Label Content="Коефіцієнт розтягу простору:"></Label>
                 <TextBox Style="{StaticResource TextBoxStyle}">
                     <TextBox.Text>
                         <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged">
@@ -243,7 +243,7 @@
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
-                </TextBox>
+                </TextBox>-->
 
                 <Label Content="Налаштування нечіткого розбиття з закріпленими центрами:" FontWeight="Bold"></Label>
 

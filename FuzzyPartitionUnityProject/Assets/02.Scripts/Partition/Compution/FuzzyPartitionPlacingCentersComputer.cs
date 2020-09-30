@@ -1,6 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
+using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ namespace FuzzyPartitionComputing
             var zeroTaus = new List<Vector<double>>();
 
             var p1 = settings.SpaceSettings.MinCorner;
-            var p2 = settings.SpaceSettings.MaxCorner;//VectorUtils.CreateVector(p1[0], settings.SpaceSettings.MaxCorner[1]);
+            var p2 = VectorUtils.CreateVector(p1[0], settings.SpaceSettings.MaxCorner[1]);
 
             for (var i = 0; i < settings.CentersSettings.CentersCount; i++)
             {

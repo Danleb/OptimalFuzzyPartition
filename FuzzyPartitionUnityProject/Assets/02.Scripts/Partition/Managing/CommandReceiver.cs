@@ -131,9 +131,9 @@ namespace Partition.Managing
                                 _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient,
                                 _currentData.AlwaysShowCentersInfo);
                             _client.Write(result.ToBytes());
-
-                            _currentData = null;
                         }
+
+                        _currentData = null;
                     }
                     break;
 

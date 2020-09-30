@@ -163,13 +163,7 @@ namespace OptimalFuzzyPartition.ViewModel
             set
             {
                 Settings.CentersSettings.CentersCount = value;
-                Settings.CentersSettings.CenterDatas.ResizeList(CentersCount, () => new CenterData
-                {
-                    IsFixed = true,
-                    Position = (Settings.SpaceSettings.MaxCorner + Settings.SpaceSettings.MinCorner) / 2,
-                    A = 0,
-                    W = 1
-                });//???
+                Settings.CentersSettings.CenterDatas.ResizeList(CentersCount, () => DefaultSettingsKeeper.GetDefaultCenterData(Settings));
 
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CenterDatas));
