@@ -8,20 +8,52 @@ RWTexture2D<float4> Result;
 bool DrawThresholdValue;
 float MuThresholdValue;
 
+bool DrawGrayscale;
+bool DrawBorder;
+int BorderWidth;
+
+struct MuCenterData
+{
+	int index;
+	float value;
+};
+
+MuCenterData GetMaxMuCenterData(int2 xy)
+{
+	int imax = 0;
+	float max = MuGrids[int3(xy, 0)];
+
+	for (int i = 0; i < CentersCount; i++)
+	{
+		float muValue = MuGrids[int3(xy, i)];
+
+		if (muValue > max)
+		{
+			max = muValue;
+			imax = i;
+		}
+	}
+
+	MuCenterData data;
+	data.index = imax;
+	data.value = max;
+	return data;
+}
+
 #pragma kernel DrawPartition
-[numthreads(8,8,1)]
+[numthreads(8, 8, 1)]
 void DrawPartition(uint3 id : SV_DispatchThreadID)
 {
-	float4 res = float4(0,0,0,0);
-	
+	float4 res = float4(0, 0, 0, 1);
+
 	int imax = 0;
 	float max = MuGrids[uint3(id.xy, 0)];
-	
-	for(int i = 0; i < CentersCount; i++)
+
+	for (int i = 0; i < CentersCount; i++)
 	{
 		float muValue = MuGrids[uint3(id.xy, i)];
 
-		if(muValue > max)
+		if (muValue > max)
 		{
 			max = muValue;
 			imax = i;
@@ -29,16 +61,57 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 
 		res += CentersColors[i] * muValue;
 	}
-	
-	if(DrawThresholdValue)
+
+	if (DrawBorder)
 	{
-		const float gray = 0.4;
-		
-		if(max < MuThresholdValue)
-			res = float4(gray, gray, gray, gray);
+		for (int offsetX = -BorderWidth; offsetX < BorderWidth; offsetX++)
+		{
+			for (int offsetY = -BorderWidth; offsetY < BorderWidth; offsetY++)
+			{
+				int2 position = int2(id.xy) + int2(offsetX, offsetY);
+
+				if (position.x < 0 || position.y < 0)
+					continue;
+
+				MuCenterData data = GetMaxMuCenterData(position);
+				int neighborMaxIndex = data.index;
+
+				if (DrawThresholdValue)
+				{
+					if (max > MuThresholdValue)
+					{
+						if (data.value < MuThresholdValue || imax != neighborMaxIndex)
+						{
+							Result[id.xy] = float4(0, 0, 0, 1);
+							return;
+						}
+					}					
+				}
+				else
+				{
+					if (imax != neighborMaxIndex)
+					{
+						Result[id.xy] = float4(0, 0, 0, 1);
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	if (DrawThresholdValue)
+	{
+		const float grayValue = 0.5;
+		const float4 gray = float4(grayValue, grayValue, grayValue, grayValue);
+
+		if (max < MuThresholdValue)
+			res = gray;
 		else
 			res = CentersColors[imax];
-	}		
+	}
+
+	if (DrawGrayscale && max > MuThresholdValue)
+		res = float4(1, 1, 1, 1);
 
 	res.a = 1;
 

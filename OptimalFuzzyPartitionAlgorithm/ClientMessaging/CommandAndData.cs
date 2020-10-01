@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
+using System;
 
 namespace OptimalFuzzyPartitionAlgorithm.Utils
 {
@@ -9,14 +10,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
 
         public PartitionSettings PartitionSettings;
 
-        public bool AlwaysShowCentersInfo;
-
-        public int IterationNumber;
+        public RenderingSettings RenderingSettings;
 
         public byte[] ImageSavePath;
-
-        public bool DrawWithMistrustCoefficient;
-
-        public double MistrustCoefficient;
     }
 }

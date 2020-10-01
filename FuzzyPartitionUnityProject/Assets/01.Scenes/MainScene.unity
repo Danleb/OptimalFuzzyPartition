@@ -367,7 +367,7 @@ MonoBehaviour:
   _metricsType: 0
   _centersCount: 2
   _centerPositions:
-  - {x: 1, y: 1}
+  - {x: 6, y: 6}
   - {x: 1, y: 2}
   - {x: 9.3, y: 3}
   - {x: 1, y: 5.5}
@@ -1400,9 +1400,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _partitionSettingsHolder: {fileID: 25190599}
   _partitionRunner: {fileID: 1659042594}
-  _drawMistrustRate: 0
-  _mistrustRate: 0.3
-  _alwaysShowCentersInfo: 0
+  _renderingSettings:
+    AlwaysShowCentersInfo: 0
+    IterationNumber: 0
+    DrawWithMistrustCoefficient: 1
+    DrawGrayscale: 1
+    MistrustCoefficient: 0.6
 --- !u!1 &817121212
 GameObject:
   m_ObjectHideFlags: 0
@@ -3107,9 +3110,12 @@ MonoBehaviour:
   _partitionImageCreator: {fileID: 2114860695}
   _centersInfoShower: {fileID: 15913491}
   _colorsGenerator: {fileID: 1459721568}
-  _drawWithMistrustRate: 0
-  _mistrustRateValue: 0
-  _alwaysShowCentersInfo: 0
+  _renderingSettings:
+    AlwaysShowCentersInfo: 0
+    IterationNumber: 0
+    DrawWithMistrustCoefficient: 0
+    DrawGrayscale: 0
+    MistrustCoefficient: 0
 --- !u!1 &2022445666
 GameObject:
   m_ObjectHideFlags: 0

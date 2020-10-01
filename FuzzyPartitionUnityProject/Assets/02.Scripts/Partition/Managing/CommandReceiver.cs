@@ -112,24 +112,18 @@ namespace Partition.Managing
 
             Logger.Info($"Start to process command. CommandType = {_currentData.CommandType}");
 
-            var settings = _currentData.PartitionSettings;
-
             switch (_currentData.CommandType)
             {
                 case CommandType.CreateFuzzyPartition:
                     {
                         if (_currentData.PartitionSettings.IsCenterPlacingTask)
                         {
-                            var result = _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(settings,
-                                _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient,
-                                _currentData.AlwaysShowCentersInfo);
+                            var result = _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(_currentData.PartitionSettings, _currentData.RenderingSettings);
                             _client.Write(result.ToBytes());
                         }
                         else
                         {
-                            var result = _partitionRunner.CreateFuzzyPartitionWithFixedCenters(settings,
-                                _currentData.DrawWithMistrustCoefficient, _currentData.MistrustCoefficient,
-                                _currentData.AlwaysShowCentersInfo);
+                            var result = _partitionRunner.CreateFuzzyPartitionWithFixedCenters(_currentData.PartitionSettings, _currentData.RenderingSettings);
                             _client.Write(result.ToBytes());
                         }
 
@@ -147,7 +141,7 @@ namespace Partition.Managing
 
                         //_partitionRunner.show
 
-                        _partitionRunner.DrawPartitionAtIteration(_currentData.IterationNumber);
+                        _partitionRunner.DrawPartitionAtIteration(_currentData.RenderingSettings.IterationNumber);
                     }
                     break;
 
@@ -167,8 +161,7 @@ namespace Partition.Managing
 
                 case CommandType.ShowCurrentPartitionWithSettings:
                     {
-                        _partitionRunner.RedrawPartitionWithSettings(_currentData.DrawWithMistrustCoefficient,
-                            _currentData.MistrustCoefficient);
+                        _partitionRunner.RedrawPartitionWithSettings(_currentData.RenderingSettings);
                         _currentData = null;
 
                     }

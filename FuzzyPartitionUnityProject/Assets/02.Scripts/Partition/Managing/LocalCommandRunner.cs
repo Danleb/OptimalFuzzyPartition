@@ -1,6 +1,7 @@
 ﻿using FuzzyPartitionComputing;
 using NaughtyAttributes;
 using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using Partition.PartitionView;
 using UnityEngine;
 
@@ -10,26 +11,24 @@ namespace Partition.Managing
     {
         [SerializeField] private PartitionSettingsHolder _partitionSettingsHolder;
         [SerializeField] private PartitionRunner _partitionRunner;
-        [SerializeField] private bool _drawMistrustRate;
-        [SerializeField] private double _mistrustRate;
-        [SerializeField] private bool _alwaysShowCentersInfo;
+        [SerializeField] private RenderingSettings _renderingSettings;
 
         [Button("Create fuzzy partition with fixed centers")]
         public void CreateFuzzyPartitionWithFixedCenters()
         {
-            _partitionRunner.CreateFuzzyPartitionWithFixedCenters(GetSettings(), _drawMistrustRate, _mistrustRate, _alwaysShowCentersInfo);
+            _partitionRunner.CreateFuzzyPartitionWithFixedCenters(GetSettings(), _renderingSettings);
         }
 
         [Button("Create fuzzy partition with centers placing")]
         public void CreateFuzzyPartitionWithCentersPlacing()
         {
-            _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(GetSettings(), _drawMistrustRate, _mistrustRate, _alwaysShowCentersInfo);
+            _partitionRunner.CreateFuzzyPartitionWithCentersPlacing(GetSettings(), _renderingSettings);
         }
 
         [Button("Redraw partition with current settings")]
         public void RedrawPartitionWithSettings()
         {
-            _partitionRunner.RedrawPartitionWithSettings(_drawMistrustRate, _mistrustRate);
+            _partitionRunner.RedrawPartitionWithSettings(_renderingSettings);
         }
 
         [Button]

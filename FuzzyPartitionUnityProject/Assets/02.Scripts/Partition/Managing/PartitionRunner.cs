@@ -21,7 +21,7 @@ namespace FuzzyPartitionComputing
         [SerializeField] private bool _calculateTargetFunctionalValue;
         [SerializeField] private bool _calculateDualFunctionalValue;
 
-        public PartitionResult CreateFuzzyPartitionWithFixedCenters(PartitionSettings partitionSettings, bool drawMistrustRate, double mistrustRate, bool alwaysShowCentersInfo)
+        public PartitionResult CreateFuzzyPartitionWithFixedCenters(PartitionSettings partitionSettings, RenderingSettings renderingSettings)
         {
             _partitionFixedCentersComputer.Init(partitionSettings);
 
@@ -34,15 +34,13 @@ namespace FuzzyPartitionComputing
                 WorkFinished = true
             };
 
-            _partitionImageShower.AlwaysShowCentersInfo = alwaysShowCentersInfo;
-            _partitionImageShower.DrawWithMistrustRate = drawMistrustRate;
-            _partitionImageShower.MistrustRate = (float)mistrustRate;
+            _partitionImageShower.RenderingSettings = renderingSettings;
             _partitionImageShower.CreatePartitionAndShow(partitionSettings, muRenderTexture);
 
             return result;
         }
 
-        public PartitionResult CreateFuzzyPartitionWithCentersPlacing(PartitionSettings partitionSettings, bool drawMistrustRate, double mistrustRate, bool alwaysShowCentersInfo)
+        public PartitionResult CreateFuzzyPartitionWithCentersPlacing(PartitionSettings partitionSettings, RenderingSettings renderingSettings)
         {
             _partitionPlacingCentersComputer.Init(partitionSettings);
 
@@ -51,7 +49,7 @@ namespace FuzzyPartitionComputing
             for (var i = 0; i < centersPositions.Count; i++)
                 partitionSettings.CentersSettings.CenterDatas[i].Position = centersPositions[i];
 
-            var result = CreateFuzzyPartitionWithFixedCenters(partitionSettings, drawMistrustRate, mistrustRate, alwaysShowCentersInfo);
+            var result = CreateFuzzyPartitionWithFixedCenters(partitionSettings, renderingSettings);
             result.CentersPositions = centersPositions.ToArray();
             result.WorkFinished = true;
 
@@ -71,10 +69,9 @@ namespace FuzzyPartitionComputing
             Logger.Info($"Drawing partition at iteration {iterationNumber}");
         }
 
-        public void RedrawPartitionWithSettings(bool drawMistrustRate, double mistrustRate)
+        public void RedrawPartitionWithSettings(RenderingSettings renderingSettings)
         {
-            _partitionImageShower.DrawWithMistrustRate = drawMistrustRate;
-            _partitionImageShower.MistrustRate = (float)mistrustRate;
+            _partitionImageShower.RenderingSettings = renderingSettings;
             _partitionImageShower.CreatePartitionAndShow();
         }
 

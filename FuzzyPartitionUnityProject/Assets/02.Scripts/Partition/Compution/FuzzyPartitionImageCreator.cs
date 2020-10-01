@@ -1,4 +1,5 @@
 ﻿using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using UnityEngine;
 using Utils;
 
@@ -12,6 +13,7 @@ namespace FuzzyPartitionVisualizing
         [SerializeField] private ComputeShader _partitionDrawingShader;
 
         private PartitionSettings _settings;
+        private RenderingSettings _renderingSettings;
         private Color[] _centersColors;
 
         private RenderTexture _partitionRenderTexture;
@@ -38,9 +40,10 @@ namespace FuzzyPartitionVisualizing
                 _colorsComputeBuffer.Release();
         }
 
-        public void Init(PartitionSettings partitionSettings, Color[] centersColors)
+        public void Init(PartitionSettings partitionSettings, RenderingSettings renderingSettings, Color[] centersColors)
         {
             _settings = partitionSettings;
+            _renderingSettings = renderingSettings;
             _centersColors = centersColors;
 
             _partitionDrawingKernel = _partitionDrawingShader.FindKernel(PartitionDrawingKernel);
@@ -59,6 +62,10 @@ namespace FuzzyPartitionVisualizing
             _partitionDrawingShader.SetInt("CentersCount", _settings.CentersSettings.CentersCount);
             _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "Result", _partitionRenderTexture);
+            _partitionDrawingShader.SetBool("DrawGrayscale", _renderingSettings.DrawGrayscale);
+            _partitionDrawingShader.SetBool("DrawBorder", _renderingSettings.DrawGrayscale);
+            const int borderWidth = 5;
+            _partitionDrawingShader.SetInt("BorderWidth", borderWidth);
         }
 
         public RenderTexture CreatePartitionTexture(RenderTexture muRenderTexture, bool drawWithMuThreshold, float muThreshold = 0.35f)

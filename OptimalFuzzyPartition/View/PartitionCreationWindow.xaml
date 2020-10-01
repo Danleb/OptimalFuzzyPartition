@@ -48,13 +48,14 @@
                     <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>
 
                     <CheckBox Margin="5" Content="Малювати розбиття з коефіцієнтом недовіри" IsChecked="{Binding DrawWithMistrust}"></CheckBox>
+                    <CheckBox Margin="5" Content="Розбиття у градаціях сірого" IsChecked="{Binding DrawGrayscale}"></CheckBox>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Коефіцієнт недовіри: "></Label>
                         <TextBox VerticalAlignment="Center" MinWidth="50" Margin="5" Text="{Binding MistrustCoefficient}"></TextBox>
                     </StackPanel>
                     <Slider Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
-                    <Button Name="Button" Margin="5" Content="Зробити розбиття" Command="{Binding RunPartitionCreationCommand}"></Button>
+                    <Button Name="Button" Margin="5" Content="Оновити розбиття" Command="{Binding UpdatePartitionCommand}"></Button>
 
                     <!--<Button Margin="5" Content="Відкрити налаштування"></Button>-->
 

@@ -116,13 +116,13 @@ namespace OptimalFuzzyPartition.View
             //}
         }
 
-        public void KeyDown(Key key)
-        {
-            Trace.WriteLine(key);
-            var lParam = GetKeyCode(key, false);
-            PostMessage(_unityPlayerHwnd, WM_KEYDOWN, (IntPtr)key, (IntPtr)lParam);
-            PostMessage(_unityPlayerHwnd, WM_CHAR, (IntPtr)key, new IntPtr(0));
-        }
+        //public void KeyDown(Key key)
+        //{
+        //    Trace.WriteLine(key);
+        //    var lParam = GetKeyCode(key, false);
+        //    PostMessage(_unityPlayerHwnd, WM_KEYDOWN, (IntPtr)key, (IntPtr)lParam);
+        //    PostMessage(_unityPlayerHwnd, WM_CHAR, (IntPtr)key, new IntPtr(0));
+        //}
 
         //protected override void OnKeyDown(KeyEventArgs e)
         //{
