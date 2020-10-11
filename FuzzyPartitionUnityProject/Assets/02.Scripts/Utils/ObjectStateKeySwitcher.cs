@@ -7,10 +7,15 @@ namespace Utils
         [SerializeField] private KeyCode _switchKeyCode;
         [SerializeField] private GameObject _gameObject;
 
+        public void Switch()
+        {
+            _gameObject.SetActive(!_gameObject.activeSelf);
+        }
+
         private void Update()
         {
             if (Input.GetKeyDown(_switchKeyCode))
-                _gameObject.SetActive(!_gameObject.activeSelf);
+                Switch();
         }
     }
 }

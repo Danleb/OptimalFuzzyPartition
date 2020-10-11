@@ -44,7 +44,7 @@ namespace FuzzyPartitionComputing
         {
             _partitionPlacingCentersComputer.Init(partitionSettings);
 
-            var centersPositions = _partitionPlacingCentersComputer.Run();
+            var centersPositions = _partitionPlacingCentersComputer.Run(out var iterationsCount);
 
             for (var i = 0; i < centersPositions.Count; i++)
                 partitionSettings.CentersSettings.CenterDatas[i].Position = centersPositions[i];
@@ -52,6 +52,7 @@ namespace FuzzyPartitionComputing
             var result = CreateFuzzyPartitionWithFixedCenters(partitionSettings, renderingSettings);
             result.CentersPositions = centersPositions.ToArray();
             result.WorkFinished = true;
+            result.PerformedIterationsCount = iterationsCount;
 
             return result;
         }

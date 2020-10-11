@@ -48,7 +48,7 @@ namespace PartitionView
         [Button("Redraw partition image with current settings")]
         public Texture2D CreatePartitionAndShow()
         {
-            var renderTexture = _partitionImageCreator.CreatePartitionTexture(_muRenderTexture, _renderingSettings.DrawWithMistrustCoefficient, (float)_renderingSettings.MistrustCoefficient);
+            var renderTexture = _partitionImageCreator.CreatePartitionTexture(_muRenderTexture, _renderingSettings);
             var partitionTexture2D = new Texture2D(renderTexture.width, renderTexture.height) { wrapMode = TextureWrapMode.Clamp };
             RenderTexture.active = renderTexture;
             partitionTexture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);

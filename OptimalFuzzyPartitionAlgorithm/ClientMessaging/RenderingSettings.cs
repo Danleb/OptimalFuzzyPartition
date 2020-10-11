@@ -14,5 +14,7 @@ namespace OptimalFuzzyPartitionAlgorithm.ClientMessaging
         public bool DrawGrayscale;
 
         public double MistrustCoefficient;
+
+        public int BorderWidth;
     }
 }

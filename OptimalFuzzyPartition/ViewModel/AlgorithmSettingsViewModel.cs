@@ -230,6 +230,16 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
+        public double CentersDeltaEpsilon
+        {
+            get => Settings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon;
+            set
+            {
+                Settings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Settings for the: Fuzzy partition with fixed centers

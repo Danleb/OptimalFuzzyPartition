@@ -9,8 +9,18 @@ namespace Utils
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public string TakeAndSaveScreenshot(string path)
+        public string TakeAndSaveScreenshot(string folderPath)
         {
+            const string fileName = "PartitionImage_";
+            var fileCount = 0;
+            string path;
+
+            do
+            {
+                fileCount++;
+                path = Path.ChangeExtension(Path.Combine(folderPath, fileName + fileCount), "png");
+            } while (File.Exists(path));
+
             Logger.Info($"Screenshot saving path = {path}");
 
             var directory = Path.GetDirectoryName(path);
@@ -35,21 +45,9 @@ namespace Utils
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 #else
             var folderPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "PartitionImages");
-#endif
+#endif            
 
-            const string fileName = "PartitionImage_";
-            var fileCount = 0;
-            string path;
-
-            do
-            {
-                fileCount++;
-                path = Path.ChangeExtension(Path.Combine(folderPath, fileName + fileCount), "png");
-            } while (File.Exists(path));
-
-            TakeAndSaveScreenshot(path);
-
-            return path;
+            return TakeAndSaveScreenshot(folderPath);
         }
     }
 }

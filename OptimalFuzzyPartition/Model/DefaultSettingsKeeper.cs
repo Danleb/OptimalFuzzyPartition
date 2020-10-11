@@ -53,7 +53,7 @@ namespace OptimalFuzzyPartition.Model
                 },
                 FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
                 {
-                    CentersDeltaEpsilon = 0.5,
+                    CentersDeltaEpsilon = 0.01,
                     GaussLegendreIntegralOrder = 32
                 },
                 RAlgorithmSettings = new RAlgorithmSettings

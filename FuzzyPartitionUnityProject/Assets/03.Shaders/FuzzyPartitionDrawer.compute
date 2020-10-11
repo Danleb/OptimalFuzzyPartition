@@ -9,7 +9,7 @@ bool DrawThresholdValue;
 float MuThresholdValue;
 
 bool DrawGrayscale;
-bool DrawBorder;
+int2 ImageSize;
 int BorderWidth;
 
 struct MuCenterData
@@ -44,10 +44,24 @@ MuCenterData GetMaxMuCenterData(int2 xy)
 [numthreads(8, 8, 1)]
 void DrawPartition(uint3 id : SV_DispatchThreadID)
 {
-	float4 res = float4(0, 0, 0, 1);
+	const float lightGrayValue = 0.7;
+	const float4 lightGray = float4(lightGrayValue, lightGrayValue, lightGrayValue, 1);
+	const float darkGrayValue = 0.3;
+	const float4 darkGray = float4(darkGrayValue, darkGrayValue, darkGrayValue, 1);
+	const float4 white = float4(1, 1, 1, 1);
+	const float4 black = float4(0, 0, 0, 1);
+
+	float4 res = black;
 
 	int imax = 0;
 	float max = MuGrids[uint3(id.xy, 0)];
+
+	if (DrawGrayscale)
+		if ((int)id.x - BorderWidth < 0 || (int)id.y - BorderWidth < 0 || id.x + BorderWidth > ImageSize.x || id.y + BorderWidth > ImageSize.y)
+		{
+			Result[id.xy] = darkGray;
+			return;
+		}
 
 	for (int i = 0; i < CentersCount; i++)
 	{
@@ -62,16 +76,13 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 		res += CentersColors[i] * muValue;
 	}
 
-	if (DrawBorder)
+	if (DrawGrayscale)
 	{
 		for (int offsetX = -BorderWidth; offsetX < BorderWidth; offsetX++)
 		{
 			for (int offsetY = -BorderWidth; offsetY < BorderWidth; offsetY++)
 			{
 				int2 position = int2(id.xy) + int2(offsetX, offsetY);
-
-				if (position.x < 0 || position.y < 0)
-					continue;
 
 				MuCenterData data = GetMaxMuCenterData(position);
 				int neighborMaxIndex = data.index;
@@ -82,16 +93,16 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 					{
 						if (data.value < MuThresholdValue || imax != neighborMaxIndex)
 						{
-							Result[id.xy] = float4(0, 0, 0, 1);
+							Result[id.xy] = darkGray;
 							return;
 						}
-					}					
+					}
 				}
 				else
 				{
 					if (imax != neighborMaxIndex)
 					{
-						Result[id.xy] = float4(0, 0, 0, 1);
+						Result[id.xy] = darkGray;
 						return;
 					}
 				}
@@ -101,17 +112,14 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 
 	if (DrawThresholdValue)
 	{
-		const float grayValue = 0.5;
-		const float4 gray = float4(grayValue, grayValue, grayValue, grayValue);
-
 		if (max < MuThresholdValue)
-			res = gray;
+			res = lightGray;
 		else
 			res = CentersColors[imax];
 	}
 
-	if (DrawGrayscale && max > MuThresholdValue)
-		res = float4(1, 1, 1, 1);
+	if (DrawGrayscale && (!DrawThresholdValue || max > MuThresholdValue))
+		res = white;
 
 	res.a = 1;
 

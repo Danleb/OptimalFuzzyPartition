@@ -26,9 +26,7 @@ namespace Partition.Managing
         [SerializeField] private string _screenshotPath;
 
         [Header("Show current partition with settings")]
-        [SerializeField] private bool _alwaysShowCentersInfo;
-        [SerializeField] private bool _drawWithMistrustCoefficient;
-        [SerializeField] private double _mistrustCoefficient;
+        [SerializeField] RenderingSettings _renderingSettings;
 
         private SimpleTcpServer _server;
 
@@ -54,12 +52,7 @@ namespace Partition.Managing
             {
                 CommandType = CommandType.CreateFuzzyPartition,
                 PartitionSettings = _partitionSettingsHolder.GetPartitionSettings(),
-                RenderingSettings = new RenderingSettings
-                {
-                    AlwaysShowCentersInfo = _alwaysShowCentersInfo,
-                    DrawWithMistrustCoefficient = _drawWithMistrustCoefficient,
-                    MistrustCoefficient = _mistrustCoefficient
-                }
+                RenderingSettings = _renderingSettings
             };
 
             SendToClient(commandAndData);
@@ -71,13 +64,7 @@ namespace Partition.Managing
             var commandAndData = new CommandAndData
             {
                 CommandType = CommandType.ShowPartitionAtIterationIndex,
-                RenderingSettings = new RenderingSettings
-                {
-                    AlwaysShowCentersInfo = _alwaysShowCentersInfo,
-                    DrawWithMistrustCoefficient = _drawWithMistrustCoefficient,
-                    MistrustCoefficient = _mistrustCoefficient,
-                    IterationNumber = _iterationNumber
-                }
+                RenderingSettings = _renderingSettings
             };
 
             SendToClient(commandAndData);
@@ -101,13 +88,7 @@ namespace Partition.Managing
             var commandAndData = new CommandAndData
             {
                 CommandType = CommandType.ShowCurrentPartitionWithSettings,
-                RenderingSettings = new RenderingSettings
-                {
-                    AlwaysShowCentersInfo = _alwaysShowCentersInfo,
-                    DrawWithMistrustCoefficient = _drawWithMistrustCoefficient,
-                    MistrustCoefficient = _mistrustCoefficient,
-                    IterationNumber = _iterationNumber
-                }
+                RenderingSettings = _renderingSettings
             };
 
             SendToClient(commandAndData);

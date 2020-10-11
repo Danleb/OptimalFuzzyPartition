@@ -62,17 +62,19 @@ namespace FuzzyPartitionVisualizing
             _partitionDrawingShader.SetInt("CentersCount", _settings.CentersSettings.CentersCount);
             _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "Result", _partitionRenderTexture);
-            _partitionDrawingShader.SetBool("DrawGrayscale", _renderingSettings.DrawGrayscale);
-            _partitionDrawingShader.SetBool("DrawBorder", _renderingSettings.DrawGrayscale);
-            const int borderWidth = 5;
-            _partitionDrawingShader.SetInt("BorderWidth", borderWidth);
         }
 
-        public RenderTexture CreatePartitionTexture(RenderTexture muRenderTexture, bool drawWithMuThreshold, float muThreshold = 0.35f)
+        public RenderTexture CreatePartitionTexture(RenderTexture muRenderTexture, RenderingSettings renderingSettings)
         {
+            _renderingSettings = renderingSettings;
+
+            _partitionDrawingShader.SetBool("DrawGrayscale", _renderingSettings.DrawGrayscale);
+            _partitionDrawingShader.SetInts("ImageSize", _settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1]);
+            _partitionDrawingShader.SetInt("BorderWidth", _renderingSettings.BorderWidth);
+
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
-            _partitionDrawingShader.SetBool("DrawThresholdValue", drawWithMuThreshold);
-            _partitionDrawingShader.SetFloat("MuThresholdValue", muThreshold);
+            _partitionDrawingShader.SetBool("DrawThresholdValue", _renderingSettings.DrawWithMistrustCoefficient);
+            _partitionDrawingShader.SetFloat("MuThresholdValue", (float)_renderingSettings.MistrustCoefficient);
 
             _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.SpaceSettings.GridSize[0] / _shaderNumThreads.x, _settings.SpaceSettings.GridSize[1] / _shaderNumThreads.y, 1);
 

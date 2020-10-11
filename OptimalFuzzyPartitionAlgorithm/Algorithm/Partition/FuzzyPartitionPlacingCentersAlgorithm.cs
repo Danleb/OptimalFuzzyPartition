@@ -84,8 +84,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
             if (tausDelta < _settings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon)
             {
-                //Trace.WriteLine("Algorithm stop by centers max delta");
-                //return true;
+                Trace.WriteLine("Algorithm stop by centers max delta");
+                return true;
             }
 
             return false;

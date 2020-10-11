@@ -7,7 +7,11 @@
         xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови нечіткого розбиття" Height="874.496" Width="837.778" WindowStartupLocation="CenterScreen"
+        Title="Налаштування алгоритму побудови нечіткого розбиття"
+        Height="839.829"
+        Width="837.778"
+        SizeToContent ="Height"
+        WindowStartupLocation="CenterScreen"
         Closing="AlgorithmSettingsWindow_OnClosing"
         >
 
@@ -139,6 +143,7 @@
                             <Binding Path="SegmentsCountY" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <vr:NumberValidationRule></vr:NumberValidationRule>
+                                    <vr:GridSizeValidationRule></vr:GridSizeValidationRule>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
@@ -210,7 +215,8 @@
                     </TextBox.Text>
                 </TextBox>
 
-                <Label Content="Параметри r-алгоритму:" FontWeight="Bold"></Label>
+                <!--<Label Content="Параметри r-алгоритму:" FontWeight="Bold"></Label>-->
+                <Label Content="Параметри методу градієнтного спуску:" FontWeight="Bold"></Label>
 
                 <Label Content="Максимальна кількість ітерацій:"></Label>
                 <TextBox Style="{StaticResource TextBoxStyle}">
@@ -234,6 +240,17 @@
                     </TextBox.Text>
                 </TextBox>
 
+                <Label Content="Мінімальне значення кроку для закінчення ітерацій:"></Label>
+                <TextBox Style="{StaticResource TextBoxStyle}">
+                    <TextBox.Text>
+                        <Binding Path="CentersDeltaEpsilon" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                
                 <!--<Label Content="Коефіцієнт розтягу простору:"></Label>
                 <TextBox Style="{StaticResource TextBoxStyle}">
                     <TextBox.Text>

@@ -76,7 +76,7 @@ namespace FuzzyPartitionComputing
             return muGridValueInterpolators;
         }
 
-        public List<Vector<double>> Run()
+        public List<Vector<double>> Run(out int iteratiosCount)
         {
             _timer.Start();
 
@@ -98,6 +98,8 @@ namespace FuzzyPartitionComputing
             var t = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
             var timeString = $"{t.Hours:D2}h:{t.Minutes:D2}m:{t.Seconds:D2}s:{t.Milliseconds:D3}ms";
             Logger.Debug($"Optimal placing partition global time: {timeString}");
+
+            iteratiosCount = PlacingAlgorithm.PerformedIterationCount;
 
             return PlacingAlgorithm.GetCenters();
         }

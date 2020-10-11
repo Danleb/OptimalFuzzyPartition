@@ -1,4 +1,5 @@
-﻿using OptimalFuzzyPartition.Annotations;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using OptimalFuzzyPartitionAlgorithm.Settings;
@@ -7,7 +8,10 @@ using SimpleTCP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Threading;
 
 namespace OptimalFuzzyPartition.ViewModel
@@ -23,9 +27,16 @@ namespace OptimalFuzzyPartition.ViewModel
         private double _targetFunctionalValue;
         private double _dualFunctionalValue;
 
+        private Stopwatch _timePassStopWatch;
+        private string _lastPartitionImageSavePath;
+        private bool _isManualSavePathEnabled;
+        private string _partitionImageSavePath;
         private readonly CommandAndData _commandAndData = new CommandAndData
         {
-            RenderingSettings = new RenderingSettings()
+            RenderingSettings = new RenderingSettings
+            {
+                BorderWidth = 3
+            }
         };
 
         public TimeSpan TimePassed { get; set; }
@@ -110,13 +121,34 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
+        public bool IsManualSavePathEnabled
+        {
+            get => _isManualSavePathEnabled; set
+            {
+                _isManualSavePathEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string PartitionImageSavePath
+        {
+            get => _partitionImageSavePath;
+            set
+            {
+                _partitionImageSavePath = value;
+                OnPropertyChanged();
+            }
+        }
+
         public List<CenterData> CenterCoordinates { get; set; } = new List<CenterData>();
 
-        public RelayCommand RunPartitionCreationCommand { get; set; }
+        public RelayCommand RunPartitionCreationCommand { get; }
 
-        public RelayCommand SavePartitionImageCommand { get; set; }
+        public RelayCommand SavePartitionImageCommand { get; }
 
-        public RelayCommand UpdatePartitionCommand { get; set; }
+        public RelayCommand UpdatePartitionCommand { get; }
+
+        public RelayCommand ChoosePartitionImageSavePathCommand { get; }
 
         public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
         {
@@ -125,6 +157,12 @@ namespace OptimalFuzzyPartition.ViewModel
 
             PartitionSettings = partitionSettings;
 
+            _ = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
+
+            _lastPartitionImageSavePath = Properties.Settings.Default.PartitionImageSavePath;
+            PartitionImageSavePath = _lastPartitionImageSavePath;
+
+            ChoosePartitionImageSavePathCommand = new RelayCommand(v => ChoosePartitionImageSavePath());
             RunPartitionCreationCommand = new RelayCommand(v => RunPartitionCreation());
             SavePartitionImageCommand = new RelayCommand(v => SavePartitionImage());
             UpdatePartitionCommand = new RelayCommand(v => UpdatePartition());
@@ -134,10 +172,40 @@ namespace OptimalFuzzyPartition.ViewModel
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
         }
 
+        private void ChoosePartitionImageSavePath()
+        {
+            var directory = (_lastPartitionImageSavePath == null || string.IsNullOrEmpty(_lastPartitionImageSavePath)) ? Environment.CurrentDirectory : _lastPartitionImageSavePath;
+
+            var commonOpenFileDialog = new CommonOpenFileDialog
+            {
+                IsFolderPicker = true,
+                DefaultDirectory = directory
+            };
+
+            if (commonOpenFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                directory = commonOpenFileDialog.FileName;
+                _lastPartitionImageSavePath = directory;
+                PartitionImageSavePath = directory;
+
+                Properties.Settings.Default.PartitionImageSavePath = directory;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void SavePartitionImage()
         {
             _commandAndData.CommandType = CommandType.SavePartitionImage;
-            _commandAndData.ImageSavePath = null;
+
+            if (IsManualSavePathEnabled && PartitionImageSavePath != null)
+            {
+                _commandAndData.ImageSavePath = Encoding.UTF8.GetBytes(PartitionImageSavePath);
+            }
+            else
+            {
+                _commandAndData.ImageSavePath = null;
+            }
+
             _simpleTcpServer.Broadcast(_commandAndData.ToBytes());
         }
 
@@ -152,10 +220,14 @@ namespace OptimalFuzzyPartition.ViewModel
                 var data = e.Data.ConvertTo<PartitionResult>();
                 TargetFunctionalValue = data.TargetFunctionalValue;
                 DualFunctionalValue = data.DualFunctionalValue;
+                PerformedIterationCount = data.PerformedIterationsCount;
 
                 if (data.WorkFinished)
                 {
                     _timer.Stop();
+                    _timePassStopWatch.Stop();
+                    TimePassed = TimeSpan.FromMilliseconds(_timePassStopWatch.ElapsedMilliseconds);
+                    OnPropertyChanged(nameof(TimePassed));
                 }
             }
         }
@@ -164,6 +236,8 @@ namespace OptimalFuzzyPartition.ViewModel
         {
             TimePassed = TimeSpan.Zero;
             _timer.Start();
+            _timePassStopWatch = new Stopwatch();
+            _timePassStopWatch.Start();
 
             _commandAndData.CommandType = CommandType.CreateFuzzyPartition;
             _commandAndData.PartitionSettings = PartitionSettings;

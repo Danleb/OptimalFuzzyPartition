@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
-        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="450" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico"
+        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="625" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
@@ -37,7 +37,7 @@
 
                     <CheckBox x:Name="CheckBoxAlwaysShowInfo" Content="Завжди показувати інформацію про центри" Margin="5" IsChecked="{Binding AlwaysShowCentersInfo}"></CheckBox>
 
-                    <Label Margin="5" Content="{Binding IterationNumberToInspect}" ContentStringFormat="Номер ітерації для дослідження: {0}"></Label>
+                    <!--<Label Margin="5" Content="{Binding IterationNumberToInspect}" ContentStringFormat="Номер ітерації для дослідження: {0}"></Label>
                     <TextBox Margin="5" Width="70" HorizontalAlignment="Left">
                         <TextBox.Text>
                             <Binding Path="IterationNumberToInspect">
@@ -45,24 +45,39 @@
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
-                    <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>
+                    <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>-->
+
+                    <CheckBox Margin="5" Content="Розбиття у градаціях сірого" IsChecked="{Binding DrawGrayscale}"></CheckBox>
 
                     <CheckBox Margin="5" Content="Малювати розбиття з коефіцієнтом недовіри" IsChecked="{Binding DrawWithMistrust}"></CheckBox>
-                    <CheckBox Margin="5" Content="Розбиття у градаціях сірого" IsChecked="{Binding DrawGrayscale}"></CheckBox>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding DrawWithMistrust}">
                         <Label Content="Коефіцієнт недовіри: "></Label>
                         <TextBox VerticalAlignment="Center" MinWidth="50" Margin="5" Text="{Binding MistrustCoefficient}"></TextBox>
                     </StackPanel>
-                    <Slider Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
+                    <Slider IsEnabled="{Binding  DrawWithMistrust}" Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
                     <Button Name="Button" Margin="5" Content="Оновити розбиття" Command="{Binding UpdatePartitionCommand}"></Button>
 
                     <!--<Button Margin="5" Content="Відкрити налаштування"></Button>-->
 
-                    <Label Margin="5" Content="{Binding TargetFunctionalValue}" ContentStringFormat="Значення цільового функціоналу: {0}"></Label>
-                    <Label Margin="5" Content="{Binding DualFunctionalValue}" ContentStringFormat="Значення двоїстого функціоналу: {0}"></Label>
+                    <!--"Значення цільового функціоналу: {0}"-->
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Значення цільового функціоналу:"></Label>
+                        <TextBox Text="{Binding TargetFunctionalValue}" VerticalAlignment="Center" Margin="5" MinWidth="50" IsReadOnly="True"></TextBox>
+                    </StackPanel>
 
-                    <CheckBox Margin="5" Content="Вибрати шлях вручну:" VerticalAlignment="Center" IsChecked="False"></CheckBox>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Значення двоїстого функціоналу:"></Label>
+                        <TextBox  Text="{Binding DualFunctionalValue}" VerticalAlignment="Center" Margin="5" MinWidth="50" IsReadOnly="True"></TextBox>
+                    </StackPanel>
+
+                    <!--<TextBox Margin="5" Text="{Binding StringFormat=Значення цільового функціоналу: {0}, Path=TargetFunctionalValue}" IsReadOnly="True"></TextBox>
+                    -->
+                    <!--ContentStringFormat="Значення двоїстого функціоналу: {0}"-->
+                    <!--
+                    <TextBox Margin="5" Text="{Binding DualFunctionalValue}" IsReadOnly="True"></TextBox>-->
+
+                    <CheckBox Margin="5" Content="Вибрати шлях вручну:" VerticalAlignment="Center" IsChecked="{Binding IsManualSavePathEnabled}"></CheckBox>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -70,8 +85,8 @@
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Content="Шлях:" VerticalAlignment="Center"></Label>
-                        <TextBox Grid.Column="1" Text="Розбиття.png" VerticalAlignment="Center"></TextBox>
-                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="5" Content="Обрати шлях" VerticalAlignment="Center"></Button>
+                        <TextBox Grid.Column="1" Text="{Binding PartitionImageSavePath}" VerticalAlignment="Center" MaxWidth="150" IsReadOnly="True"></TextBox>
+                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="5" Content="Обрати шлях" VerticalAlignment="Center" Command="{Binding ChoosePartitionImageSavePathCommand}" IsEnabled="{Binding IsManualSavePathEnabled}"></Button>
                     </Grid>
 
                     <Button Margin="5" Content="Зберегти зображення" Command="{Binding SavePartitionImageCommand}"></Button>
