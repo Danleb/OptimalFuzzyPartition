@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 // Handles the log items in an optimized way such that existing log items are
 // recycled within the list instead of creating a new log item at each chance
@@ -15,9 +16,6 @@ namespace IngameDebugConsole
 		private RectTransform viewportTransform;
 
 		[SerializeField]
-		private DebugLogManager debugManager;
-
-		[SerializeField]
 		private Color logItemNormalColor1;
 		[SerializeField]
 		private Color logItemNormalColor2;
@@ -25,7 +23,8 @@ namespace IngameDebugConsole
 		private Color logItemSelectedColor;
 #pragma warning restore 0649
 
-		private DebugLogManager manager;
+		internal DebugLogManager manager;
+		private ScrollRect scrollView;
 
 		private float logItemHeight, _1OverLogItemHeight;
 		private float viewportHeight;
@@ -34,7 +33,8 @@ namespace IngameDebugConsole
 		private List<DebugLogEntry> collapsedLogEntries = null;
 
 		// Indices of debug entries to show in collapsedLogEntries
-		private DebugLogIndexList indicesOfEntriesToShow = null;
+		private DebugLogIndexList<int> indicesOfEntriesToShow = null;
+		private DebugLogIndexList<DebugLogEntryTimestamp> timestampsOfEntriesToShow = null;
 
 		private int indexOfSelectedLogEntry = int.MaxValue;
 		private float positionOfSelectedLogEntry = float.MaxValue;
@@ -42,7 +42,7 @@ namespace IngameDebugConsole
 		private float deltaHeightOfSelectedLogEntry;
 
 		// Log items used to visualize the debug entries at specified indices
-		private Dictionary<int, DebugLogItem> logItemsAtIndices = new Dictionary<int, DebugLogItem>();
+		private readonly Dictionary<int, DebugLogItem> logItemsAtIndices = new Dictionary<int, DebugLogItem>( 256 );
 
 		private bool isCollapseOn = false;
 
@@ -52,17 +52,20 @@ namespace IngameDebugConsole
 		public float ItemHeight { get { return logItemHeight; } }
 		public float SelectedItemHeight { get { return heightOfSelectedLogEntry; } }
 
-		void Awake()
+		private void Awake()
 		{
+			scrollView = viewportTransform.GetComponentInParent<ScrollRect>();
+			scrollView.onValueChanged.AddListener( ( pos ) => UpdateItemsInTheList( false ) );
+
 			viewportHeight = viewportTransform.rect.height;
 		}
 
-		public void Initialize( DebugLogManager manager, List<DebugLogEntry> collapsedLogEntries,
-			DebugLogIndexList indicesOfEntriesToShow, float logItemHeight )
+		public void Initialize( DebugLogManager manager, List<DebugLogEntry> collapsedLogEntries, DebugLogIndexList<int> indicesOfEntriesToShow, DebugLogIndexList<DebugLogEntryTimestamp> timestampsOfEntriesToShow, float logItemHeight )
 		{
 			this.manager = manager;
 			this.collapsedLogEntries = collapsedLogEntries;
 			this.indicesOfEntriesToShow = indicesOfEntriesToShow;
+			this.timestampsOfEntriesToShow = timestampsOfEntriesToShow;
 			this.logItemHeight = logItemHeight;
 			_1OverLogItemHeight = 1f / logItemHeight;
 		}
@@ -75,13 +78,43 @@ namespace IngameDebugConsole
 		// A log item is clicked, highlight it
 		public void OnLogItemClicked( DebugLogItem item )
 		{
-			if( indexOfSelectedLogEntry != item.Index )
+			OnLogItemClickedInternal( item.Index, item );
+		}
+
+		// Force expand the log item at specified index
+		public void SelectAndFocusOnLogItemAtIndex( int itemIndex )
+		{
+			if( indexOfSelectedLogEntry != itemIndex ) // Make sure that we aren't deselecting the target log item
+				OnLogItemClickedInternal( itemIndex );
+
+			float transformComponentCenterYAtTop = viewportHeight * 0.5f;
+			float transformComponentCenterYAtBottom = transformComponent.sizeDelta.y - viewportHeight * 0.5f;
+			float transformComponentTargetCenterY = itemIndex * logItemHeight + viewportHeight * 0.5f;
+			if( transformComponentCenterYAtTop == transformComponentCenterYAtBottom )
+				scrollView.verticalNormalizedPosition = 0.5f;
+			else
+				scrollView.verticalNormalizedPosition = Mathf.Clamp01( Mathf.InverseLerp( transformComponentCenterYAtBottom, transformComponentCenterYAtTop, transformComponentTargetCenterY ) );
+
+			manager.SetSnapToBottom( false );
+		}
+
+		private void OnLogItemClickedInternal( int itemIndex, DebugLogItem referenceItem = null )
+		{
+			if( indexOfSelectedLogEntry != itemIndex )
 			{
 				DeselectSelectedLogItem();
 
-				indexOfSelectedLogEntry = item.Index;
-				positionOfSelectedLogEntry = item.Index * logItemHeight;
-				heightOfSelectedLogEntry = item.CalculateExpandedHeight( item.ToString() );
+				if( !referenceItem )
+				{
+					if( currentTopIndex == -1 )
+						UpdateItemsInTheList( false ); // Try to generate some DebugLogItems, we need one DebugLogItem to calculate the text height
+
+					referenceItem = logItemsAtIndices[currentTopIndex];
+				}
+
+				indexOfSelectedLogEntry = itemIndex;
+				positionOfSelectedLogEntry = itemIndex * logItemHeight;
+				heightOfSelectedLogEntry = referenceItem.CalculateExpandedHeight( collapsedLogEntries[indicesOfEntriesToShow[itemIndex]], ( timestampsOfEntriesToShow != null ) ? timestampsOfEntriesToShow[itemIndex] : (DebugLogEntryTimestamp?) null );
 				deltaHeightOfSelectedLogEntry = heightOfSelectedLogEntry - logItemHeight;
 
 				manager.SetSnapToBottom( false );
@@ -130,11 +163,42 @@ namespace IngameDebugConsole
 		{
 			DebugLogItem logItem;
 			if( logItemsAtIndices.TryGetValue( index, out logItem ) )
+			{
 				logItem.ShowCount();
+
+				if( timestampsOfEntriesToShow != null )
+					logItem.UpdateTimestamp( timestampsOfEntriesToShow[index] );
+			}
 		}
 
-		// Log window is resized, update the list
-		public void OnViewportDimensionsChanged()
+		// Log window's width has changed, update the expanded (currently selected) log's height
+		public void OnViewportWidthChanged()
+		{
+			if( indexOfSelectedLogEntry >= indicesOfEntriesToShow.Count )
+				return;
+
+			if( currentTopIndex == -1 )
+			{
+				UpdateItemsInTheList( false ); // Try to generate some DebugLogItems, we need one DebugLogItem to calculate the text height
+				if( currentTopIndex == -1 ) // No DebugLogItems are generated, weird
+					return;
+			}
+
+			DebugLogItem referenceItem = logItemsAtIndices[currentTopIndex];
+
+			heightOfSelectedLogEntry = referenceItem.CalculateExpandedHeight( collapsedLogEntries[indicesOfEntriesToShow[indexOfSelectedLogEntry]], ( timestampsOfEntriesToShow != null ) ? timestampsOfEntriesToShow[indexOfSelectedLogEntry] : (DebugLogEntryTimestamp?) null );
+			deltaHeightOfSelectedLogEntry = heightOfSelectedLogEntry - logItemHeight;
+
+			CalculateContentHeight();
+
+			HardResetItems();
+			UpdateItemsInTheList( true );
+
+			manager.ValidateScrollPosition();
+		}
+
+		// Log window's height has changed, update the list
+		public void OnViewportHeightChanged()
 		{
 			viewportHeight = viewportTransform.rect.height;
 			UpdateItemsInTheList( false );
@@ -277,7 +341,7 @@ namespace IngameDebugConsole
 		// Create (or unpool) a log item
 		private void CreateLogItemAtIndex( int index )
 		{
-			DebugLogItem logItem = debugManager.PopLogItem();
+			DebugLogItem logItem = manager.PopLogItem();
 
 			// Reposition the log item
 			Vector2 anchoredPosition = new Vector2( 1f, -index * logItemHeight );
@@ -296,7 +360,7 @@ namespace IngameDebugConsole
 		private void DestroyLogItemsBetweenIndices( int topIndex, int bottomIndex )
 		{
 			for( int i = topIndex; i <= bottomIndex; i++ )
-				debugManager.PoolLogItem( logItemsAtIndices[i] );
+				manager.PoolLogItem( logItemsAtIndices[i] );
 		}
 
 		private void UpdateLogItemContentsBetweenIndices( int topIndex, int bottomIndex )
@@ -305,7 +369,7 @@ namespace IngameDebugConsole
 			for( int i = topIndex; i <= bottomIndex; i++ )
 			{
 				logItem = logItemsAtIndices[i];
-				logItem.SetContent( collapsedLogEntries[indicesOfEntriesToShow[i]], i, i == indexOfSelectedLogEntry );
+				logItem.SetContent( collapsedLogEntries[indicesOfEntriesToShow[i]], ( timestampsOfEntriesToShow != null ) ? timestampsOfEntriesToShow[i] : (DebugLogEntryTimestamp?) null, i, i == indexOfSelectedLogEntry );
 
 				if( isCollapseOn )
 					logItem.ShowCount();

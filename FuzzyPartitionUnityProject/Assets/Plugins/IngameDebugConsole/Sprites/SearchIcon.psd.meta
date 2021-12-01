@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: e04e6c970b950d946a782ea08e5f971d
 TextureImporter:
-  internalIDToNameTable: []
+  fileIDToRecycleName: {}
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 9
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -57,69 +57,62 @@ TextureImporter:
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
-  applyGammaDecoding: 1
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 2
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 32
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
-  - serializedVersion: 3
+  - serializedVersion: 2
     buildTarget: Standalone
     maxTextureSize: 32
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
-  - serializedVersion: 3
+  - serializedVersion: 2
     buildTarget: Android
     maxTextureSize: 32
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
-  - serializedVersion: 3
+  - serializedVersion: 2
     buildTarget: WebGL
     maxTextureSize: 32
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
     serializedVersion: 2
     sprites: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    spriteID: 7ed98dd97fcb4944d94b7002c7194e19
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures: []
   spritePackingTag: DebugLogUI
   pSDRemoveMatte: 1
   pSDShowRemoveMatteOption: 1
