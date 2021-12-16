@@ -35,6 +35,14 @@ namespace OptimalFuzzyPartitionAlgorithmTests.Utils.GridValue
             var interpolator = new GridValueInterpolator(spaceSettings, getter);
 
             Assert.AreEqual(1, interpolator.GetGridValueAtPoint(0, 0));
+            Assert.AreEqual(2, interpolator.GetGridValueAtPoint(1, 0));
+            Assert.AreEqual(3, interpolator.GetGridValueAtPoint(2, 0));
+            Assert.AreEqual(4, interpolator.GetGridValueAtPoint(0, 1));
+            Assert.AreEqual(5, interpolator.GetGridValueAtPoint(1, 1));
+            Assert.AreEqual(6, interpolator.GetGridValueAtPoint(2, 1));
+            Assert.AreEqual(7, interpolator.GetGridValueAtPoint(0, 2));
+            Assert.AreEqual(8, interpolator.GetGridValueAtPoint(1, 2));
+            Assert.AreEqual(9, interpolator.GetGridValueAtPoint(2, 2));
             Assert.AreEqual(9, interpolator.GetGridValueAtPoint(10, 10));
 
 

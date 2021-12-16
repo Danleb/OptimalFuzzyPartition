@@ -526,37 +526,65 @@ MonoBehaviour:
   _isCentersPlacingTask: 1
   _minCorner: {x: 0, y: 0}
   _maxCorner: {x: 1, y: 1}
-  _gridSize: {x: 256, y: 256}
+  _gridSize: {x: 128, y: 128}
   _densityType: 0
   _metricsType: 0
-  _centersCount: 3
+  _centersCount: 10
   _centerPositions:
   - {x: 0.1, y: 0.1}
-  - {x: 0.2, y: 0.1}
+  - {x: 0.1, y: 0.2}
+  - {x: 0.1, y: 0.3}
+  - {x: 0.1, y: 0.4}
+  - {x: 0.1, y: 0.5}
+  - {x: 0.1, y: 0.6}
+  - {x: 0.1, y: 0.7}
+  - {x: 0.1, y: 0.8}
+  - {x: 0.1, y: 0.9}
+  - {x: 0.2, y: 0.2}
+  - {x: 0.3, y: 0.2}
+  - {x: 0.4, y: 0.2}
+  - {x: 0.5, y: 0.2}
+  - {x: 0.6, y: 0.2}
+  - {x: 0.7, y: 0.2}
+  - {x: 0.8, y: 0.2}
+  - {x: 0.9, y: 0.2}
+  - {x: 0.2, y: 0.9}
   - {x: 0.3, y: 0.1}
+  - {x: 0.3, y: 0.2}
+  - {x: 0.3, y: 0.3}
+  - {x: 0.3, y: 0.4}
+  - {x: 0.3, y: 0.5}
+  - {x: 0.3, y: 0.6}
+  - {x: 0.3, y: 0.7}
+  - {x: 0.3, y: 0.8}
+  - {x: 0.3, y: 0.9}
   - {x: 0.5, y: 0.5}
-  - {x: 0.9, y: 0.1}
-  - {x: 0.9, y: 0.4}
+  - {x: 0.6, y: 0.6}
+  - {x: 0.7, y: 0.7}
   - {x: 0.8, y: 0.8}
-  - {x: 0.6, y: 0.3}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
-  - {x: 0.9, y: 0.9}
   - {x: 0.9, y: 0.9}
   _centerDatas:
+  - A: 0
+    W: 1
+    IsFixed: 0
+  - A: 0
+    W: 1
+    IsFixed: 0
+  - A: 0
+    W: 1
+    IsFixed: 0
+  - A: 0
+    W: 1
+    IsFixed: 0
+  - A: 0
+    W: 1
+    IsFixed: 0
+  - A: 0
+    W: 1
+    IsFixed: 0
+  - A: 0
+    W: 1
+    IsFixed: 0
   - A: 0
     W: 1
     IsFixed: 0
@@ -671,15 +699,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1459721567}
-  - {fileID: 1915549118}
   - {fileID: 412366507}
-  - {fileID: 691422280}
   - {fileID: 2064381403}
   - {fileID: 1786049688}
-  - {fileID: 949403743}
   - {fileID: 911121354}
   - {fileID: 815567635}
-  - {fileID: 1139091454}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1037,7 +1061,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 42029893}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &412366508
 MonoBehaviour:
@@ -1365,51 +1389,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 572412594}
   m_CullTransparentMesh: 0
---- !u!1 &691422279
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 691422280}
-  - component: {fileID: 691422281}
-  m_Layer: 0
-  m_Name: Slicer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &691422280
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 691422279}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 42029893}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &691422281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 691422279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af427577891cb934698ec8e67f99158a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _slicerNumThreads: {x: 8, y: 8}
-  _slicerShader: {fileID: 7200000, guid: ffe5a0f8086b5064ea8a65b4be0363be, type: 3}
 --- !u!1 &709468086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1455,12 +1434,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fuzzyPartitionShader: {fileID: 7200000, guid: 4386990bb7c8ca04d9362aab55abeebb,
     type: 3}
-  _textureToGridConverter: {fileID: 1915549119}
   _zeroInitNumThreads: {x: 8, y: 8, z: 1}
   _muUpdateNumThreads: {x: 8, y: 8, z: 1}
   _psiUpdateNumThreads: {x: 8, y: 8, z: 1}
   _showMuGridsInfo: 0
   _compareWithCpuMuGrid: 0
+  _muValueDigitsCount: 8
 --- !u!1 &722078894
 GameObject:
   m_ObjectHideFlags: 0
@@ -1664,7 +1643,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 42029893}
-  m_RootOrder: 8
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &815567636
 MonoBehaviour:
@@ -1711,7 +1690,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 42029893}
-  m_RootOrder: 7
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &911121355
 MonoBehaviour:
@@ -1725,36 +1704,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cd2693382801e48a527f73070f9794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &949403742
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 949403743}
-  m_Layer: 0
-  m_Name: KeyboardHook
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &949403743
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 949403742}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 42029893}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &956044179
 GameObject:
   m_ObjectHideFlags: 0
@@ -2086,50 +2035,6 @@ Sprite:
   m_PhysicsShape: []
   m_Bones: []
   m_SpriteID: 
---- !u!1 &1139091453
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1139091454}
-  - component: {fileID: 1139091455}
-  m_Layer: 0
-  m_Name: FpsSetter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1139091454
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139091453}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 42029893}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1139091455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139091453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7412c974d014a824f8b9ff175420043b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetFps: 20
 --- !u!1 &1194084745
 GameObject:
   m_ObjectHideFlags: 0
@@ -2438,7 +2343,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _partitionFixedCentersComputer: {fileID: 709468088}
-  _muConverter: {fileID: 1915549119}
 --- !u!1 &1376847333
 GameObject:
   m_ObjectHideFlags: 0
@@ -5475,7 +5379,6 @@ MonoBehaviour:
   _partitionFixedCentersComputer: {fileID: 709468088}
   _screenshotTaker: {fileID: 412366508}
   _partitionImageShower: {fileID: 2020812381}
-  _textureToGridConverter: {fileID: 1915549119}
   _calculateTargetFunctionalValue: 1
   _calculateDualFunctionalValue: 1
 --- !u!1 &1711571384
@@ -5746,7 +5649,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 42029893}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1786049689
 MonoBehaviour:
@@ -5761,50 +5664,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetFrameRate: 20
---- !u!1 &1915549117
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1915549118}
-  - component: {fileID: 1915549119}
-  m_Layer: 0
-  m_Name: TextureToGridConverter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1915549118
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1915549117}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 42029893}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1915549119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1915549117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c02fcd0338e79a6428e317639ee30cdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _slicer: {fileID: 691422281}
 --- !u!1 &1944735420
 GameObject:
   m_ObjectHideFlags: 0
@@ -5956,8 +5815,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319d980f673d10f40bac3036628ca1d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _image: {fileID: 336839357}
-  _partitionImageCreator: {fileID: 2114860695}
+  _partitionImage: {fileID: 336839357}
+  _partitionTextureCreator: {fileID: 2114860695}
   _centersInfoShower: {fileID: 15913491}
   _colorsGenerator: {fileID: 1459721568}
   _renderingSettings:
@@ -6071,7 +5930,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 42029893}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2064381404
 MonoBehaviour:
@@ -6217,6 +6076,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2

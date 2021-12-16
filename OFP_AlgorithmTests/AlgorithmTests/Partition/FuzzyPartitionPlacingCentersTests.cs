@@ -120,9 +120,9 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests.Partition
     {
         public const double PositionDelta = 0.01;
 
-        public readonly FuzzyPartitionTestData _1_CenterData = FuzzyPartitionSettingsBuilder._1_Center();
-        public readonly FuzzyPartitionTestData _3_CenterData = FuzzyPartitionSettingsBuilder._3_Center();
-        public readonly FuzzyPartitionTestData _5_CenterData = FuzzyPartitionSettingsBuilder._5_Center();
+        public static FuzzyPartitionTestData _1_CenterData = FuzzyPartitionSettingsBuilder._1_Center();
+        public static FuzzyPartitionTestData _3_CenterData = FuzzyPartitionSettingsBuilder._3_Center();
+        public static FuzzyPartitionTestData _5_CenterData = FuzzyPartitionSettingsBuilder._5_Center();
 
         [TestCaseSource(nameof(_1_CenterData))]
         public void _1_Center(FuzzyPartitionTestData testData)

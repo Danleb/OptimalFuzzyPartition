@@ -95,7 +95,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             {
                 for (var yIndex = 0; yIndex < WidthY; yIndex++)
                 {
-                    _psiGrid[yIndex, xIndex] = -1d;
+                    _psiGrid[yIndex, xIndex] = PartitionSettings.PsiStartValue;
                 }
             }
         }

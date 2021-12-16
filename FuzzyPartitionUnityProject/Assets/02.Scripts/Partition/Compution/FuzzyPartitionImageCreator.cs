@@ -12,9 +12,9 @@ namespace FuzzyPartitionVisualizing
     {
         [SerializeField] private ComputeShader _partitionDrawingShader;
 
+        private Color[] _centersColors;
         private PartitionSettings _settings;
         private RenderingSettings _renderingSettings;
-        private Color[] _centersColors;
 
         private RenderTexture _partitionRenderTexture;
         private int _partitionDrawingKernel;
@@ -50,6 +50,7 @@ namespace FuzzyPartitionVisualizing
 
             var targetWidth = _settings.SpaceSettings.GridSize[0];
             var targetHeight = _settings.SpaceSettings.GridSize[1];
+
             if (_partitionRenderTexture?.width != targetWidth || _partitionRenderTexture?.height != targetHeight)
             {
                 _partitionRenderTexture = new RenderTexture(targetWidth, targetHeight, 0)
@@ -73,14 +74,14 @@ namespace FuzzyPartitionVisualizing
             _partitionDrawingShader.SetInts("ImageSize", _settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1]);
         }
 
-        public RenderTexture CreatePartitionTexture(RenderTexture muRenderTexture, RenderingSettings renderingSettings)
+        public RenderTexture CreatePartitionTexture(ComputeBuffer muGrids, RenderingSettings renderingSettings)
         {
             _renderingSettings = renderingSettings;
             _partitionDrawingShader.SetInt("BorderWidth", _renderingSettings.BorderWidth);
             _partitionDrawingShader.SetBool("DrawGrayscale", _renderingSettings.DrawGrayscale);
             _partitionDrawingShader.SetFloat("MuThresholdValue", (float)_renderingSettings.MistrustCoefficient);
             _partitionDrawingShader.SetBool("DrawThresholdValue", _renderingSettings.DrawWithMistrustCoefficient);
-            _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
+            _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "MuGrids", muGrids);
 
             _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.SpaceSettings.GridSize[0] / _shaderNumThreads.x, _settings.SpaceSettings.GridSize[1] / _shaderNumThreads.y, 1);
 

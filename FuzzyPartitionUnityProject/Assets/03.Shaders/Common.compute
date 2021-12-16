@@ -1,14 +1,11 @@
-﻿float GetEuclideanDistance(float2 a, float2 b)
-{
+﻿float GetEuclideanDistance(float2 a, float2 b) {
 	return distance(a, b);
 }
 
-float GetManhattanDistance(float2 a, float2 b)
-{
+float GetManhattanDistance(float2 a, float2 b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
-float GetChebyshevDistance(float2 a, float2 b)
-{
+float GetChebyshevDistance(float2 a, float2 b) {
 	return max(abs(a.x - b.x), abs(a.y - b.y));
 }

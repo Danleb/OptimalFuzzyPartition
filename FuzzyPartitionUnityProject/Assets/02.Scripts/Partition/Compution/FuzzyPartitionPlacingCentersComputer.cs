@@ -14,7 +14,6 @@ namespace FuzzyPartitionComputing
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [SerializeField] private FuzzyPartitionFixedCentersComputer _partitionFixedCentersComputer;
-        [SerializeField] private TextureToGridConverter _muConverter;
 
         private Stopwatch _timer;
         private PartitionSettings _settings;
@@ -42,7 +41,7 @@ namespace FuzzyPartitionComputing
                      _settings.CentersSettings = centersSettings;
                      _partitionFixedCentersComputer.Init(_settings);
                      var partitionTexture = _partitionFixedCentersComputer.Run();
-                     var muGridValueInterpolators = _muConverter.GetGridValueInterpolators(partitionTexture, settings);
+                     var muGridValueInterpolators = ComputeBufferToGridConverter.GetGridValueInterpolators(partitionTexture, settings);
                      return muGridValueInterpolators;
                  })
              );

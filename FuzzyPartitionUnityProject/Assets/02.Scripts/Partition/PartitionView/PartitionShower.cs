@@ -15,13 +15,13 @@ namespace PartitionView
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [SerializeField] private Image _image;
-        [SerializeField] private FuzzyPartitionImageCreator _partitionImageCreator;
+        [SerializeField] private Image _partitionImage;
+        [SerializeField] private FuzzyPartitionImageCreator _partitionTextureCreator;
         [SerializeField] private CentersInfoShower _centersInfoShower;
         [SerializeField] private ColorsGenerator _colorsGenerator;
         [SerializeField] private RenderingSettings _renderingSettings;
 
-        private RenderTexture _muRenderTexture;
+        private ComputeBuffer _muGrids;
         private PartitionSettings _partitionSettings;
         private Texture2D _partitionTexture;
 
@@ -33,19 +33,19 @@ namespace PartitionView
 
         public void Show()
         {
-            _image.gameObject.SetActive(true);
+            _partitionImage.gameObject.SetActive(true);
         }
 
         public void Hide()
         {
-            _image.gameObject.SetActive(false);
+            _partitionImage.gameObject.SetActive(false);
         }
 
-        public Texture2D CreatePartitionAndShow(PartitionSettings partitionSettings, RenderTexture muRenderTexture)
+        public Texture2D CreatePartitionAndShow(PartitionSettings partitionSettings, ComputeBuffer muGrids)
         {
-            _muRenderTexture = muRenderTexture;
+            _muGrids = muGrids;
             _partitionSettings = partitionSettings;
-            _partitionImageCreator.Init(_partitionSettings, _renderingSettings, _colorsGenerator.GetColors(_partitionSettings.CentersSettings.CentersCount));
+            _partitionTextureCreator.Init(_partitionSettings, _renderingSettings, _colorsGenerator.GetColors(_partitionSettings.CentersSettings.CentersCount));
             _centersInfoShower.Init(partitionSettings);
 
             return CreatePartitionAndShow();
@@ -55,7 +55,7 @@ namespace PartitionView
         public Texture2D CreatePartitionAndShow()
         {
             Logger.Debug("Creating partition texture and showing it.");
-            var renderTexture = _partitionImageCreator.CreatePartitionTexture(_muRenderTexture, _renderingSettings);
+            var renderTexture = _partitionTextureCreator.CreatePartitionTexture(_muGrids, _renderingSettings);
 
             if (_partitionTexture?.width != renderTexture.width || _partitionTexture?.height != renderTexture.height)
             {
@@ -67,11 +67,17 @@ namespace PartitionView
             _partitionTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
             _partitionTexture.Apply();
             var sprite = _partitionTexture.ToSprite();
-            _image.sprite = sprite;
+            _partitionImage.sprite = sprite;
 
             _centersInfoShower.SetShowAlways(_renderingSettings.AlwaysShowCentersInfo);
 
             return _partitionTexture;
+        }
+
+        [Button("Draw test partition image")]
+        public void DrawTestPartitionImage()
+        {
+            //var m
         }
     }
 }

@@ -1,16 +1,18 @@
-﻿int CentersCount;
+﻿#include "Assets/03.Shaders/Common.compute"
+
+int CentersCount;
 StructuredBuffer<float4> CentersColors;
 
-Texture3D<float> MuGrids; //todo replace with StructuredBuffer<float>
-
-RWTexture2D<float4> Result;
+StructuredBuffer<float> MuGrids;
+int2 ImageSize;
 
 bool DrawThresholdValue;
 float MuThresholdValue;
 
 bool DrawGrayscale;
-int2 ImageSize;
 int BorderWidth;
+
+RWTexture2D<float4> Result;
 
 struct MuCenterData
 {
@@ -18,14 +20,29 @@ struct MuCenterData
 	float value;
 };
 
+//=
+int GridIndex(int2 size, int2 xy)
+{
+	return size.x * xy.y + xy.x;
+}
+int PsiIndex(int2 size, int2 xy)
+{
+	return GridIndex(size, xy);
+}
+int MuIndex(int2 size, int2 xy, int centerIndex)
+{
+	return size.x * size.y * centerIndex + GridIndex(size, xy);
+}
+//=
+
 MuCenterData GetMaxMuCenterData(int2 xy)
 {
 	int imax = 0;
-	float max = MuGrids[int3(xy, 0)];
+	float max = MuGrids[MuIndex(ImageSize, xy, 0)];
 
 	for (int i = 0; i < CentersCount; i++)
 	{
-		float muValue = MuGrids[int3(xy, i)];
+		float muValue = MuGrids[MuIndex(ImageSize, xy, i)];
 
 		if (muValue > max)
 		{
@@ -54,7 +71,7 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 	float4 res = black;
 
 	int imax = 0;
-	float max = MuGrids[uint3(id.xy, 0)];
+	float max = MuGrids[MuIndex(ImageSize, id.xy, 0)];
 
 	if (DrawGrayscale)
 		if ((int)id.x - BorderWidth < 0 || (int)id.y - BorderWidth < 0 || (int)id.x + BorderWidth > ImageSize.x || (int)id.y + BorderWidth > ImageSize.y)
@@ -65,7 +82,7 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 
 	for (int i = 0; i < CentersCount; i++)
 	{
-		float muValue = MuGrids[uint3(id.xy, i)];
+		float muValue = MuGrids[MuIndex(ImageSize, id.xy, i)];
 
 		if (muValue > max)
 		{

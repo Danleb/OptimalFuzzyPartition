@@ -10,5 +10,7 @@ namespace OptimalFuzzyPartitionAlgorithm
         public double GradientStep;
 
         public double GradientEpsilon;
+
+        public double PsiStartValue = -1d;
     }
 }

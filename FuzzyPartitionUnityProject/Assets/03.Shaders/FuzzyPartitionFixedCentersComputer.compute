@@ -1,15 +1,18 @@
-﻿int CentersCount;
+﻿#include "Assets/03.Shaders/Common.compute"
+
+int CentersCount;
 
 StructuredBuffer<float2> CentersPositions;
 StructuredBuffer<float> AdditiveCoefficients;
 StructuredBuffer<float> MultiplicativeCoefficients;
 
-RWTexture3D<float> MuGrids;
-RWTexture2D<float> PsiGrid;
+RWStructuredBuffer<float> MuGrids;
+RWStructuredBuffer<float> PsiGrid;
 
 float GradientLambdaStep;
 
 float GradientEpsilon;
+float PsiStartValue;
 
 float2 GridSize;
 float2 MinCorner;
@@ -18,8 +21,6 @@ float2 Diff;
 RWStructuredBuffer<int> StopConditions;
 
 int MetricsIndex;
-
-#include "Assets/03.Shaders/Common.compute"
 
 float GetDistance(float2 a, float2 b)
 {
@@ -34,31 +35,48 @@ float GetDistance(float2 a, float2 b)
 	return GetEuclideanDistance(a, b);
 }
 
+//=
+int GridIndex(int2 size, int2 xy)
+{
+	return size.x * xy.y + xy.x;
+}
+int PsiIndex(int2 size, int2 xy)
+{
+	return GridIndex(size, xy);
+}
+int MuIndex(int2 size, int2 xy, int centerIndex)
+{
+	return size.x * size.y * centerIndex + GridIndex(size, xy);
+}
+//=
+
 #pragma kernel ZeroIterationInit
 [numthreads(8,8,1)]
 void ZeroIterationInit(uint3 id : SV_DispatchThreadID)
 {
-	uint2 texturePoint = id.xy;
-	uint centerIndex = id.z;
+	int2 texturePoint = id.xy;
+	int centerIndex = id.z;		
 	
-	PsiGrid[texturePoint] = 1;
+	PsiGrid[PsiIndex(GridSize, texturePoint)] = PsiStartValue;
 	
 	float muRatio = 1.0 / CentersCount;
-	MuGrids[id] = muRatio;
+	MuGrids[MuIndex(GridSize, texturePoint, centerIndex)] = muRatio;
 }
 
 #pragma kernel UpdateMu
 [numthreads(8,8,1)]
 void UpdateMu(uint3 id : SV_DispatchThreadID)
 {
-	uint2 texturePoint = id.xy;
-	uint centerIndex = id.z;
+	int2 texturePoint = id.xy;
+	int centerIndex = id.z;
+	//int muGridIndex = MuIndex(GridSize, texturePoint, centerIndex);
+	int muGridIndex = GridSize.x * GridSize.y * centerIndex + GridSize.x * id.y + id.x;
 	
 	float a = AdditiveCoefficients[centerIndex];
 	float w = MultiplicativeCoefficients[centerIndex];
 	float2 centerPosition = CentersPositions[centerIndex];
 
-	float2 pointRatio = float2(texturePoint.x, texturePoint.y) / GridSize;
+	float2 pointRatio = float2(texturePoint.x, texturePoint.y) / (GridSize - float2(1, 1));
 	float2 spacePoint = MinCorner + Diff * pointRatio;
 	
 	float densityValue = 1;
@@ -66,7 +84,7 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 	
 	float distance = GetDistance(centerPosition, spacePoint);
 
-	float psiValue = PsiGrid[texturePoint];
+	float psiValue = PsiGrid[PsiIndex(GridSize, texturePoint)];
 
 	float newMuValue = -psiValue / (m * densityValue * (distance / w + a));
 
@@ -78,31 +96,32 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 	}
 	else
 	{
-		float previousMuValue = MuGrids[id];
+		float previousMuValue = MuGrids[muGridIndex];
 		float muGradient = psiValue + m * previousMuValue * (distance / w + a) * densityValue;
 		float signMuGradient = sign(muGradient);
 		normalizedMuValue = 0.5 * (1 - signMuGradient);
 	}
 
-	MuGrids[id] = normalizedMuValue;
+	MuGrids[muGridIndex] = normalizedMuValue;
 }
 
 #pragma kernel UpdatePsi
 [numthreads(8,8,1)]
 void UpdatePsi(uint3 id : SV_DispatchThreadID)
 {
-	uint2 texturePoint = id.xy;
+	int2 texturePoint = int2(id.xy);
 	float grad = 0;
 	for(int centerIndex = 0; centerIndex < CentersCount; centerIndex++)
-		grad += MuGrids[uint3(texturePoint, centerIndex)];
+		grad += MuGrids[MuIndex(GridSize, texturePoint, centerIndex)];
 
 	grad -= 1;
 
-	PsiGrid[texturePoint] = PsiGrid[texturePoint] + GradientLambdaStep * grad;
+	int index = GridSize.x * id.y + id.x;
+	PsiGrid[index] = PsiGrid[index] + GradientLambdaStep * grad;
 
 	//check psi gradient value
 	//if(grad > GradientEpsilon)//reset if gradient too big
 	//{
-	//	StopConditions[0] = 0;
+	//	    StopConditions[0] = 0;
 	//}
 }
