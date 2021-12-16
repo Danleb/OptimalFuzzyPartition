@@ -2,6 +2,9 @@
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm.GradientCalculation
 {
+    /// <summary>
+    /// Calculates value of gradient in point.
+    /// </summary>
     public interface IDistanceGradientCalculator
     {
         double GetGradientDimensionValue(Vector<double> point, int dimensionIndex);

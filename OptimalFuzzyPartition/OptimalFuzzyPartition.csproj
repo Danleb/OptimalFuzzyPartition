@@ -35,6 +35,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>OptimalFuzzyPartition.App</StartupObject>
@@ -94,7 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\DefaultSettingsKeeper.cs" />
+    <Compile Include="Model\DefaultSettingsBuilder.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\AlgorithmSettingsViewModel.cs" />
     <Compile Include="ViewModel\PartitionCreationViewModel.cs" />

@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Text;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
+using System.Collections.Generic;
 
 namespace OptimalFuzzyPartitionAlgorithm.Utils
 {
@@ -51,9 +52,14 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
             return new MatrixGridValueGetter(matrix);
         }
 
-        public static GridValueInterpolator ToGridValueInterpolator(this Matrix<double> matrix, PartitionSettings partitionSettings)
+        public static GridValueInterpolator ToGridValueInterpolator(this Matrix<double> matrix, SpaceSettings spaceSettings)
         {
-            return new GridValueInterpolator(partitionSettings.SpaceSettings, new MatrixGridValueGetter(matrix));
+            return new GridValueInterpolator(spaceSettings, new MatrixGridValueGetter(matrix));
+        }
+
+        public static List<GridValueInterpolator> CreateGridValueInterpolators(this List<Matrix<double>> partition, SpaceSettings spaceSettings)
+        {
+            return partition.Select(v => new GridValueInterpolator(spaceSettings, new MatrixGridValueGetter(v))).ToList();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿int CentersCount;
-RWStructuredBuffer<float4> CentersColors;
+StructuredBuffer<float4> CentersColors;
 
-Texture3D<float> MuGrids;
+Texture3D<float> MuGrids; //todo replace with StructuredBuffer<float>
 
 RWTexture2D<float4> Result;
 
@@ -57,7 +57,7 @@ void DrawPartition(uint3 id : SV_DispatchThreadID)
 	float max = MuGrids[uint3(id.xy, 0)];
 
 	if (DrawGrayscale)
-		if ((int)id.x - BorderWidth < 0 || (int)id.y - BorderWidth < 0 || id.x + BorderWidth > ImageSize.x || id.y + BorderWidth > ImageSize.y)
+		if ((int)id.x - BorderWidth < 0 || (int)id.y - BorderWidth < 0 || (int)id.x + BorderWidth > ImageSize.x || (int)id.y + BorderWidth > ImageSize.y)
 		{
 			Result[id.xy] = darkGray;
 			return;

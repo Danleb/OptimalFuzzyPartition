@@ -22,7 +22,7 @@ namespace OptimalFuzzyPartition.ViewModel
 
         public AlgorithmSettingsViewModel()
         {
-            Settings = DefaultSettingsKeeper.GetPartitionSettings();
+            Settings = DefaultSettingsBuilder.GetPartitionSettings();
 
             CreatePartitionCommand = new RelayCommand(_ =>
                 {
@@ -162,8 +162,7 @@ namespace OptimalFuzzyPartition.ViewModel
             get => Settings.CentersSettings.CentersCount;
             set
             {
-                Settings.CentersSettings.CentersCount = value;
-                Settings.CentersSettings.CenterDatas.ResizeList(CentersCount, () => DefaultSettingsKeeper.GetDefaultCenterData(Settings));
+                Settings.CentersSettings.CenterDatas.ResizeList(value, () => DefaultSettingsBuilder.GetDefaultCenterData(Settings));
 
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CenterDatas));
@@ -188,10 +187,10 @@ namespace OptimalFuzzyPartition.ViewModel
 
         public int GaussLegendreIntegralOrder
         {
-            get => Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder;
+            get => Settings.GaussLegendreIntegralOrder;
             set
             {
-                Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder = value;
+                Settings.GaussLegendreIntegralOrder = value;
                 OnPropertyChanged();
             }
         }
@@ -276,11 +275,23 @@ namespace OptimalFuzzyPartition.ViewModel
 
         #endregion
 
+        #region Settings for menu
+
+        public bool Is;
+
+        #endregion
+
         #region Commands
 
         public RelayCommand CreatePartitionCommand { get; }
 
         public RelayCommand OnClosing { get; }
+
+        public RelayCommand OnSave { get; }
+
+        public RelayCommand OnSaveAs { get; }
+
+        public RelayCommand OnLoadSettings { get; }
 
         #endregion
 

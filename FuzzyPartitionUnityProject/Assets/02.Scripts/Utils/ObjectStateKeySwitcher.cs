@@ -5,11 +5,17 @@ namespace Utils
     public class ObjectStateKeySwitcher : MonoBehaviour
     {
         [SerializeField] private KeyCode _switchKeyCode;
-        [SerializeField] private GameObject _gameObject;
+        [SerializeField] private GameObject[] _gameObjects;
+
+        private bool _isEnabled = false;
 
         public void Switch()
         {
-            _gameObject.SetActive(!_gameObject.activeSelf);
+            _isEnabled = !_isEnabled;
+            foreach (var gameObject in _gameObjects)
+            {
+                gameObject.SetActive(_isEnabled);
+            }
         }
 
         private void Update()

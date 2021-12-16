@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using OptimalFuzzyPartitionAlgorithm.Utils;
 using UnityEngine;
 
 namespace Utils
@@ -7,7 +8,7 @@ namespace Utils
     {
         public static Vector<double> ToVector(this Vector2 vector2)
         {
-            return Vector<double>.Build.SparseOfArray(new double[] { vector2.x, vector2.y });
+            return VectorUtils.CreateVector(vector2.x, vector2.y);
         }
 
         public static Vector2 ToVector2(this Vector<double> vector)

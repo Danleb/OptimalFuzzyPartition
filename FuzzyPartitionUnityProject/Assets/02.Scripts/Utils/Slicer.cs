@@ -11,21 +11,37 @@ namespace Utils
         [SerializeField] private Vector2Int _slicerNumThreads;
         [SerializeField] private ComputeShader _slicerShader;
 
+        private int _kernelIndex;
+        private RenderTexture _tempRenderTexture;
+
+        private void Awake()
+        {
+            _kernelIndex = _slicerShader.FindKernel("CSMain");
+        }
+
         public RenderTexture Copy3DSliceToRenderTexture(RenderTexture sourceRenderTexture, int layer)
         {
-            RenderTexture targetRenderTexture = new RenderTexture(sourceRenderTexture.width, sourceRenderTexture.height, 0, sourceRenderTexture.graphicsFormat, 0);
-            targetRenderTexture.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
-            targetRenderTexture.enableRandomWrite = true;
-            targetRenderTexture.wrapMode = TextureWrapMode.Clamp;
-            targetRenderTexture.Create();
+            if (_tempRenderTexture?.width != sourceRenderTexture.width || _tempRenderTexture?.height != sourceRenderTexture.height)
+            {
+                if (_tempRenderTexture != null)
+                {
+                    _tempRenderTexture.Release();
+                    _tempRenderTexture = null;
+                }
 
-            int kernelIndex = _slicerShader.FindKernel("CSMain");
-            _slicerShader.SetTexture(kernelIndex, "voxels", sourceRenderTexture);
+                _tempRenderTexture = new RenderTexture(sourceRenderTexture.width, sourceRenderTexture.height, 0, sourceRenderTexture.graphicsFormat, 0);
+                _tempRenderTexture.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
+                _tempRenderTexture.enableRandomWrite = true;
+                _tempRenderTexture.wrapMode = TextureWrapMode.Clamp;
+                _tempRenderTexture.Create();
+            }
+
+            _slicerShader.SetTexture(_kernelIndex, "voxels", sourceRenderTexture);
             _slicerShader.SetInt("layer", layer);
-            _slicerShader.SetTexture(kernelIndex, "Result", targetRenderTexture);
-            _slicerShader.Dispatch(kernelIndex, sourceRenderTexture.width / _slicerNumThreads.x, sourceRenderTexture.height / _slicerNumThreads.y, 1);
+            _slicerShader.SetTexture(_kernelIndex, "Result", _tempRenderTexture);
+            _slicerShader.Dispatch(_kernelIndex, sourceRenderTexture.width / _slicerNumThreads.x, sourceRenderTexture.height / _slicerNumThreads.y, 1);
 
-            return targetRenderTexture;
+            return _tempRenderTexture;
         }
     }
 }

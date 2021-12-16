@@ -10,30 +10,18 @@ namespace Utils
         [MenuItem("Build/Build to debug folder")]
         public static void BuildToDebugFolder()
         {
-            var outputFolder = Path.Combine(GetBinFolder(), "Debug");
-            var targetPath = Path.Combine(outputFolder, GetTargetFileName());
-
-            var scene = SceneManager.GetSceneByName("MainScene");
-
-            var options = new BuildPlayerOptions
-            {
-                locationPathName = targetPath,
-                target = BuildTarget.StandaloneWindows,
-                targetGroup = BuildTargetGroup.Standalone,
-                scenes = new[] { scene.path },
-                assetBundleManifestPath = outputFolder,
-                options = BuildOptions.None
-            };
-
-            var report = BuildPipeline.BuildPlayer(options);
-            Debug.Log($"Build result: {report.summary.result}");
+            BuildToBinFolder("Debug");
         }
 
         [MenuItem("Build/Build to release folder")]
         public static void BuildToReleaseFolder()
         {
-            var outputFolder = Path.Combine(GetBinFolder(), "Release");
-            var targetPath = Path.Combine(outputFolder, GetTargetFileName());
+            BuildToBinFolder("Release");
+        }
+
+        private static void BuildToBinFolder(string buildType)
+        {
+            var targetPath = Path.Combine(GetBinFolder(), buildType, GetTargetFileName());
 
             var scene = SceneManager.GetSceneByName("MainScene");
 
@@ -43,7 +31,6 @@ namespace Utils
                 target = BuildTarget.StandaloneWindows,
                 targetGroup = BuildTargetGroup.Standalone,
                 scenes = new[] { scene.path },
-                assetBundleManifestPath = outputFolder,
                 options = BuildOptions.None
             };
 

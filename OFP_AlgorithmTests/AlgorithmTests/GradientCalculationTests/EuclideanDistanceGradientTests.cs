@@ -4,10 +4,6 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests.GradientCalculation
 {
     public class EuclideanDistanceGradientTests
     {
-        [Test]
-        public void Test1()
-        {
-
-        }
+        
     }
 }

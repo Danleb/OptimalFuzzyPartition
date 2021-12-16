@@ -1,37 +1,52 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
 using System.Collections.Generic;
+using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
+    /// <summary>
+    /// Calculates fuzzy partition with fixed centers on CPU.
+    /// </summary>
     public class FuzzyPartitionFixedCentersAlgorithm
     {
         public int PerformedIterationsCount { get; private set; }
 
-        private readonly PartitionSettings _settings;
-        private List<Matrix<double>> _muGrids;
-        private Matrix<double> _psiGrid;
+        private SpaceSettings SpaceSettings { get; }
+        private CentersSettings CentersSettings { get; }
+        private FuzzyPartitionFixedCentersSettings PartitionSettings { get; }
+        private int WidthX => SpaceSettings.GridSize[0];
+        private int WidthY => SpaceSettings.GridSize[1];
+
         private double _maxGradientValue;
+        private Matrix _psiGrid;
+        private List<Matrix> _muGrids;
 
-        private int WidthX => _settings.SpaceSettings.GridSize[0];
-        private int WidthY => _settings.SpaceSettings.GridSize[1];
-
-        public FuzzyPartitionFixedCentersAlgorithm(PartitionSettings partitionSettings)
+        public FuzzyPartitionFixedCentersAlgorithm(SpaceSettings spaceSettings, CentersSettings centersSettings, FuzzyPartitionFixedCentersSettings partitionSettings)
         {
-            _settings = partitionSettings;
+            SpaceSettings = spaceSettings;
+            CentersSettings = centersSettings;
+            PartitionSettings = partitionSettings;
         }
 
-        public List<Matrix<double>> BuildPartition(out Matrix<double> psiGrid)
-        {
-            var muGrids = BuildPartition();
-            psiGrid = _psiGrid;
-            return muGrids;
-        }
-
-        public List<Matrix<double>> BuildPartition()
+        /// <summary>
+        /// Returns list of Mu grids for each center.
+        /// </summary>
+        /// <param name="psiGrid">Result values of Psi grid.</param>
+        /// <returns></returns>
+        public List<Matrix> BuildPartition(out Matrix psiGrid)
         {
             Init();
+            psiGrid = _psiGrid;
+
+            // in case of one center the solution is trivial
+            if (CentersSettings.CentersCount == 1)
+            {
+                SetSingleCenterPsi();
+                return _muGrids;
+            }
 
             while (true)
             {
@@ -44,21 +59,24 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     break;
             }
 
-            UpdateMuValues();
-
             return _muGrids;
+        }
+
+        public List<Matrix> BuildPartition()
+        {
+            return BuildPartition(out _);
         }
 
         private void Init()
         {
             PerformedIterationsCount = 0;
 
-            _muGrids = new List<Matrix<double>>();
-            var value = 1d / _settings.CentersSettings.CentersCount;
+            _muGrids = new List<Matrix>();
+            var value = 1d / CentersSettings.CentersCount;
 
-            for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
+            for (var centerIndex = 0; centerIndex < CentersSettings.CentersCount; centerIndex++)
             {
-                var m = Matrix<double>.Build.Sparse(WidthX, WidthY);
+                var m = Matrix.Build.Dense(WidthX, WidthY);
 
                 for (var i = 0; i < WidthX; i++)
                 {
@@ -71,20 +89,20 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 _muGrids.Add(m);
             }
 
-            _psiGrid = Matrix<double>.Build.Sparse(WidthY, WidthX);
+            _psiGrid = Matrix.Build.Dense(WidthY, WidthX);
 
             for (var xIndex = 0; xIndex < WidthX; xIndex++)
             {
                 for (var yIndex = 0; yIndex < WidthY; yIndex++)
                 {
-                    _psiGrid[yIndex, xIndex] = 1d;
+                    _psiGrid[yIndex, xIndex] = -1d;
                 }
             }
         }
 
         private void UpdateMuValues()
         {
-            for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
+            for (var centerIndex = 0; centerIndex < CentersSettings.CentersCount; centerIndex++)
             {
                 for (var xIndex = 0; xIndex < WidthX; xIndex++)
                 {
@@ -92,7 +110,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     {
                         var densityValue = 1d;
                         var m = 2d;
-                        var data = _settings.CentersSettings.CenterDatas[centerIndex];
+                        var data = CentersSettings.CenterDatas[centerIndex];
                         var a = data.A;
                         var w = data.W;
                         var centerPosition = data.Position;
@@ -100,10 +118,9 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                         var distance = (point - centerPosition).L2Norm();
                         var psiValue = _psiGrid[yIndex, xIndex];
                         var oldMuValue = _muGrids[centerIndex][yIndex, xIndex];
-
                         var newMuValue = -psiValue / (m * densityValue * (distance / w + a));
 
-                        if (newMuValue <= 0 || newMuValue >= 1)
+                        if (double.IsNaN(newMuValue) || newMuValue <= 0 || newMuValue >= 1)
                         {
                             var muGradient = psiValue + m * oldMuValue * (distance / w + a) * densityValue;
                             newMuValue = 0.5d * (1d - Math.Sign(muGradient));
@@ -125,7 +142,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 {
                     var psiGradient = 0d;
 
-                    for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
+                    for (var centerIndex = 0; centerIndex < CentersSettings.CentersCount; centerIndex++)
                     {
                         psiGradient += _muGrids[centerIndex][yIndex, xIndex];
                     }
@@ -133,7 +150,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     psiGradient -= 1;
 
                     var oldPsi = _psiGrid[yIndex, xIndex];
-                    var newPsi = oldPsi + GetGradientStep() * psiGradient;
+                    var newPsi = oldPsi + GetLambdaStep() * psiGradient;
 
                     _psiGrid[yIndex, xIndex] = newPsi;
 
@@ -147,27 +164,58 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
         private bool IsStopConditionSatisfied()
         {
-            if (PerformedIterationsCount >= _settings.FuzzyPartitionFixedCentersSettings.MaxIterationsCount)
+            if (PerformedIterationsCount >= PartitionSettings.MaxIterationsCount)
                 return true;
 
-            if (_maxGradientValue <= _settings.FuzzyPartitionFixedCentersSettings.GradientEpsilon)
+            if (_maxGradientValue <= PartitionSettings.GradientEpsilon)
                 return true;
 
             return false;
         }
 
-        private Vector<double> GetPoint(int xIndex, int yIndex)
+        /// <summary>
+        /// Converts point in mu grid into world space point.
+        /// </summary>
+        /// <param name="xIndex">x coordinate of point as index in mu grid.</param>
+        /// <param name="yIndex">y coordinate of point as index in mu grid.</param>
+        /// <returns></returns>
+        private Vector GetPoint(int xIndex, int yIndex)
         {
             var xRatio = (double)xIndex / (WidthX - 1d);
             var yRatio = (double)yIndex / (WidthY - 1d);
             var ratioPoint = VectorUtils.CreateVector(xRatio, yRatio);
-            var point = _settings.SpaceSettings.MinCorner + ratioPoint.PointwiseMultiply(_settings.SpaceSettings.MaxCorner - _settings.SpaceSettings.MinCorner);
+            var point = SpaceSettings.MinCorner + ratioPoint.PointwiseMultiply(SpaceSettings.MaxCorner - SpaceSettings.MinCorner);
             return point;
         }
 
-        private double GetGradientStep()
+        /// <summary>
+        /// Returns lambda step value.
+        /// Speed and stability of convergence of method depends on the rule the step is calculated by.
+        /// </summary>
+        /// <returns></returns>
+        private double GetLambdaStep()
         {
-            return _settings.FuzzyPartitionFixedCentersSettings.GradientStep / (PerformedIterationsCount + 1);
+            return PartitionSettings.GradientStep / (PerformedIterationsCount + 1d);
+        }
+
+        private void SetSingleCenterPsi()
+        {
+            for (var xIndex = 0; xIndex < WidthX; xIndex++)
+            {
+                for (var yIndex = 0; yIndex < WidthY; yIndex++)
+                {
+                    var densityValue = 1d;
+                    var m = 2d;
+                    var data = CentersSettings.CenterDatas[0];
+                    var a = data.A;
+                    var w = data.W;
+                    var centerPosition = data.Position;
+                    var point = GetPoint(xIndex, yIndex);
+                    var distance = (point - centerPosition).L2Norm();
+                    var psi = -m * densityValue * (distance / w + a);
+                    _psiGrid[yIndex, xIndex] = psi;
+                }
+            }
         }
     }
 }

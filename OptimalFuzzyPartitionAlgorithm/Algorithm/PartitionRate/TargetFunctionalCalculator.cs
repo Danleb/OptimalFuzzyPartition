@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.Integration;
+using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,15 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
     /// </summary>
     public class TargetFunctionalCalculator
     {
-        public PartitionSettings Settings { get; }
+        public SpaceSettings SpaceSettings { get; }
+        public CentersSettings CentersSettings { get; }
+        public int GaussLegendreIntegralOrder { get; }
 
-        public TargetFunctionalCalculator(PartitionSettings partitionSettings)
+        public TargetFunctionalCalculator(SpaceSettings spaceSettings, CentersSettings centersSettings, int gaussLegendreIntegralOrder)
         {
-            Settings = partitionSettings;
+            SpaceSettings = spaceSettings;
+            CentersSettings = centersSettings;
+            GaussLegendreIntegralOrder = gaussLegendreIntegralOrder;
         }
 
         public double CalculateFunctionalValue(List<GridValueInterpolator> muValueInterpolators)
@@ -25,24 +30,34 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     var densityValue = 1d;
                     var point = VectorUtils.CreateVector(x, y);
 
-                    for (var centerIndex = 0; centerIndex < Settings.CentersSettings.CentersCount; centerIndex++)
+                    //var minDist = double.MaxValue;
+
+                    for (var centerIndex = 0; centerIndex < CentersSettings.CentersCount; centerIndex++)
                     {
-                        var centerData = Settings.CentersSettings.CenterDatas[centerIndex];
+                        var centerData = CentersSettings.CenterDatas[centerIndex];
                         var center = centerData.Position;
                         var w = centerData.W;
                         var a = centerData.A;
                         var distanceValue = (point - center).L2Norm();
                         var muValue = muValueInterpolators[centerIndex].GetGridValueAtPoint(x, y);
-                        functionValue += Math.Pow(muValue, 2) * (distanceValue / w + a) * densityValue;
+                        //var muValue = 1;
+                        var v = Math.Pow(muValue, 2) * (distanceValue / w + a) * densityValue;
+
+                        //if (distanceValue < minDist)
+                        //{
+                        //    minDist = distanceValue;
+                        //    functionValue = v;
+                        //}
+                        functionValue += v;
                     }
 
                     return functionValue;
                 },
-                Settings.SpaceSettings.MinCorner[0],
-                Settings.SpaceSettings.MaxCorner[0],
-                Settings.SpaceSettings.MinCorner[1],
-                Settings.SpaceSettings.MaxCorner[1],
-                Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder
+                SpaceSettings.MinCorner[0],
+                SpaceSettings.MaxCorner[0],
+                SpaceSettings.MinCorner[1],
+                SpaceSettings.MaxCorner[1],
+                GaussLegendreIntegralOrder
                 );
 
             return value;

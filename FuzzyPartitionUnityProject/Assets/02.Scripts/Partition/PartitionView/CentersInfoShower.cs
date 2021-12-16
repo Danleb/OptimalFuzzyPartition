@@ -10,7 +10,6 @@ namespace FuzzyPartitionVisualizing
         [SerializeField] private CenterInfo _centerInfoPrefab;
         [SerializeField] private GameObject _minCorner;
         [SerializeField] private GameObject _maxCorner;
-
         [SerializeField] private List<CenterInfo> _centerInfos;
 
         private PartitionSettings _partitionSettings;
@@ -51,18 +50,20 @@ namespace FuzzyPartitionVisualizing
         [Button]
         public void EnableShowAlways()
         {
-            foreach (var centerInfo in _centerInfos)
-            {
-                centerInfo.EnableAlwaysShow();
-            }
+            SetShowAlways(true);
         }
 
         [Button]
         public void DisableShowAlways()
         {
+            SetShowAlways(false);
+        }
+
+        public void SetShowAlways(bool isAlwaysShowCentersInfo)
+        {
             foreach (var centerInfo in _centerInfos)
             {
-                centerInfo.DisableAlwaysShow();
+                centerInfo.SetAlwaysShow(isAlwaysShowCentersInfo);
             }
         }
 

@@ -15,7 +15,7 @@ namespace OptimalFuzzyPartition.View
 
         public PartitionCreationWindow()
         {
-            _partitionSettings = DefaultSettingsKeeper.GetPartitionSettings();
+            _partitionSettings = DefaultSettingsBuilder.GetPartitionSettings();
         }
 
         public PartitionCreationWindow(PartitionSettings partitionSettings)

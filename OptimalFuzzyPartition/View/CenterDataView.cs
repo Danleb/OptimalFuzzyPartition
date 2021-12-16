@@ -30,7 +30,7 @@ namespace OptimalFuzzyPartition.View
 
         public string ValueY
         {
-            get => CenterData.Position[0].ToString(CultureInfo.CurrentCulture);
+            get => CenterData.Position[1].ToString(CultureInfo.CurrentCulture);
                 //IsFixedCenter ?
                 //    CenterData.Position[0].ToString(CultureInfo.CurrentCulture) :
                 //    "---";

@@ -8,8 +8,13 @@ using Utils;
 
 namespace PartitionView
 {
+    /// <summary>
+    /// Shows the partition in the UI.
+    /// </summary>
     public class PartitionShower : MonoBehaviour
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         [SerializeField] private Image _image;
         [SerializeField] private FuzzyPartitionImageCreator _partitionImageCreator;
         [SerializeField] private CentersInfoShower _centersInfoShower;
@@ -18,6 +23,7 @@ namespace PartitionView
 
         private RenderTexture _muRenderTexture;
         private PartitionSettings _partitionSettings;
+        private Texture2D _partitionTexture;
 
         public RenderingSettings RenderingSettings
         {
@@ -48,20 +54,24 @@ namespace PartitionView
         [Button("Redraw partition image with current settings")]
         public Texture2D CreatePartitionAndShow()
         {
+            Logger.Debug("Creating partition texture and showing it.");
             var renderTexture = _partitionImageCreator.CreatePartitionTexture(_muRenderTexture, _renderingSettings);
-            var partitionTexture2D = new Texture2D(renderTexture.width, renderTexture.height) { wrapMode = TextureWrapMode.Clamp };
+
+            if (_partitionTexture?.width != renderTexture.width || _partitionTexture?.height != renderTexture.height)
+            {
+                Logger.Debug("Texture2D allocation.");
+                _partitionTexture = new Texture2D(renderTexture.width, renderTexture.height) { wrapMode = TextureWrapMode.Clamp };
+            }
+
             RenderTexture.active = renderTexture;
-            partitionTexture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
-            partitionTexture2D.Apply();
-            var sprite = partitionTexture2D.ToSprite();
+            _partitionTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+            _partitionTexture.Apply();
+            var sprite = _partitionTexture.ToSprite();
             _image.sprite = sprite;
 
-            if (_renderingSettings.AlwaysShowCentersInfo)
-                _centersInfoShower.EnableShowAlways();
-            else
-                _centersInfoShower.DisableShowAlways();
+            _centersInfoShower.SetShowAlways(_renderingSettings.AlwaysShowCentersInfo);
 
-            return partitionTexture2D;
+            return _partitionTexture;
         }
     }
 }

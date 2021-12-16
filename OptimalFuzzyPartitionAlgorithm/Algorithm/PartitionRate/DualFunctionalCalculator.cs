@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.Integration;
+using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate
@@ -8,12 +9,17 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate
     /// </summary>
     public class DualFunctionalCalculator
     {
-        private readonly PartitionSettings _settings;
+        public SpaceSettings SpaceSettings { get; }
+        public CentersSettings CentersSettings { get; }
+        public int GaussLegendreIntegralOrder { get; }
+
         private readonly GridValueInterpolator _psiGridValueGetter;
 
-        public DualFunctionalCalculator(PartitionSettings partitionSettings, GridValueInterpolator psiGridValueGetter)
+        public DualFunctionalCalculator(SpaceSettings spaceSettings, CentersSettings centersSettings, int gaussLegendreIntegralOrder, GridValueInterpolator psiGridValueGetter)
         {
-            _settings = partitionSettings;
+            SpaceSettings = spaceSettings;
+            CentersSettings = centersSettings;
+            GaussLegendreIntegralOrder = gaussLegendreIntegralOrder;
             _psiGridValueGetter = psiGridValueGetter;
         }
 
@@ -26,9 +32,9 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate
                     var psi = _psiGridValueGetter.GetGridValueAtPoint(x, y);
                     var point = VectorUtils.CreateVector(x, y);
 
-                    for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
+                    for (var centerIndex = 0; centerIndex < CentersSettings.CentersCount; centerIndex++)
                     {
-                        var data = _settings.CentersSettings.CenterDatas[centerIndex];
+                        var data = CentersSettings.CenterDatas[centerIndex];
                         var position = data.Position;
                         var distance = (point - position).L2Norm();
                         var a = data.A;
@@ -39,11 +45,11 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate
 
                     return functionValue;
                 },
-                _settings.SpaceSettings.MinCorner[0],
-                _settings.SpaceSettings.MaxCorner[0],
-                _settings.SpaceSettings.MinCorner[1],
-                _settings.SpaceSettings.MaxCorner[1],
-                _settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder
+                SpaceSettings.MinCorner[0],
+                SpaceSettings.MaxCorner[0],
+                SpaceSettings.MinCorner[1],
+                SpaceSettings.MaxCorner[1],
+                GaussLegendreIntegralOrder
             );
 
             var functionalValue = 0.25d * integralValue;

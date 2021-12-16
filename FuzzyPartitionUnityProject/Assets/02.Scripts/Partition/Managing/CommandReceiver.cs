@@ -39,7 +39,7 @@ namespace Partition.Managing
                 throw new NotSupportedException("Compute shaders are not supported on this platform.");
             }
 
-            if (_connectOnAwake)
+            if (_connectOnAwake && !Application.isEditor)
             {
                 Logger.Info(Environment.CommandLine);
 
@@ -80,7 +80,7 @@ namespace Partition.Managing
 
         private void Client_DataReceived(object sender, Message e)
         {
-            Logger.Info("Data received from the server: " + e.MessageString);
+            //Logger.Trace("Data received from the server: " + e.MessageString);
 
             var bf = new BinaryFormatter();
             using (var ms = new MemoryStream(e.Data))

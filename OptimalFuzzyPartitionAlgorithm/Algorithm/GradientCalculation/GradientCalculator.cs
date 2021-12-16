@@ -11,13 +11,15 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
     /// </summary>
     public class GradientCalculator
     {
-        private PartitionSettings Settings { get; }
+        private SpaceSettings SpaceSettings { get; }
+        private int GaussLegendreIntegralOrder { get; }
 
         private Vector<double> _centerPosition;
 
-        public GradientCalculator(PartitionSettings settings)
+        public GradientCalculator(SpaceSettings spaceSettings, int gaussLegendreIntegralOrder)
         {
-            Settings = settings;
+            SpaceSettings = spaceSettings;
+            GaussLegendreIntegralOrder = gaussLegendreIntegralOrder;
         }
 
         /// <summary>
@@ -29,12 +31,12 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         {
             _centerPosition = centerPosition;
 
-            if (Settings.SpaceSettings.MetricsType != MetricsType.Euclidean)
-                throw new NotImplementedException($"Визначення градієнту для метрики {Settings.SpaceSettings.MetricsType} не реалізовано");
+            if (SpaceSettings.MetricsType != MetricsType.Euclidean)
+                throw new NotImplementedException($"Визначення градієнту для метрики {SpaceSettings.MetricsType} не реалізовано");
 
-            var vector = Vector<double>.Build.Sparse(Settings.SpaceSettings.DimensionsCount);
+            var vector = Vector<double>.Build.Dense(SpaceSettings.DimensionsCount);
 
-            for (var i = 0; i < Settings.SpaceSettings.DimensionsCount; i++)
+            for (var i = 0; i < SpaceSettings.DimensionsCount; i++)
             {
                 var dimensionIndex = i;
 
@@ -51,11 +53,11 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
                         return integralFunctionValue;
                     },
-                    Settings.SpaceSettings.MinCorner[0],
-                    Settings.SpaceSettings.MaxCorner[0],
-                    Settings.SpaceSettings.MinCorner[1],
-                    Settings.SpaceSettings.MaxCorner[1],
-                    Settings.FuzzyPartitionPlacingCentersSettings.GaussLegendreIntegralOrder
+                    SpaceSettings.MinCorner[0],
+                    SpaceSettings.MaxCorner[0],
+                    SpaceSettings.MinCorner[1],
+                    SpaceSettings.MaxCorner[1],
+                    GaussLegendreIntegralOrder
                 );
 
                 vector[i] = value;

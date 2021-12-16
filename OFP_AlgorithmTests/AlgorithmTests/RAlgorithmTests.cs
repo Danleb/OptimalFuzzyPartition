@@ -8,22 +8,22 @@ namespace OFP_AlgorithmTests.AlgorithmTests
 {
     public class RAlgorithmTests
     {
-        [Test]
-        public void RAlgorithmTest1()
-        {
-            var function = 0;
-            var gradient = new Func<Vector<double>, Vector<double>>(vector =>
-            {
+        //[Test]
+        //public void RAlgorithmTest1()
+        //{
+        //    var function = 0;
+        //    var gradient = new Func<Vector<double>, Vector<double>>(vector =>
+        //    {
 
-                return null;
-            });
-            var initialX = VectorUtils.CreateVector(0, 0);
+        //        return null;
+        //    });
+        //    var initialX = VectorUtils.CreateVector(0, 0);
 
-            var rAlgorithm = new RAlgorithmSolverBForm(initialX, gradient);
+        //    var rAlgorithm = new RAlgorithmSolverBForm(initialX, gradient);
 
-            rAlgorithm.DoIteration();
+        //    rAlgorithm.DoIteration();
 
 
-        }
+        //}
     }
 }

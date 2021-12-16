@@ -9,7 +9,7 @@ using System.Windows.Interop;
 
 namespace OptimalFuzzyPartition.View
 {
-    public class UnityWindowHost : HwndHost //TODO dispose
+    public class UnityWindowHost : HwndHost
     {
         public StreamWriter StreamWriter => _unityPlayerProcess.StandardInput;
         public StreamReader StreamReader => _unityPlayerProcess.StandardOutput;
@@ -26,23 +26,36 @@ namespace OptimalFuzzyPartition.View
 
         private readonly int port;
 
-        private bool destroyed = false;
+        private bool _isDisposed = false;
 
         public UnityWindowHost()
         {
             port = _nextPortNumber++;
             SimpleTcpServer = new SimpleTcpServer().Start(port);
+
+            Loaded += delegate (object sender, RoutedEventArgs e) {
+                Window parent_window = Window.GetWindow(this);
+                if (parent_window != null)
+                {
+                    parent_window.Closed += delegate (object sender2, EventArgs e2) {
+                        Dispose(true);
+                    };
+                }
+            };
         }
 
         ~UnityWindowHost()
         {
-            if (destroyed) return;
+            if (_isDisposed) return;
 
-            Destroy();
+            Dispose();
         }
 
         public void Destroy()
         {
+            if (_isDisposed) return;
+
+
             _unityPlayerProcess.Kill();
             //_unityPlayerProcess.Close();
 
@@ -51,7 +64,8 @@ namespace OptimalFuzzyPartition.View
             //    
 
             //DestroyWindow(handle);
-            destroyed = true;
+
+            _isDisposed = true;
         }
 
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
@@ -91,6 +105,16 @@ namespace OptimalFuzzyPartition.View
         protected override void DestroyWindowCore(HandleRef hwnd)
         {
             Destroy();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            Destroy();
+
+            GC.SuppressFinalize(this);
+            base.Dispose(disposing);
         }
 
         //protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

@@ -14,6 +14,11 @@ namespace FuzzyPartitionComputing
             _gridSizeX = gridSizeX;
         }
 
+        ~GridValueTextureCalculator()
+        {
+            _gridTexture.Dispose();
+        }
+
         public double GetValue(int rowIndex, int columnIndex)
         {
             float gridValue = _gridTexture[rowIndex * _gridSizeX + columnIndex];

@@ -86,12 +86,12 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             if (PerformedIterationsCount != 0)
             {
                 var g1 = FunctionGradient(CurrentX);
-                var r = CalculateR(g, g1);
-                var eta = CalculateEta(Bt, r);
-                var beta = 1d / SpaceStretchFactor;
-                var operatorR = CalculateOperatorR(eta, beta);
-                var B1 = B * operatorR;
-                B = B1;
+                //var r = CalculateR(g, g1);
+                //var eta = CalculateEta(Bt, r);
+                //var beta = 1d / SpaceStretchFactor;
+                //var operatorR = CalculateOperatorR(eta, beta);
+                //var B1 = B * operatorR;
+                //B = B1;
                 g = g1;
             }
 

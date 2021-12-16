@@ -21,5 +21,11 @@ namespace OptimalFuzzyPartitionAlgorithm
         public FuzzyPartitionPlacingCentersSettings FuzzyPartitionPlacingCentersSettings;
 
         public RAlgorithmSettings RAlgorithmSettings;
+
+        /// <summary>
+        /// Parameter for integration on supply area. Is used for calculating 
+        /// target functional and gradient values.
+        /// </summary>
+        public int GaussLegendreIntegralOrder { get; set; }
     }
 }

@@ -32,6 +32,8 @@ namespace Partition.PartitionView
         [SerializeField] private FuzzyPartitionFixedCentersSettings _fuzzyPartitionFixedCentersSettings;
         [SerializeField] private FuzzyPartitionPlacingCentersSettings _fuzzyPartitionPlacingCentersSettings;
 
+        [SerializeField] private int _gaussLegendreIntegralOrder;
+
         public PartitionSettings GetPartitionSettings()
         {
             if (_centersCount > _centerPositions.Length)
@@ -53,7 +55,6 @@ namespace Partition.PartitionView
                 },
                 CentersSettings = new CentersSettings
                 {
-                    CentersCount = _centersCount,
                     CenterDatas = _centerDatas
                         .Take(_centersCount)
                         .Select((v, i) =>
@@ -64,7 +65,8 @@ namespace Partition.PartitionView
                 },
                 RAlgorithmSettings = _rAlgorithmSettings,
                 FuzzyPartitionFixedCentersSettings = _fuzzyPartitionFixedCentersSettings,
-                FuzzyPartitionPlacingCentersSettings = _fuzzyPartitionPlacingCentersSettings
+                FuzzyPartitionPlacingCentersSettings = _fuzzyPartitionPlacingCentersSettings,
+                GaussLegendreIntegralOrder = _gaussLegendreIntegralOrder
             };
 
             return settings;

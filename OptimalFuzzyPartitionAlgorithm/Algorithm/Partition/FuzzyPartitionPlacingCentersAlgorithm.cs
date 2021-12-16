@@ -1,94 +1,96 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using OptimalFuzzyPartitionAlgorithm.Algorithm.Partition;
+using OptimalFuzzyPartitionAlgorithm.Settings;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
     public class FuzzyPartitionPlacingCentersAlgorithm
     {
-        public int PerformedIterationCount { get; private set; }
+        public static List<CenterData> GetCenterDatas(CentersSettings centersSettings, Vector currentX)
+        {
+            var list = new List<CenterData>();
+            var placingCentersProcessed = 0;
+
+            for (var i = 0; i < centersSettings.CentersCount; i++)
+            {
+                if (centersSettings.CenterDatas[i].IsFixed)
+                {
+                    list.Add(centersSettings.CenterDatas[i]);
+                }
+                else
+                {
+                    var position = Vector.Build.Dense(2);
+                    position[0] = currentX[2 * placingCentersProcessed];
+                    position[1] = currentX[2 * placingCentersProcessed + 1];
+                    var centerData = new CenterData
+                    {
+                        Position = position,
+                        A = centersSettings.CenterDatas[i].A,
+                        W = centersSettings.CenterDatas[i].W,
+                        IsFixed = centersSettings.CenterDatas[i].IsFixed,
+                    };
+                    list.Add(centerData);
+                    placingCentersProcessed++;
+                }
+            }
+
+            return list;
+        }
+
+        public int PerformedIterationCount => _rSolver.PerformedIterationCount;
+        public bool IsFinished => _rSolver.IsFinished;
 
         private readonly PartitionSettings _settings;
-        private readonly List<RAlgorithmSolverBForm> _rAlgorithmSolvers;
-        private readonly List<Vector<double>> _previousTaus = new List<Vector<double>>();
+        private RSolver _rSolver;
 
-        public FuzzyPartitionPlacingCentersAlgorithm(PartitionSettings partitionSettings, List<Vector<double>> zeroCenters, List<GridValueInterpolator> zeroMuGrids)
+        public FuzzyPartitionPlacingCentersAlgorithm(PartitionSettings partitionSettings, Func<Vector, Vector> subgradientEvaluator)
         {
-            PerformedIterationCount = 0;
             _settings = partitionSettings;
-            _rAlgorithmSolvers = new List<RAlgorithmSolverBForm>();
-            _previousTaus.AddRange(Enumerable.Repeat(default(Vector<double>), _settings.CentersSettings.CentersCount));
 
-            for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
+            const int DimensionsCount = 2;
+            var valuesCount = _settings.CentersSettings.PlacingCentersCount * DimensionsCount;
+            var initialVector = Vector.Build.Dense(valuesCount, 0);
+
+            for (var i = 0; i < _settings.CentersSettings.PlacingCentersCount; i++)
             {
-                var zeroCenter = zeroCenters[centerIndex];
-                var gradientCalculator = new GradientCalculator(_settings);
-                var gradientVector = gradientCalculator.CalculateGradientForCenter(zeroCenter, zeroMuGrids[centerIndex]);
-                var rAlgorithm = new RAlgorithmSolverBForm(zeroCenter, _ => gradientVector, _settings.RAlgorithmSettings.SpaceStretchFactor);
-                _rAlgorithmSolvers.Add(rAlgorithm);
+                var value = 1d / _settings.CentersSettings.PlacingCentersCount * i;
+                initialVector[i * 2] = value;
             }
+
+            var options = new Options
+            {
+                SpaceStretchCoefficient = partitionSettings.RAlgorithmSettings.SpaceStretchFactor,
+                InitialStep = partitionSettings.RAlgorithmSettings.H0,
+                MaximumIterationsCount = partitionSettings.RAlgorithmSettings.MaxIterationsCount,
+
+                PrecisionByVariable = partitionSettings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon,
+
+                IterationsCountToIncreaseStep = 3,
+                PrecisionBySubgradient = 0.001,
+                StepDecreaseMultiplier = 0.9,
+                StepIncreaseMultiplier = 1.1
+            };
+
+            _rSolver = new RSolver(initialVector, false, options, subgradientEvaluator);
         }
 
-        public void DoIteration(List<GridValueInterpolator> muGrids)
+        public void DoIteration()
         {
-            for (var centerIndex = 0; centerIndex < _settings.CentersSettings.CentersCount; centerIndex++)
-            {
-                if (_settings.CentersSettings.CenterDatas[centerIndex].IsFixed)
-                    continue;
-
-                var rAlgorithm = _rAlgorithmSolvers[centerIndex];
-
-                _previousTaus[centerIndex] = rAlgorithm.CurrentX;
-
-                var centerIndex2 = centerIndex;
-
-                rAlgorithm.FunctionGradient = vector =>
-                {
-                    var gradientCalculator = new GradientCalculator(_settings);
-                    var gradientVector = gradientCalculator.CalculateGradientForCenter(rAlgorithm.CurrentX, muGrids[centerIndex2]);
-                    return gradientVector;
-                };
-
-                rAlgorithm.h = _settings.RAlgorithmSettings.H0 / (PerformedIterationCount + 1);// 0.5;//TODO adaptive step
-
-                rAlgorithm.DoIteration();
-            }
-
-            PerformedIterationCount++;
+            _rSolver.DoIteration();
         }
 
-        public List<Vector<double>> GetCenters()
+        /// <summary>
+        /// Returns list of current positions of generation centers.
+        /// If center position is fixed, it will remain the same in all calls.
+        /// If center position is placing, it will be changing throught the iterations.
+        /// </summary>
+        /// <returns>List of points in 2d Euclidean space.</returns>
+        public List<CenterData> GetCurrentCenters()
         {
-            return _rAlgorithmSolvers.Select(v => v.CurrentX).ToList();
-        }
-
-        public bool IsStopConditionSatisfied()
-        {
-            if (_settings.RAlgorithmSettings.MaxIterationsCount == 0)
-                return true;
-            if (PerformedIterationCount == 0)
-                return false;
-
-            var tausDeltas = _previousTaus.Select((v, i) => (v - _rAlgorithmSolvers[i].CurrentX).L2Norm());
-            var tausDelta = tausDeltas.Max();
-
-            Trace.WriteLine($"Taus max delta = {tausDelta}");
-            Trace.WriteLine($"Iteration Number = {PerformedIterationCount}; Max = {_settings.RAlgorithmSettings.MaxIterationsCount}");
-
-            if (PerformedIterationCount >= _settings.RAlgorithmSettings.MaxIterationsCount)
-            {
-                Trace.WriteLine("Algorithm stop by iterations count.");
-                return true;
-            }
-
-            if (tausDelta < _settings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon)
-            {
-                Trace.WriteLine("Algorithm stop by centers max delta");
-                return true;
-            }
-
-            return false;
+            var currentX = _rSolver.GetCurrentX();
+            return GetCenterDatas(_settings.CentersSettings, currentX);
         }
     }
 }

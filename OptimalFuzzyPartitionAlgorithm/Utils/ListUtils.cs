@@ -15,5 +15,21 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
                 for (var i = 0; i < delta; i++)
                     list.Add(getT == null ? default : getT());
         }
+
+        public static T MinElement<T>(this List<T> list, Func<T, double> func)
+        {
+            double minValue = 0;
+            T minElement = default;
+            foreach (var v in list)
+            {
+                var value = func(v);
+                if (value < minValue)
+                {
+                    minValue = value;
+                    minElement = v;
+                }
+            }
+            return minElement;
+        }
     }
 }

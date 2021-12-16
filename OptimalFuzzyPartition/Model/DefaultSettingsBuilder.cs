@@ -7,17 +7,17 @@ using System.Collections.Generic;
 
 namespace OptimalFuzzyPartition.Model
 {
-    public static class DefaultSettingsKeeper
+    public static class DefaultSettingsBuilder
     {
         public static PartitionSettings GetPartitionSettings()
         {
             return new PartitionSettings
             {
-                IsCenterPlacingTask = true,
+                IsCenterPlacingTask = false,
                 SpaceSettings = new SpaceSettings
                 {
                     MinCorner = VectorUtils.CreateVector(0, 0),
-                    MaxCorner = VectorUtils.CreateVector(10, 10),
+                    MaxCorner = VectorUtils.CreateVector(1, 1),
                     GridSize = new List<int> { 128, 128 },
                     DensityType = DensityType.Everywhere1,
                     MetricsType = MetricsType.Euclidean,
@@ -26,21 +26,21 @@ namespace OptimalFuzzyPartition.Model
                 },
                 CentersSettings = new CentersSettings
                 {
-                    CentersCount = 2,
                     CenterDatas = new List<CenterData>
                     {
                         new CenterData
                         {
                             A = 0,
                             W = 1,
-                            Position = VectorUtils.CreateVector(3.33, 5),
+                            //Position = VectorUtils.CreateVector(0.5, 0.5),
+                            Position = VectorUtils.CreateVector(0.33, 0.5),
                             IsFixed = false
                         },
                         new CenterData
                         {
                             A = 0,
                             W = 1,
-                            Position = VectorUtils.CreateVector(6.66, 5),
+                            Position = VectorUtils.CreateVector(0.66, 0.5),
                             IsFixed = false
                         },
                     }
@@ -48,20 +48,20 @@ namespace OptimalFuzzyPartition.Model
                 FuzzyPartitionFixedCentersSettings = new FuzzyPartitionFixedCentersSettings
                 {
                     GradientEpsilon = 0.01,
-                    GradientStep = 10,
+                    GradientStep = 1,
                     MaxIterationsCount = 400
                 },
                 FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
                 {
-                    CentersDeltaEpsilon = 0.01,
-                    GaussLegendreIntegralOrder = 32
+                    CentersDeltaEpsilon = 0.01
                 },
                 RAlgorithmSettings = new RAlgorithmSettings
                 {
                     SpaceStretchFactor = 2,
-                    H0 = 9,
-                    MaxIterationsCount = 40
-                }
+                    H0 = 0.7,
+                    MaxIterationsCount = 100
+                },
+                GaussLegendreIntegralOrder = 32
             };
         }
 

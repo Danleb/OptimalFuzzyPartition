@@ -6,7 +6,7 @@ using Utils;
 namespace FuzzyPartitionVisualizing
 {
     /// <summary>
-    /// Creates fuzzy partition 2d RenderTexture.
+    /// Generates fuzzy partition 2d RenderTexture.
     /// </summary>
     public class FuzzyPartitionImageCreator : MonoBehaviour
     {
@@ -20,12 +20,14 @@ namespace FuzzyPartitionVisualizing
         private int _partitionDrawingKernel;
         private ComputeBuffer _colorsComputeBuffer;
 
+        private const int ColorBufferStride = sizeof(float) * 4;
         private const string PartitionDrawingKernel = "DrawPartition";
         private readonly Vector3Int _shaderNumThreads = new Vector3Int(8, 8, 1);
 
         private void Awake()
         {
             PlayStateNotifier.OnPlaymodeExit += PlayStateNotifier_OnPlaymodeExit;
+            _partitionDrawingKernel = _partitionDrawingShader.FindKernel(PartitionDrawingKernel);
         }
 
         private void PlayStateNotifier_OnPlaymodeExit()
@@ -46,35 +48,39 @@ namespace FuzzyPartitionVisualizing
             _renderingSettings = renderingSettings;
             _centersColors = centersColors;
 
-            _partitionDrawingKernel = _partitionDrawingShader.FindKernel(PartitionDrawingKernel);
-
-            _partitionRenderTexture = new RenderTexture(_settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1], 0)
+            var targetWidth = _settings.SpaceSettings.GridSize[0];
+            var targetHeight = _settings.SpaceSettings.GridSize[1];
+            if (_partitionRenderTexture?.width != targetWidth || _partitionRenderTexture?.height != targetHeight)
             {
-                format = RenderTextureFormat.ARGB32,
-                enableRandomWrite = true
-            };
-            _partitionRenderTexture.Create();
+                _partitionRenderTexture = new RenderTexture(targetWidth, targetHeight, 0)
+                {
+                    format = RenderTextureFormat.ARGB32,
+                    enableRandomWrite = true
+                };
+                _partitionRenderTexture.Create();
+            }
 
-            CheckAndReleaseBuffer();
-            _colorsComputeBuffer = new ComputeBuffer(centersColors.Length, sizeof(float) * 4, ComputeBufferType.Default);
-            _colorsComputeBuffer.SetData(_centersColors);
+            if (_colorsComputeBuffer == null || _colorsComputeBuffer.count != centersColors.Length)
+            {
+                CheckAndReleaseBuffer();
+                _colorsComputeBuffer = new ComputeBuffer(centersColors.Length, ColorBufferStride, ComputeBufferType.Default);
+                _colorsComputeBuffer.SetData(_centersColors);
+            }
 
             _partitionDrawingShader.SetInt("CentersCount", _settings.CentersSettings.CentersCount);
-            _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
             _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "Result", _partitionRenderTexture);
+            _partitionDrawingShader.SetBuffer(_partitionDrawingKernel, "CentersColors", _colorsComputeBuffer);
+            _partitionDrawingShader.SetInts("ImageSize", _settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1]);
         }
 
         public RenderTexture CreatePartitionTexture(RenderTexture muRenderTexture, RenderingSettings renderingSettings)
         {
             _renderingSettings = renderingSettings;
-
-            _partitionDrawingShader.SetBool("DrawGrayscale", _renderingSettings.DrawGrayscale);
-            _partitionDrawingShader.SetInts("ImageSize", _settings.SpaceSettings.GridSize[0], _settings.SpaceSettings.GridSize[1]);
             _partitionDrawingShader.SetInt("BorderWidth", _renderingSettings.BorderWidth);
-
-            _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
-            _partitionDrawingShader.SetBool("DrawThresholdValue", _renderingSettings.DrawWithMistrustCoefficient);
+            _partitionDrawingShader.SetBool("DrawGrayscale", _renderingSettings.DrawGrayscale);
             _partitionDrawingShader.SetFloat("MuThresholdValue", (float)_renderingSettings.MistrustCoefficient);
+            _partitionDrawingShader.SetBool("DrawThresholdValue", _renderingSettings.DrawWithMistrustCoefficient);
+            _partitionDrawingShader.SetTexture(_partitionDrawingKernel, "MuGrids", muRenderTexture);
 
             _partitionDrawingShader.Dispatch(_partitionDrawingKernel, _settings.SpaceSettings.GridSize[0] / _shaderNumThreads.x, _settings.SpaceSettings.GridSize[1] / _shaderNumThreads.y, 1);
 

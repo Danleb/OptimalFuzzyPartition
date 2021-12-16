@@ -3,6 +3,7 @@ using OptimalFuzzyPartitionAlgorithm.Algorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate;
 using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using PartitionView;
+using System.Linq;
 using UnityEngine;
 using Utils;
 
@@ -43,11 +44,9 @@ namespace FuzzyPartitionComputing
         public PartitionResult CreateFuzzyPartitionWithCentersPlacing(PartitionSettings partitionSettings, RenderingSettings renderingSettings)
         {
             _partitionPlacingCentersComputer.Init(partitionSettings);
-
-            var centersPositions = _partitionPlacingCentersComputer.Run(out var iterationsCount);
-
-            for (var i = 0; i < centersPositions.Count; i++)
-                partitionSettings.CentersSettings.CenterDatas[i].Position = centersPositions[i];
+            var centerDatas = _partitionPlacingCentersComputer.Run(out var iterationsCount);
+            partitionSettings.CentersSettings.CenterDatas = centerDatas;
+            var centersPositions = centerDatas.Select(v => v.Position);
 
             var result = CreateFuzzyPartitionWithFixedCenters(partitionSettings, renderingSettings);
             result.CentersPositions = centersPositions.ToArray();
@@ -82,7 +81,7 @@ namespace FuzzyPartitionComputing
                 return double.MinValue;
 
             var muGridGetters = _textureToGridConverter.GetGridValueInterpolators(muRenderTexture, partitionSettings);
-            var targetFunctionalValue = new TargetFunctionalCalculator(partitionSettings).CalculateFunctionalValue(muGridGetters);
+            var targetFunctionalValue = new TargetFunctionalCalculator(partitionSettings.SpaceSettings, partitionSettings.CentersSettings, partitionSettings.GaussLegendreIntegralOrder).CalculateFunctionalValue(muGridGetters);
             Logger.Info($"Target functional value = {targetFunctionalValue}");
             return targetFunctionalValue;
         }
@@ -93,7 +92,7 @@ namespace FuzzyPartitionComputing
                 return double.MinValue;
 
             var psiGridValueGetter = _textureToGridConverter.GetGridValueInterpolator(psiGridTexture, partitionSettings);
-            var dualFunctionalValue = new DualFunctionalCalculator(partitionSettings, psiGridValueGetter).CalculateFunctionalValue();
+            var dualFunctionalValue = new DualFunctionalCalculator(partitionSettings.SpaceSettings, partitionSettings.CentersSettings, partitionSettings.GaussLegendreIntegralOrder, psiGridValueGetter).CalculateFunctionalValue();
             Logger.Info($"Dual functional value = {dualFunctionalValue}");
             return dualFunctionalValue;
         }

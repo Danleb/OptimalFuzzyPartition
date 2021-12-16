@@ -9,6 +9,9 @@ using Utils;
 
 namespace Partition.Managing
 {
+    /// <summary>
+    /// Imitates work of host app that manages calculations on Unity side.
+    /// </summary>
     public class CommandSender : MonoBehaviour
     {
         [Header("Server settings")]
