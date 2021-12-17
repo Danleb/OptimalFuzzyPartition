@@ -7,8 +7,10 @@ using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace OptimalFuzzyPartition.ViewModel
 {
@@ -56,6 +58,9 @@ namespace OptimalFuzzyPartition.ViewModel
             {
                 _partitionCreationWindow?.Close();
             });
+
+            App.LanguageChanged += App_LanguageChanged;
+            App_LanguageChanged(null, null);
         }
 
         #region Settings for the: space
@@ -292,6 +297,31 @@ namespace OptimalFuzzyPartition.ViewModel
         public RelayCommand OnSaveAs { get; }
 
         public RelayCommand OnLoadSettings { get; }
+
+        #endregion
+
+        #region Localization commands
+        public RelayCommand SwitchToEnglish { get; } = SelectLanguageCommand("en-US");
+        public RelayCommand SwitchToUkrainian { get; } = SelectLanguageCommand("uk-UA");
+        public RelayCommand SwitchToRussian { get; } = SelectLanguageCommand("ru-RU");
+
+        public static RelayCommand SelectLanguageCommand(string code)
+        {
+            return new RelayCommand(obj =>
+            {
+                var menuItem = (MenuItem)obj;
+                var cultureInfo = new CultureInfo(code);
+                App.Language = cultureInfo;
+            });
+        }
+
+        private void App_LanguageChanged(object _, System.EventArgs e)
+        {
+            CurrentCulture = App.Language;
+            OnPropertyChanged(nameof(CurrentCulture));
+        }
+
+        public CultureInfo CurrentCulture { get; private set; }
 
         #endregion
 

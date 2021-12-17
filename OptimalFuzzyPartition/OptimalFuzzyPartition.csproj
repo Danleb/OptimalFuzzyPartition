@@ -14,6 +14,21 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -102,15 +117,16 @@
     <Compile Include="ViewModel\PartitionCreationViewModel.cs" />
     <Compile Include="ViewModel\Utils\RelayCommand.cs" />
     <Compile Include="ViewModel\Utils\Utils.cs" />
-    <Compile Include="View\CenterDataConverter.cs" />
+    <Compile Include="View\Converter\CenterDataConverter.cs" />
     <Compile Include="View\CenterDataView.cs" />
+    <Compile Include="View\Converter\CultureForCheckboxConverter.cs" />
     <Compile Include="View\InputBindingsManager.cs" />
-    <Compile Include="View\MetricsConverter.cs" />
-    <Compile Include="View\TimePassedConverter.cs" />
+    <Compile Include="View\Converter\MetricsConverter.cs" />
+    <Compile Include="View\Converter\TimePassedConverter.cs" />
     <Compile Include="View\AlgorithmSettingsWindow.xaml.cs">
       <DependentUpon>AlgorithmSettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DensityConverter.cs" />
+    <Compile Include="View\Converter\DensityConverter.cs" />
     <Compile Include="View\UnityWindowHost.cs" />
     <Compile Include="View\ValidationRules\BindingProxy.cs" />
     <Compile Include="View\ValidationRules\CornerPositionValidationRule.cs" />
@@ -122,6 +138,18 @@
     <Compile Include="View\ValidationRules\PositiveIntValidationRule.cs" />
     <Compile Include="View\ValidationRules\PositiveNumberValidationRule.cs" />
     <Compile Include="View\VisibilityConverter.cs" />
+    <Page Include="Resources\lang.uk-UA.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\lang.ru-RU.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\lang.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\AlgorithmSettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -143,22 +171,11 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.ru-RU.resx" />
-    <EmbeddedResource Include="Properties\Resources.uk-UA.resx" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -185,6 +202,18 @@
       <Project>{38196ac9-6a10-4e9b-a758-5c3985c6126e}</Project>
       <Name>OptimalFuzzyPartitionAlgorithm</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

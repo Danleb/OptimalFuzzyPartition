@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:v="clr-namespace:OptimalFuzzyPartition.View"
+        xmlns:c="clr-namespace:OptimalFuzzyPartition.View.Converter"
         xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
@@ -24,6 +25,7 @@
         <v:MetricsConverter x:Key="MetricsConverter"></v:MetricsConverter>
         <v:CenterDataConverter x:Key="CenterDataConverter"></v:CenterDataConverter>
         <v:VisibilityConverter x:Key="VisibilityConverter"></v:VisibilityConverter>
+        <c:CultureForCheckboxConverter x:Key="CultureForCheckboxConverter"/>
 
         <ControlTemplate x:Key="ValidationFailed">
             <StackPanel Orientation="Horizontal">
@@ -58,11 +60,11 @@
                     <MenuItem Header="Save as" Command="{Binding SaveSettingsAsCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Language">
-                    <MenuItem Header="English"/>
-                    <MenuItem Header="Ukrainian"/>
-                    <MenuItem Header="Russian"/>
+                    <MenuItem Header="English" Command="{Binding SwitchToEnglish}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='en', Mode=OneWay}"/>
+                    <MenuItem Header="Ukrainian" Command="{Binding SwitchToUkrainian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='uk', Mode=OneWay}"/>
+                    <MenuItem Header="Russian" Command="{Binding SwitchToRussian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='ru', Mode=OneWay}"/>
                 </MenuItem>
-                <MenuItem Header="About"/>
+                <MenuItem  Header="{DynamicResource lAbout}"/>
             </Menu>
 
             <ScrollViewer>
@@ -215,12 +217,12 @@
                                 <DataGridTextColumn Header="Координата Y" IsReadOnly="{Binding IsPositionCellReadonly}" Binding="{Binding ValueY}"></DataGridTextColumn>
                                 <DataGridTextColumn Header="Адитивний коефіцієнт а" IsReadOnly="False" Binding="{Binding CoefficientA}"></DataGridTextColumn>
                                 <DataGridTextColumn Header="Мультиплікативний коефіцієнт w" IsReadOnly="False" Binding="{Binding CoefficientW}"></DataGridTextColumn>
-                                <DataGridCheckBoxColumn Header="Фіксований центр?" Visibility="Visible" IsReadOnly="False" Binding="{Binding IsFixedCenter}"></DataGridCheckBoxColumn>
+                                <!--<DataGridCheckBoxColumn Header="Фіксований центр?" Visibility="Visible" IsReadOnly="False" Binding="{Binding IsFixedCenter}"></DataGridCheckBoxColumn>-->
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
 
-                    <Label Content="Налаштування нечіткого розбиття з розміщенням центрів:" FontWeight="Bold"></Label>
+                    <Label Content="Налаштування інтегрування площі:" FontWeight="Bold"></Label>
                     <Label Content="Кількість коефіцієнтів Гауса-Лежадра для рахування інтеграла:"></Label>
                     <TextBox Style="{StaticResource TextBoxStyle}" >
                         <TextBox.Text>
