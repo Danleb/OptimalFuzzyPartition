@@ -1,8 +1,7 @@
 ﻿<Application x:Class="OptimalFuzzyPartition.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="View/AlgorithmSettingsWindow.xaml"
-             >
+             StartupUri="View/AlgorithmSettingsWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

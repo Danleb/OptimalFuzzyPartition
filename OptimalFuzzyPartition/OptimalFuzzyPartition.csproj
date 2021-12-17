@@ -117,6 +117,9 @@
     <Compile Include="ViewModel\PartitionCreationViewModel.cs" />
     <Compile Include="ViewModel\Utils\RelayCommand.cs" />
     <Compile Include="ViewModel\Utils\Utils.cs" />
+    <Compile Include="View\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Converter\CenterDataConverter.cs" />
     <Compile Include="View\CenterDataView.cs" />
     <Compile Include="View\Converter\CultureForCheckboxConverter.cs" />
@@ -137,7 +140,7 @@
     <Compile Include="View\ValidationRules\NumberValidationRule.cs" />
     <Compile Include="View\ValidationRules\PositiveIntValidationRule.cs" />
     <Compile Include="View\ValidationRules\PositiveNumberValidationRule.cs" />
-    <Compile Include="View\VisibilityConverter.cs" />
+    <Compile Include="View\Converter\VisibilityConverter.cs" />
     <Page Include="Resources\lang.uk-UA.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -147,6 +150,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\lang.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

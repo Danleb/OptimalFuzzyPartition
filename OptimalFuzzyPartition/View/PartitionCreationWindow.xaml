@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:view="clr-namespace:OptimalFuzzyPartition.View"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
+        xmlns:c="clr-namespace:OptimalFuzzyPartition.View.Converter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
         Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="625" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico"
@@ -13,7 +14,7 @@
         Closed="Window_Closed"
         >
     <Window.Resources>
-        <view:TimePassedConverter x:Key="TimePassedConverter"></view:TimePassedConverter>
+        <c:TimePassedConverter x:Key="TimePassedConverter"/>
     </Window.Resources>
     <Grid>
         <DockPanel>

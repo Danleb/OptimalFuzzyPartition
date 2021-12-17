@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace OptimalFuzzyPartition.View
+namespace OptimalFuzzyPartition.View.Converter
 {
     public class MetricsConverter : IValueConverter
     {
@@ -16,7 +16,7 @@ namespace OptimalFuzzyPartition.View
             switch (metricsType)
             {
                 case MetricsType.Euclidean:
-                    return "Евклідова метрика";
+                    return "Евклідова метрика";//todo localize
                 case MetricsType.Manhattan:
                     return "Манхеттенська метрика";
                 case MetricsType.Chebyshev:

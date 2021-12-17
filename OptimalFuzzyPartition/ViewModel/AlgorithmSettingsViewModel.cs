@@ -300,6 +300,16 @@ namespace OptimalFuzzyPartition.ViewModel
 
         #endregion
 
+        #region Menu commands
+
+        public RelayCommand AboutCommand { get; } = new RelayCommand(_ =>
+        {
+            var window = new AboutWindow();
+            window.ShowDialog();
+        });
+
+        #endregion
+
         #region Localization commands
         public RelayCommand SwitchToEnglish { get; } = SelectLanguageCommand("en-US");
         public RelayCommand SwitchToUkrainian { get; } = SelectLanguageCommand("uk-UA");

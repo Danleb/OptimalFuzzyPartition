@@ -21,10 +21,10 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <v:DensityConverter x:Key="DensityConverter"></v:DensityConverter>
-        <v:MetricsConverter x:Key="MetricsConverter"></v:MetricsConverter>
-        <v:CenterDataConverter x:Key="CenterDataConverter"></v:CenterDataConverter>
-        <v:VisibilityConverter x:Key="VisibilityConverter"></v:VisibilityConverter>
+        <c:DensityConverter x:Key="DensityConverter"/>
+        <c:MetricsConverter x:Key="MetricsConverter"/>
+        <c:CenterDataConverter x:Key="CenterDataConverter"/>
+        <c:VisibilityConverter x:Key="VisibilityConverter"/>
         <c:CultureForCheckboxConverter x:Key="CultureForCheckboxConverter"/>
 
         <ControlTemplate x:Key="ValidationFailed">
@@ -64,7 +64,7 @@
                     <MenuItem Header="Ukrainian" Command="{Binding SwitchToUkrainian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='uk', Mode=OneWay}"/>
                     <MenuItem Header="Russian" Command="{Binding SwitchToRussian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='ru', Mode=OneWay}"/>
                 </MenuItem>
-                <MenuItem  Header="{DynamicResource lAbout}"/>
+                <MenuItem Header="{DynamicResource lAbout}" Command="{Binding AboutCommand}"/>
             </Menu>
 
             <ScrollViewer>

@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace OptimalFuzzyPartition.View
+namespace OptimalFuzzyPartition.View.Converter
 {
     public class DensityConverter : IValueConverter
     {

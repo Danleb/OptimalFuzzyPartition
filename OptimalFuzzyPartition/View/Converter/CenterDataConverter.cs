@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace OptimalFuzzyPartition.View
+namespace OptimalFuzzyPartition.View.Converter
 {
     public class CenterDataConverter : IValueConverter
     {

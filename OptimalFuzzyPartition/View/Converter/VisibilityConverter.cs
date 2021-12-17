@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OptimalFuzzyPartition.View
+namespace OptimalFuzzyPartition.View.Converter
 {
     public class VisibilityConverter : IValueConverter
     {

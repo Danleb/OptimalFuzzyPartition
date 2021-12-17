@@ -1,11 +1,10 @@
-﻿using System;
+﻿using OptimalFuzzyPartition.Properties;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace OptimalFuzzyPartition
@@ -15,6 +14,30 @@ namespace OptimalFuzzyPartition
     /// </summary>
     public partial class App : Application
     {
+        static App()
+        {
+            LanguageChanged += App_LanguageChanged;
+
+            Languages = new List<CultureInfo>();
+            Languages.Clear();
+            var culturesCodes = new string[]
+            {
+                "en-US",
+                "uk-UA",
+                "ru-RU",
+            };
+            foreach (var code in culturesCodes)
+            {
+                Languages.Add(new CultureInfo(code));
+            }
+        }
+
+        App()
+        {
+            InitializeComponent();
+            Language = Settings.Default.SavedLanguage;
+        }
+
         public static event EventHandler LanguageChanged;
 
         public static List<CultureInfo> Languages { get; }
@@ -47,7 +70,7 @@ namespace OptimalFuzzyPartition
 
                 var oldDict = Current.Resources.MergedDictionaries
                     .Where(d => d.Source != null && d.Source.OriginalString.StartsWith("Resources/lang."))
-                    .First();
+                    .FirstOrDefault();
 
                 if (oldDict != null)
                 {
@@ -64,20 +87,10 @@ namespace OptimalFuzzyPartition
             }
         }
 
-        static App()
+        private static void App_LanguageChanged(Object sender, EventArgs e)
         {
-            Languages = new List<CultureInfo>();
-            Languages.Clear();
-            var culturesCodes = new string[]
-            {
-                "en-US",
-                "uk-UA",
-                "ru-RU",
-            };
-            foreach (var code in culturesCodes)
-            {
-                Languages.Add(new CultureInfo(code));
-            }
+            Settings.Default.SavedLanguage = Language;
+            Settings.Default.Save();
         }
     }
 }
