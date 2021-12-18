@@ -46,5 +46,17 @@ namespace OptimalFuzzyPartition.Properties {
                 this["SavedLanguage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConfigurationPath {
+            get {
+                return ((string)(this["ConfigurationPath"]));
+            }
+            set {
+                this["ConfigurationPath"] = value;
+            }
+        }
     }
 }

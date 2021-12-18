@@ -1,13 +1,17 @@
-﻿using OptimalFuzzyPartition.Annotations;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
+using OptimalFuzzyPartition.Annotations;
 using OptimalFuzzyPartition.Model;
 using OptimalFuzzyPartition.View;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm.Common;
 using OptimalFuzzyPartitionAlgorithm.Settings;
 using OptimalFuzzyPartitionAlgorithm.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,10 +20,7 @@ namespace OptimalFuzzyPartition.ViewModel
 {
     public class AlgorithmSettingsViewModel : INotifyPropertyChanged
     {
-        public readonly PartitionSettings Settings;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        private PartitionSettings _settings;
         private PartitionCreationWindow _partitionCreationWindow;
 
         public AlgorithmSettingsViewModel()
@@ -61,6 +62,26 @@ namespace OptimalFuzzyPartition.ViewModel
 
             App.LanguageChanged += App_LanguageChanged;
             App_LanguageChanged(null, null);
+
+            SaveCommand = new RelayCommand(_ => Save());
+            SaveAsCommand = new RelayCommand(_ => SaveAs());
+            LoadCommand = new RelayCommand(_ => LoadConfiguration());
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string CurrentConfigurationFile { get; set; }
+
+        public bool IsConfigFileChosen => CurrentConfigurationFile != null;
+
+        public PartitionSettings Settings
+        {
+            get => _settings;
+            set
+            {
+                _settings = value;
+                OnPropertyChanged("");
+            }
         }
 
         #region Settings for the: space
@@ -280,27 +301,27 @@ namespace OptimalFuzzyPartition.ViewModel
 
         #endregion
 
-        #region Settings for menu
-
-        public bool Is;
-
-        #endregion
-
         #region Commands
 
         public RelayCommand CreatePartitionCommand { get; }
 
         public RelayCommand OnClosing { get; }
 
-        public RelayCommand OnSave { get; }
-
-        public RelayCommand OnSaveAs { get; }
-
-        public RelayCommand OnLoadSettings { get; }
-
         #endregion
 
         #region Menu commands
+
+        public RelayCommand SaveCommand { get; }
+
+        public RelayCommand SaveAsCommand { get; }
+
+        public RelayCommand LoadCommand { get; }
+
+        public RelayCommand ResetToDefault { get; }
+
+        public RelayCommand LightTheme { get; }
+
+        public RelayCommand DarkTheme { get; }
 
         public RelayCommand AboutCommand { get; } = new RelayCommand(_ =>
         {
@@ -339,6 +360,108 @@ namespace OptimalFuzzyPartition.ViewModel
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void Save()
+        {
+            if (CurrentConfigurationFile == null)
+            {
+                SaveAs();
+            }
+            else
+            {
+                SaveSettings(CurrentConfigurationFile);
+            }
+        }
+
+        private void SaveAs()
+        {
+            var openDialog = new CommonSaveFileDialog
+            {
+                Title = "Save partition configuration",
+                DefaultFileName = $"Partition_{CentersCount}_{SegmentsCountX}x{SegmentsCountY}",
+                DefaultExtension = "json",
+                InitialDirectory = GetSaveDirectory(),
+                AlwaysAppendDefaultExtension = true,
+                EnsureFileExists = true,
+                EnsurePathExists = true,
+                EnsureValidNames = true,
+            };
+            openDialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
+
+            if (openDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var filePath = openDialog.FileName;
+
+                Properties.Settings.Default.ConfigurationPath = filePath;
+                Properties.Settings.Default.Save();
+
+                CurrentConfigurationFile = filePath;
+                OnPropertyChanged(nameof(IsConfigFileChosen));
+
+                SaveSettings(CurrentConfigurationFile);
+            }
+        }
+
+        private void LoadConfiguration()
+        {
+            var commonOpenFileDialog = new CommonOpenFileDialog
+            {
+                Title = "Load partition configuration",
+                DefaultFileName = $"Partition_{CentersCount}_{SegmentsCountX}x{SegmentsCountY}",
+                DefaultExtension = "json",
+                InitialDirectory = GetSaveDirectory(),
+            };
+
+            if (commonOpenFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var filePath = commonOpenFileDialog.FileName;
+
+                Properties.Settings.Default.ConfigurationPath = filePath;
+                Properties.Settings.Default.Save();
+
+                CurrentConfigurationFile = filePath;
+                OnPropertyChanged(nameof(IsConfigFileChosen));
+
+                LoadSettings(CurrentConfigurationFile);
+            }
+        }
+
+        private string GetSaveDirectory()
+        {
+            var defaultDirectory = Path.Combine(Environment.CurrentDirectory, "Configurations");
+            var directory = defaultDirectory;
+            if (CurrentConfigurationFile != null && !string.IsNullOrEmpty(CurrentConfigurationFile))
+            {
+                directory = Path.GetDirectoryName(CurrentConfigurationFile);
+            }
+            else if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.ConfigurationPath))
+            {
+                directory = Path.GetDirectoryName(Properties.Settings.Default.ConfigurationPath);
+            }
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            return directory;
+        }
+
+        private void SaveSettings(string path)
+        {
+            var writer = new StreamWriter(path);
+            var data = JsonConvert.SerializeObject(Settings, Formatting.Indented);
+            writer.Write(data);
+            writer.Close();
+        }
+
+        private void LoadSettings(string path)
+        {
+            var reader = new StreamReader(path);
+            var data = reader.ReadToEnd();
+            reader.Close();
+            Settings = JsonConvert.DeserializeObject<PartitionSettings>(data, new VectorJsonConverter());
         }
     }
 }

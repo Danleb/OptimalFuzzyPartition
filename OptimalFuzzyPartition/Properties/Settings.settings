@@ -8,5 +8,8 @@
     <Setting Name="SavedLanguage" Type="System.Globalization.CultureInfo" Scope="User">
       <Value Profile="(Default)">en-US</Value>
     </Setting>
+    <Setting Name="ConfigurationPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -16,6 +16,11 @@
         Closing="AlgorithmSettingsWindow_OnClosing"
         >
 
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding SaveCommand}" Key="S" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding LoadCommand}" Key="O" Modifiers="Ctrl"/>
+    </Window.InputBindings>
+    
     <Window.DataContext>
         <vm:AlgorithmSettingsViewModel></vm:AlgorithmSettingsViewModel>
     </Window.DataContext>
@@ -54,15 +59,20 @@
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="File">
-                    <MenuItem Header="Load settings" Command="{Binding LoadSettingsCommand}"/>
-                    <MenuItem Header="Save" IsEnabled="{Binding IsSaveFileSet}" Command="{Binding SaveSettingsCommand}"/>
-                    <MenuItem Header="Save as" Command="{Binding SaveSettingsAsCommand}"/>
+                <MenuItem Header="Configuration">                    
+                    <MenuItem Header="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding IsConfigFileChosen}"/>
+                    <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}"/>
+                    <MenuItem Header="Load configuration" Command="{Binding LoadCommand}"/>
+                    <MenuItem Header="Reset to default" Command="{Binding ResetToDefault}"/>
                 </MenuItem>
                 <MenuItem Header="Language">
                     <MenuItem Header="English" Command="{Binding SwitchToEnglish}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='en', Mode=OneWay}"/>
                     <MenuItem Header="Ukrainian" Command="{Binding SwitchToUkrainian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='uk', Mode=OneWay}"/>
                     <MenuItem Header="Russian" Command="{Binding SwitchToRussian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='ru', Mode=OneWay}"/>
+                </MenuItem>
+                <MenuItem Header="Theme">
+                    <MenuItem Header="Light" IsCheckable="True" IsChecked="False"/>
+                    <MenuItem Header="Dark" IsCheckable="True" IsChecked="False"/>
                 </MenuItem>
                 <MenuItem Header="{DynamicResource lAbout}" Command="{Binding AboutCommand}"/>
             </Menu>
@@ -112,8 +122,8 @@
                             <TextBox.Text>
                                 <Binding Path="SegmentsCountX" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
-                                        <vr:NumberValidationRule></vr:NumberValidationRule>
-                                        <vr:GridSizeValidationRule></vr:GridSizeValidationRule>
+                                        <vr:NumberValidationRule/>
+                                        <vr:GridSizeValidationRule/>
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
@@ -160,8 +170,8 @@
                             <TextBox.Text>
                                 <Binding Path="SegmentsCountY" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
-                                        <vr:NumberValidationRule></vr:NumberValidationRule>
-                                        <vr:GridSizeValidationRule></vr:GridSizeValidationRule>
+                                        <vr:NumberValidationRule/>
+                                        <vr:GridSizeValidationRule/>
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
@@ -198,7 +208,7 @@
                             <TextBox.Text>
                                 <Binding Path="CentersCount" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
-                                        <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
+                                        <vr:PositiveIntValidationRule/>
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
@@ -228,54 +238,7 @@
                         <TextBox.Text>
                             <Binding Path="GaussLegendreIntegralOrder" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-
-                    <!--<Label Content="Параметри r-алгоритму:" FontWeight="Bold"></Label>-->
-                    <Label Content="Параметри методу градієнтного спуску:" FontWeight="Bold"></Label>
-
-                    <Label Content="Максимальна кількість ітерацій:"></Label>
-                    <TextBox Style="{StaticResource TextBoxStyle}">
-                        <TextBox.Text>
-                            <Binding Path="RAlgorithmMaxIterationsCount" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-
-                    <Label Content="Початковий крок H0:"></Label>
-                    <TextBox Style="{StaticResource TextBoxStyle}">
-                        <TextBox.Text>
-                            <Binding Path="InitialStepH0" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-
-                    <Label Content="Мінімальне значення кроку для закінчення ітерацій:"></Label>
-                    <TextBox Style="{StaticResource TextBoxStyle}">
-                        <TextBox.Text>
-                            <Binding Path="CentersDeltaEpsilon" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-
-                    <Label Content="Коефіцієнт розтягу простору:"></Label>
-                    <TextBox Style="{StaticResource TextBoxStyle}">
-                        <TextBox.Text>
-                            <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                                    <vr:PositiveIntValidationRule/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
@@ -288,18 +251,29 @@
                         <TextBox.Text>
                             <Binding Path="FixedPartitionGradientStep" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                                    <vr:PositiveNumberValidationRule/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
 
+                    <Label Content="Початкове значення Psi (впливає на швидкість збігу методу):"></Label>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="FixedPartitionPsiStartValue" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:NumberValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    
                     <Label Content="Мінімальне граничне значення градієнту для закінчення ітерацій:"></Label>
                     <TextBox Style="{StaticResource TextBoxStyle}">
                         <TextBox.Text>
                             <Binding Path="FixedPartitionGradientThreshold" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <vr:PositiveNumberValidationRule></vr:PositiveNumberValidationRule>
+                                    <vr:PositiveNumberValidationRule/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
@@ -310,7 +284,53 @@
                         <TextBox.Text>
                             <Binding Path="FixedPartitionMaxIteration" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <vr:PositiveIntValidationRule></vr:PositiveIntValidationRule>
+                                    <vr:PositiveIntValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Label Content="Налаштування розбиття з розміщенням цетрів:" FontWeight="Bold"></Label>
+
+                    <Label Content="Максимальна кількість ітерацій:"></Label>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="RAlgorithmMaxIterationsCount" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:PositiveIntValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Label Content="Початковий крок H0:"></Label>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="InitialStepH0" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:PositiveNumberValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Label Content="Мінімальне значення кроку для закінчення ітерацій:"></Label>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="CentersDeltaEpsilon" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:PositiveNumberValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Label Content="Коефіцієнт розтягу простору:"></Label>
+                    <TextBox Style="{StaticResource TextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <vr:PositiveNumberValidationRule/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
