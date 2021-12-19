@@ -67,10 +67,10 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 
                 PrecisionByVariable = partitionSettings.FuzzyPartitionPlacingCentersSettings.CentersDeltaEpsilon,
 
-                IterationsCountToIncreaseStep = 3,
+                IterationsCountToIncreaseStep = partitionSettings.RAlgorithmSettings.IterationsCountToIncreaseStep,
                 PrecisionBySubgradient = 0.001,
-                StepDecreaseMultiplier = 0.9,
-                StepIncreaseMultiplier = 1.1
+                StepDecreaseMultiplier = partitionSettings.RAlgorithmSettings.StepDecreaseMultiplier,
+                StepIncreaseMultiplier = partitionSettings.RAlgorithmSettings.StepIncreaseMultiplier
             };
 
             _rSolver = new RSolver(initialVector, false, options, subgradientEvaluator);

@@ -24,12 +24,12 @@ int MetricsIndex;
 
 float GetDistance(float2 a, float2 b)
 {
-	switch(MetricsIndex)
+	switch (MetricsIndex)
 	{
-		default:
-		case 1: return GetEuclideanDistance(a, b);
-		case 2: return GetManhattanDistance(a, b);
-		case 3: return GetChebyshevDistance(a, b);		
+	default:
+	case 0: return GetEuclideanDistance(a, b);
+	case 1: return GetManhattanDistance(a, b);
+	case 2: return GetChebyshevDistance(a, b);
 	}
 
 	return GetEuclideanDistance(a, b);
@@ -51,37 +51,37 @@ int MuIndex(int2 size, int2 xy, int centerIndex)
 //=
 
 #pragma kernel ZeroIterationInit
-[numthreads(8,8,1)]
+[numthreads(8, 8, 1)]
 void ZeroIterationInit(uint3 id : SV_DispatchThreadID)
 {
 	int2 texturePoint = id.xy;
-	int centerIndex = id.z;		
-	
+	int centerIndex = id.z;
+
 	PsiGrid[PsiIndex(GridSize, texturePoint)] = PsiStartValue;
-	
+
 	float muRatio = 1.0 / CentersCount;
 	MuGrids[MuIndex(GridSize, texturePoint, centerIndex)] = muRatio;
 }
 
 #pragma kernel UpdateMu
-[numthreads(8,8,1)]
+[numthreads(8, 8, 1)]
 void UpdateMu(uint3 id : SV_DispatchThreadID)
 {
 	int2 texturePoint = id.xy;
 	int centerIndex = id.z;
 	//int muGridIndex = MuIndex(GridSize, texturePoint, centerIndex);
 	int muGridIndex = GridSize.x * GridSize.y * centerIndex + GridSize.x * id.y + id.x;
-	
+
 	float a = AdditiveCoefficients[centerIndex];
 	float w = MultiplicativeCoefficients[centerIndex];
 	float2 centerPosition = CentersPositions[centerIndex];
 
 	float2 pointRatio = float2(texturePoint.x, texturePoint.y) / (GridSize - float2(1, 1));
 	float2 spacePoint = MinCorner + Diff * pointRatio;
-	
+
 	float densityValue = 1;
 	float m = 2;
-	
+
 	float distance = GetDistance(centerPosition, spacePoint);
 
 	float psiValue = PsiGrid[PsiIndex(GridSize, texturePoint)];
@@ -90,7 +90,7 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 
 	float normalizedMuValue;
 
-	if(newMuValue >= 0 && newMuValue <= 1)
+	if (newMuValue >= 0 && newMuValue <= 1)
 	{
 		normalizedMuValue = newMuValue;
 	}
@@ -106,12 +106,12 @@ void UpdateMu(uint3 id : SV_DispatchThreadID)
 }
 
 #pragma kernel UpdatePsi
-[numthreads(8,8,1)]
+[numthreads(8, 8, 1)]
 void UpdatePsi(uint3 id : SV_DispatchThreadID)
 {
 	int2 texturePoint = int2(id.xy);
 	float grad = 0;
-	for(int centerIndex = 0; centerIndex < CentersCount; centerIndex++)
+	for (int centerIndex = 0; centerIndex < CentersCount; centerIndex++)
 		grad += MuGrids[MuIndex(GridSize, texturePoint, centerIndex)];
 
 	grad -= 1;

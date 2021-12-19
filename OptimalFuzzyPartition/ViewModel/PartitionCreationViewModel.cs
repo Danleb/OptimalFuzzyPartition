@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using OptimalFuzzyPartition.Annotations;
+using OptimalFuzzyPartition.Properties;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using OptimalFuzzyPartitionAlgorithm.Settings;
@@ -39,7 +40,84 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         };
 
+        public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
+        {
+            _simpleTcpServer = simpleTcpServer;
+            _simpleTcpServer.DataReceived += OnDataReceived;
+
+            PartitionSettings = partitionSettings;
+
+            _ = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
+
+            AlwaysShowCentersInfo = Settings.Default.AlwaysShowCentersInfo;
+            DrawGrayscale = Settings.Default.DrawGrayscalePartition;
+            DrawWithMistrust = Settings.Default.DrawPartitionWithMistrustCoef;
+            MistrustCoefficient = Settings.Default.MistrustCoef;
+            PartitionImageSavePath = Settings.Default.PartitionImageSavePath;
+
+            ChoosePartitionImageSavePathCommand = new RelayCommand(v => ChoosePartitionImageSavePath());
+            RunPartitionCreationCommand = new RelayCommand(v => RunPartitionCreation());
+            SavePartitionImageCommand = new RelayCommand(v => SavePartitionImage());
+            UpdatePartitionCommand = new RelayCommand(v => UpdatePartition());
+
+            _timer = new DispatcherTimer();
+            _timer.Tick += OnTimerTick;
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        }
+
         public TimeSpan TimePassed { get; set; }
+
+        #region Render settings
+
+        public bool AlwaysShowCentersInfo
+        {
+            get => _commandAndData.RenderingSettings.AlwaysShowCentersInfo;
+            set
+            {
+                _commandAndData.RenderingSettings.AlwaysShowCentersInfo = value;
+                Settings.Default.AlwaysShowCentersInfo = _commandAndData.RenderingSettings.AlwaysShowCentersInfo;
+                Settings.Default.Save();
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DrawGrayscale
+        {
+            get => _commandAndData.RenderingSettings.DrawGrayscale;
+            set
+            {
+                _commandAndData.RenderingSettings.DrawGrayscale = value;
+                Settings.Default.DrawGrayscalePartition = _commandAndData.RenderingSettings.DrawGrayscale;
+                Settings.Default.Save();
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DrawWithMistrust
+        {
+            get => _commandAndData.RenderingSettings.DrawWithMistrustCoefficient;
+            set
+            {
+                _commandAndData.RenderingSettings.DrawWithMistrustCoefficient = value;
+                Settings.Default.DrawPartitionWithMistrustCoef = _commandAndData.RenderingSettings.DrawWithMistrustCoefficient;
+                Settings.Default.Save();
+                OnPropertyChanged();
+            }
+        }
+
+        public double MistrustCoefficient
+        {
+            get => _commandAndData.RenderingSettings.MistrustCoefficient;
+            set
+            {
+                _commandAndData.RenderingSettings.MistrustCoefficient = value;
+                Settings.Default.MistrustCoef = _commandAndData.RenderingSettings.MistrustCoefficient;
+                Settings.Default.Save();
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
 
         public int PerformedIterationCount
         {
@@ -81,46 +159,6 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
-        public bool DrawWithMistrust
-        {
-            get => _commandAndData.RenderingSettings.DrawWithMistrustCoefficient;
-            set
-            {
-                _commandAndData.RenderingSettings.DrawWithMistrustCoefficient = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool DrawGrayscale
-        {
-            get => _commandAndData.RenderingSettings.DrawGrayscale;
-            set
-            {
-                _commandAndData.RenderingSettings.DrawGrayscale = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double MistrustCoefficient
-        {
-            get => _commandAndData.RenderingSettings.MistrustCoefficient;
-            set
-            {
-                _commandAndData.RenderingSettings.MistrustCoefficient = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool AlwaysShowCentersInfo
-        {
-            get => _commandAndData.RenderingSettings.AlwaysShowCentersInfo;
-            set
-            {
-                _commandAndData.RenderingSettings.AlwaysShowCentersInfo = value;
-                OnPropertyChanged();
-            }
-        }
-
         public bool IsManualSavePathEnabled
         {
             get => _isManualSavePathEnabled; set
@@ -149,28 +187,6 @@ namespace OptimalFuzzyPartition.ViewModel
         public RelayCommand UpdatePartitionCommand { get; }
 
         public RelayCommand ChoosePartitionImageSavePathCommand { get; }
-
-        public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
-        {
-            _simpleTcpServer = simpleTcpServer;
-            _simpleTcpServer.DataReceived += OnDataReceived;
-
-            PartitionSettings = partitionSettings;
-
-            _ = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
-
-            _lastPartitionImageSavePath = Properties.Settings.Default.PartitionImageSavePath;
-            PartitionImageSavePath = _lastPartitionImageSavePath;
-
-            ChoosePartitionImageSavePathCommand = new RelayCommand(v => ChoosePartitionImageSavePath());
-            RunPartitionCreationCommand = new RelayCommand(v => RunPartitionCreation());
-            SavePartitionImageCommand = new RelayCommand(v => SavePartitionImage());
-            UpdatePartitionCommand = new RelayCommand(v => UpdatePartition());
-
-            _timer = new DispatcherTimer();
-            _timer.Tick += OnTimerTick;
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-        }
 
         private void ChoosePartitionImageSavePath()
         {

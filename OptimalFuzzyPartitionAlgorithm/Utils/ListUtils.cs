@@ -18,7 +18,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Utils
 
         public static T MinElement<T>(this List<T> list, Func<T, double> func)
         {
-            double minValue = 0;
+            double minValue = double.MaxValue;
             T minElement = default;
             foreach (var v in list)
             {

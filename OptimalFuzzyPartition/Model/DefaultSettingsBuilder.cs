@@ -59,7 +59,11 @@ namespace OptimalFuzzyPartition.Model
                 {
                     SpaceStretchFactor = 2,
                     H0 = 0.7,
-                    MaxIterationsCount = 100
+                    MaxIterationsCount = 100,
+                    IterationsCountToIncreaseStep = 3,
+                    PrecisionBySubgradient = 0.001,
+                    StepDecreaseMultiplier = 0.9,
+                    StepIncreaseMultiplier = 1.1,
                 },
                 GaussLegendreIntegralOrder = 32
             };

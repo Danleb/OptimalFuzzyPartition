@@ -3,6 +3,7 @@ using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm.PartitionRate;
 using OptimalFuzzyPartitionAlgorithm.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -141,6 +142,18 @@ namespace FuzzyPartitionComputing
             _fuzzyPartitionShader.SetFloat("GradientEpsilon", epsilon);
             _fuzzyPartitionShader.SetFloat("PsiStartValue", (float)Settings.FuzzyPartitionFixedCentersSettings.PsiStartValue);
             _fuzzyPartitionShader.SetInt("CentersCount", Settings.CentersSettings.CentersCount);
+
+            if (Settings.SpaceSettings.DensityType != OptimalFuzzyPartitionAlgorithm.Algorithm.Common.DensityType.Everywhere1)
+            {
+                throw new NotImplementedException("Using custom density function is not implemented.");
+            }
+
+            if (Settings.SpaceSettings.MetricsType == OptimalFuzzyPartition.ViewModel.MetricsType.CustomFunction)
+            {
+                throw new NotImplementedException("Using custom distance function is not implemented.");
+            }
+
+            _fuzzyPartitionShader.SetInt("MetricsIndex", (int)Settings.SpaceSettings.MetricsType);
 
             SetCentersPositionsToBuffer();
             SetAdditiveCoefficientsToBuffer();

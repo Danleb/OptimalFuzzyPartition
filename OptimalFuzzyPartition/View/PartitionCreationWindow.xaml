@@ -13,6 +13,9 @@
         Loaded="Window_Loaded"
         Closed="Window_Closed"
         >
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding UpdatePartitionCommand}" Key="F5"/>
+    </Window.InputBindings>    
     <Window.Resources>
         <c:TimePassedConverter x:Key="TimePassedConverter"/>
     </Window.Resources>
@@ -92,9 +95,17 @@
 
                     <Button Margin="5" Content="Зберегти зображення" Command="{Binding SavePartitionImageCommand}"></Button>
 
+                    <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Margin="5" Content="&lt;&lt;" Padding="5"/>
+                        <Button Margin="5" Content="&lt;" Padding="5"/>
+                        <Label Content="1/15" VerticalAlignment="Center"/>
+                        <Button Margin="5" Content="&gt;" Padding="5"/>
+                        <Button Margin="5" Content="&gt;&gt;"  Padding="5"/>
+                    </StackPanel>-->
+
                 </StackPanel>
             </ScrollViewer>
-
+            
             <view:UnityWindowHost x:Name="UnityWindowHost"></view:UnityWindowHost>
         </DockPanel>
     </Grid>

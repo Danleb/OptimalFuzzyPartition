@@ -20,6 +20,7 @@ namespace OptimalFuzzyPartition.ViewModel
 {
     public class AlgorithmSettingsViewModel : INotifyPropertyChanged
     {
+        private string _configurationSavePath;
         private PartitionSettings _settings;
         private PartitionCreationWindow _partitionCreationWindow;
 
@@ -63,14 +64,24 @@ namespace OptimalFuzzyPartition.ViewModel
             App.LanguageChanged += App_LanguageChanged;
             App_LanguageChanged(null, null);
 
-            SaveCommand = new RelayCommand(_ => Save());
-            SaveAsCommand = new RelayCommand(_ => SaveAs());
-            LoadCommand = new RelayCommand(_ => LoadConfiguration());
+            NewConfig = new RelayCommand(_ => NewConfigExec());
+            SaveConfig = new RelayCommand(_ => Save());
+            SaveAsConfig = new RelayCommand(_ => SaveAs());
+            LoadConfig = new RelayCommand(_ => LoadConfiguration());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string CurrentConfigurationFile { get; set; }
+        public string CurrentConfigurationFile
+        {
+            get => _configurationSavePath;
+            set
+            {
+                _configurationSavePath = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsConfigFileChosen));
+            }
+        }
 
         public bool IsConfigFileChosen => CurrentConfigurationFile != null;
 
@@ -265,6 +276,36 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
+        public int IterationsCountToIncreaseStep
+        {
+            get => Settings.RAlgorithmSettings.IterationsCountToIncreaseStep;
+            set
+            {
+                Settings.RAlgorithmSettings.IterationsCountToIncreaseStep = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double StepIncreaseMultiplier
+        {
+            get => Settings.RAlgorithmSettings.StepIncreaseMultiplier;
+            set
+            {
+                Settings.RAlgorithmSettings.StepIncreaseMultiplier = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double StepDecreaseMultiplier
+        {
+            get => Settings.RAlgorithmSettings.StepDecreaseMultiplier;
+            set
+            {
+                Settings.RAlgorithmSettings.StepDecreaseMultiplier = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Settings for the: Fuzzy partition with fixed centers
@@ -275,6 +316,16 @@ namespace OptimalFuzzyPartition.ViewModel
             set
             {
                 Settings.FuzzyPartitionFixedCentersSettings.GradientStep = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double FixedPartitionPsiStartValue
+        {
+            get => Settings.FuzzyPartitionFixedCentersSettings.PsiStartValue;
+            set
+            {
+                Settings.FuzzyPartitionFixedCentersSettings.PsiStartValue = value;
                 OnPropertyChanged();
             }
         }
@@ -311,13 +362,13 @@ namespace OptimalFuzzyPartition.ViewModel
 
         #region Menu commands
 
-        public RelayCommand SaveCommand { get; }
+        public RelayCommand SaveConfig { get; }
 
-        public RelayCommand SaveAsCommand { get; }
+        public RelayCommand SaveAsConfig { get; }
 
-        public RelayCommand LoadCommand { get; }
+        public RelayCommand LoadConfig { get; }
 
-        public RelayCommand ResetToDefault { get; }
+        public RelayCommand NewConfig { get; }
 
         public RelayCommand LightTheme { get; }
 
@@ -362,6 +413,12 @@ namespace OptimalFuzzyPartition.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void NewConfigExec()
+        {
+            Settings = DefaultSettingsBuilder.GetPartitionSettings();
+            CurrentConfigurationFile = null;
+        }
+
         private void Save()
         {
             if (CurrentConfigurationFile == null)
@@ -397,8 +454,6 @@ namespace OptimalFuzzyPartition.ViewModel
                 Properties.Settings.Default.Save();
 
                 CurrentConfigurationFile = filePath;
-                OnPropertyChanged(nameof(IsConfigFileChosen));
-
                 SaveSettings(CurrentConfigurationFile);
             }
         }
@@ -408,7 +463,7 @@ namespace OptimalFuzzyPartition.ViewModel
             var commonOpenFileDialog = new CommonOpenFileDialog
             {
                 Title = "Load partition configuration",
-                DefaultFileName = $"Partition_{CentersCount}_{SegmentsCountX}x{SegmentsCountY}",
+                //DefaultFileName = $"Partition_{CentersCount}_{SegmentsCountX}x{SegmentsCountY}",
                 DefaultExtension = "json",
                 InitialDirectory = GetSaveDirectory(),
             };
@@ -421,8 +476,6 @@ namespace OptimalFuzzyPartition.ViewModel
                 Properties.Settings.Default.Save();
 
                 CurrentConfigurationFile = filePath;
-                OnPropertyChanged(nameof(IsConfigFileChosen));
-
                 LoadSettings(CurrentConfigurationFile);
             }
         }

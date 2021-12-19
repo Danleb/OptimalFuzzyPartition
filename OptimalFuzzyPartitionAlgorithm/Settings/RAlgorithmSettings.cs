@@ -16,5 +16,13 @@ namespace OptimalFuzzyPartitionAlgorithm
         public double H0;
 
         public int MaxIterationsCount;
+
+        public int IterationsCountToIncreaseStep;
+
+        public double StepDecreaseMultiplier;
+
+        public double StepIncreaseMultiplier;
+
+        public double PrecisionBySubgradient;
     }
 }

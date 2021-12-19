@@ -58,5 +58,53 @@ namespace OptimalFuzzyPartition.Properties {
                 this["ConfigurationPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AlwaysShowCentersInfo {
+            get {
+                return ((bool)(this["AlwaysShowCentersInfo"]));
+            }
+            set {
+                this["AlwaysShowCentersInfo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DrawGrayscalePartition {
+            get {
+                return ((bool)(this["DrawGrayscalePartition"]));
+            }
+            set {
+                this["DrawGrayscalePartition"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DrawPartitionWithMistrustCoef {
+            get {
+                return ((bool)(this["DrawPartitionWithMistrustCoef"]));
+            }
+            set {
+                this["DrawPartitionWithMistrustCoef"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double MistrustCoef {
+            get {
+                return ((double)(this["MistrustCoef"]));
+            }
+            set {
+                this["MistrustCoef"] = value;
+            }
+        }
     }
 }
