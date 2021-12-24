@@ -17,6 +17,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Settings
         [JsonIgnore]
         public int PlacingCentersCount => CentersCount - FixedCentersCount;
 
-        public List<CenterData> CenterDatas;
+        public List<CenterData> CenterDatas = new List<CenterData>();
     }
 }

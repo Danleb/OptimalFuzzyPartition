@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WindowTitleSettings" xml:space="preserve">
+    <value>Settings for the fuzzy partitioning algorithm</value>
+  </data>
+  <data name="MenuNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="WindowTitleCreation" xml:space="preserve">
+    <value>Fuzzy partition generation</value>
+  </data>
+  <data name="WindowTitleAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="MenuConfiguration" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="MenuLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="MenuTheme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SpaceSettings" xml:space="preserve">
+    <value>Partition space settings:</value>
+  </data>
+  <data name="EnterMinX" xml:space="preserve">
+    <value>Enter min X:</value>
+  </data>
+  <data name="EnterMinY" xml:space="preserve">
+    <value>Enter min Y:</value>
+  </data>
+  <data name="EnterMaxX" xml:space="preserve">
+    <value>Enter max X:</value>
+  </data>
+  <data name="EnterMaxY" xml:space="preserve">
+    <value>Enter max Y:</value>
+  </data>
+  <data name="EnterSegmentsX" xml:space="preserve">
+    <value>Enter X dimension segments count:</value>
+  </data>
+  <data name="EnterSegmentsY" xml:space="preserve">
+    <value>Enter Y dimension segments count:</value>
+  </data>
+  <data name="DensityFunction" xml:space="preserve">
+    <value>Density function ρ(x, y):</value>
+  </data>
+  <data name="DistanceFunction" xml:space="preserve">
+    <value>Metrics distance function с((x,y), τ):</value>
+  </data>
+  <data name="CentersCount" xml:space="preserve">
+    <value>Centers count</value>
+  </data>
+  <data name="TaskWithCentersPlacing" xml:space="preserve">
+    <value>Task with optimal centers placing</value>
+  </data>
+  <data name="CentersCoordinates" xml:space="preserve">
+    <value>Centers coordinates:</value>
+  </data>
+  <data name="CenterNumber" xml:space="preserve">
+    <value>Center number</value>
+  </data>
+  <data name="CoordinateX" xml:space="preserve">
+    <value>Coordinate X</value>
+  </data>
+  <data name="CoordinateY" xml:space="preserve">
+    <value>Coordinate Y</value>
+  </data>
+  <data name="AdditiveCoefficient" xml:space="preserve">
+    <value>Additive coefficient A</value>
+  </data>
+  <data name="MultiplicativeCoefficient" xml:space="preserve">
+    <value>Multiplicative coefficient W</value>
+  </data>
+  <data name="BuildPartition" xml:space="preserve">
+    <value>Build partition</value>
+  </data>
+  <data name="SquareIntegrationSettings" xml:space="preserve">
+    <value>Area integration settings:</value>
+  </data>
+  <data name="GaussLegendreCoefCount" xml:space="preserve">
+    <value>Number of Gauss-Legendre coefficients for integration:</value>
+  </data>
+  <data name="FixedFuzzyPartitionSettings" xml:space="preserve">
+    <value>Settings for calculating fuzzy partition with fixed centers:</value>
+  </data>
+  <data name="MaxIterationsCount" xml:space="preserve">
+    <value>Max iterations count:</value>
+  </data>
+  <data name="MinimalGradientValueIterationsStop" xml:space="preserve">
+    <value>Minimal gradient length for iterations stop:</value>
+  </data>
+  <data name="StartPsiValue" xml:space="preserve">
+    <value>Start Psi value:</value>
+  </data>
+  <data name="GradientStepConstant" xml:space="preserve">
+    <value>Constant C for gradient step calculation λ = C / (k + 1):</value>
+  </data>
+  <data name="StepIncreaseCoef" xml:space="preserve">
+    <value>Step increase coefficient:</value>
+  </data>
+  <data name="StepDecreaseCoef" xml:space="preserve">
+    <value>Step decrease coefficient:</value>
+  </data>
+  <data name="IterationsCountToIncreaseStep" xml:space="preserve">
+    <value>Iterations count to increase step:</value>
+  </data>
+  <data name="SpaceStretchCoef" xml:space="preserve">
+    <value>Space stretch coefficient:</value>
+  </data>
+  <data name="GradientDescentStartStep" xml:space="preserve">
+    <value>Gradient descent start step:</value>
+  </data>
+  <data name="MinCenterDiffToStop" xml:space="preserve">
+    <value>Minimal distance between center coordinates to continue:</value>
+  </data>
+  <data name="CentersPlacingSettings" xml:space="preserve">
+    <value>Settings for fuzzy partition with centers placing:</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="LicenseInfo" xml:space="preserve">
+    <value>Licensed under MIT license.</value>
+  </data>
+  <data name="CopyrightInfo" xml:space="preserve">
+    <value>Copyright © Danylo Lebediev 2020-2022.</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="ProgramInfo" xml:space="preserve">
+    <value>Program for fuzzy partitions generation with fixed and placing centers.</value>
+  </data>
+  <data name="Site" xml:space="preserve">
+    <value>Site:</value>
+  </data>
+  <data name="SaveImage" xml:space="preserve">
+    <value>Save image</value>
+  </data>
+  <data name="SelectPath" xml:space="preserve">
+    <value>Select path</value>
+  </data>
+  <data name="SelectPathManually" xml:space="preserve">
+    <value>Select path manually</value>
+  </data>
+  <data name="TargetFunctionalValue" xml:space="preserve">
+    <value>Target functional value:</value>
+  </data>
+  <data name="DualFunctionalValue" xml:space="preserve">
+    <value>Dual functional value:</value>
+  </data>
+  <data name="UpdatePartition" xml:space="preserve">
+    <value>Update partition image</value>
+  </data>
+  <data name="MistrustsCoefficient" xml:space="preserve">
+    <value>Mistrust coefficient:</value>
+  </data>
+  <data name="DrawWithMistrustCoef" xml:space="preserve">
+    <value>Draw with mistrust coefficient</value>
+  </data>
+  <data name="GrayscaleImage" xml:space="preserve">
+    <value>Draw grayscale</value>
+  </data>
+  <data name="AlwaysShowCentersInfo" xml:space="preserve">
+    <value>Always show centers info</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path:</value>
+  </data>
+  <data name="TimePassed" xml:space="preserve">
+    <value>Time passed:</value>
+  </data>
+  <data name="PerformedIterationsCount" xml:space="preserve">
+    <value>Performed iterations count:</value>
+  </data>
+  <data name="Everywhere1" xml:space="preserve">
+    <value>Everywhere 1</value>
+  </data>
+  <data name="EuclideanMetric" xml:space="preserve">
+    <value>Euclidean metric</value>
+  </data>
+  <data name="ManhattanMetric" xml:space="preserve">
+    <value>Manhattan metric</value>
+  </data>
+  <data name="ChebishevMetric" xml:space="preserve">
+    <value>Chebishev metric</value>
+  </data>
+  <data name="CustomDistanceFunction" xml:space="preserve">
+    <value>Custom distance function</value>
+  </data>
+  <data name="CentersSettings" xml:space="preserve">
+    <value>Centers settings:</value>
+  </data>
+</root>

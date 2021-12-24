@@ -8,7 +8,7 @@
         xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
         mc:Ignorable="d"
-        Title="Налаштування алгоритму побудови нечіткого розбиття"
+        Title="{Binding WindowTitle}"
         Height="557"
         Width="1387"
         MinHeight="720"
@@ -18,6 +18,7 @@
         >
 
     <Window.InputBindings>
+        <KeyBinding Command="{Binding NewConfig}" Key="N" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding SaveConfig}" Key="S" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding LoadConfig}" Key="O" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding CreatePartitionCommand}" Key="F5"/>
@@ -51,6 +52,10 @@
             <Setter Property="Margin" Value="5,0,20,0"></Setter>
         </Style>
 
+        <Style x:Key="FloatTextBoxStyle" TargetType="TextBlock" BasedOn="{StaticResource TextBoxStyle}">
+            
+        </Style>
+        
         <ControlTemplate x:Key="TextBoxTemplate" TargetType="TextBox">
             <TextBox Style="{StaticResource TextBoxStyle}">
                 <!--<TextBox Validation.Error="OnTextBoxValidationError" Style="{StaticResource TextBoxStyle}">-->
@@ -61,26 +66,29 @@
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="Configuration">
-                    <MenuItem Header="New" Command="{Binding NewConfig}"/>
-                    <MenuItem Header="Open" Command="{Binding LoadConfig}"/>
-                    <MenuItem Header="Save" Command="{Binding SaveConfig}" IsEnabled="{Binding IsConfigFileChosen}"/>
+                <MenuItem Header="{DynamicResource MenuConfiguration}">
+                    <MenuItem Header="New" InputGestureText="Ctrl+N" Command="{Binding NewConfig}"/>
+                    <MenuItem Header="Open" InputGestureText="Ctrl+O" Command="{Binding LoadConfig}"/>
+                    <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="{Binding SaveConfig}" IsEnabled="{Binding IsConfigFileChosen}"/>
                     <MenuItem Header="Save as..." Command="{Binding SaveAsConfig}"/>
                 </MenuItem>
-                <MenuItem Header="Language">
+                <MenuItem Header="{DynamicResource MenuLanguage}">
                     <MenuItem Header="English" Command="{Binding SwitchToEnglish}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='en', Mode=OneWay}"/>
                     <MenuItem Header="Ukrainian" Command="{Binding SwitchToUkrainian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='uk', Mode=OneWay}"/>
                     <MenuItem Header="Russian" Command="{Binding SwitchToRussian}" IsCheckable="True" IsChecked="{Binding CurrentCulture, Converter={StaticResource CultureForCheckboxConverter}, ConverterParameter='ru', Mode=OneWay}"/>
                 </MenuItem>
-                <MenuItem Header="Theme">
+                <MenuItem Header="{DynamicResource MenuTheme}">
                     <MenuItem Header="Light" IsCheckable="True" IsChecked="False"/>
                     <MenuItem Header="Dark" IsCheckable="True" IsChecked="False"/>
                 </MenuItem>
-                <MenuItem Header="{DynamicResource lAbout}" Command="{Binding AboutCommand}"/>
+                <MenuItem Header="{DynamicResource MenuAbout}" Command="{Binding AboutCommand}"/>
             </Menu>
 
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                <Button Margin="5" Padding="5" Content="Побудувати розбиття" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}"/>
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">                
+                <Separator/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Margin="5" Padding="5" Content="{DynamicResource BuildPartition}" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}"/>
+                </StackPanel>                
                 <!--<Label Content="State: " VerticalAlignment="Center"/>-->
                 <!--<Label Content="Warning: Partition with custom metrics/density function will be calculated on CPU. It may take a lot of time for grid bigger than 32x32." VerticalAlignment="Center" Background="{x:Null}" Foreground="#FFFF8500" FontWeight="Bold"/>-->
             </StackPanel>
@@ -88,9 +96,9 @@
             <ScrollViewer>
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Vertical">
-                        <Label Content="Налаштування простору, на якому буде проводитись розбиття:" FontWeight="Bold"></Label>
+                        <Label Content="{DynamicResource SpaceSettings}" FontWeight="Bold"></Label>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Label Content="Введіть меншу границю за X"></Label>
+                            <Label Content="{DynamicResource EnterMinX}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Resources>
                                     <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
@@ -108,7 +116,7 @@
                                 </TextBox.Text>
                             </TextBox>
 
-                            <Label Content="Введіть меншу границю за Y"></Label>
+                            <Label Content="{DynamicResource EnterMinY}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Resources>
                                     <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
@@ -128,7 +136,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Label Content="Введіть більшу границю за X"></Label>
+                            <Label Content="{DynamicResource EnterMaxX}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Resources>
                                     <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
@@ -146,7 +154,7 @@
                                 </TextBox.Text>
                             </TextBox>
 
-                            <Label Content="Введіть більшу границю за Y"></Label>
+                            <Label Content="{DynamicResource EnterMaxY}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Resources>
                                     <vr:BindingProxy x:Key="Proxy" Data="{Binding}"></vr:BindingProxy>
@@ -166,7 +174,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Label Content="Введіть кількість сегментів за Х"></Label>
+                            <Label Content="{DynamicResource EnterSegmentsX}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Text>
                                     <Binding Path="SegmentsCountX" UpdateSourceTrigger="PropertyChanged">
@@ -178,7 +186,7 @@
                                 </TextBox.Text>
                             </TextBox>
                             
-                            <Label Content="Введіть кількість сегментів за Y"></Label>
+                            <Label Content="{DynamicResource EnterSegmentsY}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Text>
                                     <Binding Path="SegmentsCountY" UpdateSourceTrigger="PropertyChanged">
@@ -191,31 +199,31 @@
                             </TextBox>
                         </StackPanel>
 
-                        <Label Content="Функція щільності (попиту) ρ(x,y):"></Label>
+                        <Label Content="{DynamicResource DensityFunction}"></Label>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding DensityTypes}" SelectedItem="{Binding DensityType}" Margin="5" MinWidth="100">
+                            <ComboBox ItemsSource="{Binding DensityTypes}" SelectedItem="{Binding DensityType}" Margin="5" MinWidth="100" Name="DensityCombobox">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Converter={StaticResource DensityConverter}}"></TextBlock>
+                                        <TextBlock Text="{Binding Converter={StaticResource DensityConverter}}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </StackPanel>
 
-                        <Label Content="Функція вартості транспортування (метрика) с((x,y), τ):"></Label>
+                        <Label Content="{DynamicResource DistanceFunction}"></Label>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding MetricsTypes}" SelectedItem="{Binding MetricsType}" Margin="5" MinWidth="100">
+                            <ComboBox ItemsSource="{Binding MetricsTypes}" SelectedItem="{Binding MetricsType}" Margin="5" MinWidth="100" Name="MetricsCombobox">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Converter={StaticResource MetricsConverter}}"></TextBlock>
+                                        <TextBlock Text="{Binding Converter={StaticResource MetricsConverter}}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </StackPanel>
 
-                        <Label Content="Налаштування центрів (точок-генераторів):" FontWeight="Bold"></Label>
+                        <Label Content="{DynamicResource CentersSettings}" FontWeight="Bold"></Label>
                         <StackPanel Orientation="Horizontal">
-                            <Label Content="Кількість центрів"></Label>
+                            <Label Content="{DynamicResource CentersCount}"></Label>
 
                             <TextBox Style="{StaticResource TextBoxStyle}" v:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text">
                                 <TextBox.Text>
@@ -228,18 +236,18 @@
                             </TextBox>
                         </StackPanel>
 
-                        <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="Задача із оптимальним  розміщенням центрів" Margin="5"></CheckBox>
+                        <CheckBox IsChecked="{Binding IsCentersPlacingTask}" Content="{DynamicResource TaskWithCentersPlacing}" Margin="5"></CheckBox>
 
                         <StackPanel>
                             <!--Visibility="{Binding ShowCentersCoordinates}">-->
-                            <Label Content="Координати центрів (точок-генераторів):"></Label>
+                            <Label Content="{DynamicResource CentersCoordinates}"></Label>
                             <DataGrid Margin="5" HorizontalAlignment="Left" ItemsSource="{Binding Path=CenterDatas, Converter={StaticResource CenterDataConverter}}" CanUserAddRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" d:DataContext="{d:DesignInstance v:CenterDataView}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Номер центру" IsReadOnly="True" Binding="{Binding CenterNumber}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Координата Х" IsReadOnly="false" Binding="{Binding ValueX}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Координата Y" IsReadOnly="{Binding IsPositionCellReadonly}" Binding="{Binding ValueY}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Адитивний коефіцієнт а" IsReadOnly="False" Binding="{Binding CoefficientA}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Мультиплікативний коефіцієнт w" IsReadOnly="False" Binding="{Binding CoefficientW}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="{DynamicResource CenterNumber}" IsReadOnly="True" Binding="{Binding CenterNumber}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="{DynamicResource CoordinateX}" IsReadOnly="false" Binding="{Binding ValueX}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="{DynamicResource CoordinateY}" IsReadOnly="{Binding IsPositionCellReadonly}" Binding="{Binding ValueY}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="{DynamicResource AdditiveCoefficient}" IsReadOnly="False" Binding="{Binding CoefficientA}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="{DynamicResource MultiplicativeCoefficient}" IsReadOnly="False" Binding="{Binding CoefficientW}"></DataGridTextColumn>
                                     <!--<DataGridCheckBoxColumn Header="Фіксований центр?" Visibility="Visible" IsReadOnly="False" Binding="{Binding IsFixedCenter}"></DataGridCheckBoxColumn>-->
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -251,8 +259,8 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical">
-                        <Label Content="Налаштування інтегрування площі:" FontWeight="Bold"></Label>
-                        <Label Content="Кількість коефіцієнтів Гауса-Лежадра для рахування інтеграла:"></Label>
+                        <Label Content="{DynamicResource SquareIntegrationSettings}" FontWeight="Bold"></Label>
+                        <Label Content="{DynamicResource GaussLegendreCoefCount}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}" >
                             <TextBox.Text>
                                 <Binding Path="GaussLegendreIntegralOrder" UpdateSourceTrigger="PropertyChanged">
@@ -263,9 +271,9 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Налаштування нечіткого розбиття з закріпленими центрами:" FontWeight="Bold"></Label>
+                        <Label Content="{DynamicResource FixedFuzzyPartitionSettings}" FontWeight="Bold"></Label>
 
-                        <Label Content="Константа C для кроку градієнтного спуску λ = C / (k + 1):"></Label>
+                        <Label Content="{DynamicResource GradientStepConstant}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="FixedPartitionGradientStep" UpdateSourceTrigger="PropertyChanged">
@@ -276,7 +284,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Початкове значення Psi (впливає на швидкість збігу методу):"></Label>
+                        <Label Content="{DynamicResource StartPsiValue}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="FixedPartitionPsiStartValue" UpdateSourceTrigger="PropertyChanged">
@@ -287,7 +295,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Мінімальне граничне значення градієнту для закінчення ітерацій:"></Label>
+                        <Label Content="{DynamicResource MinimalGradientValueIterationsStop}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="FixedPartitionGradientThreshold" UpdateSourceTrigger="PropertyChanged">
@@ -298,7 +306,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Максимальна кількість ітерацій:"></Label>
+                        <Label Content="{DynamicResource MaxIterationsCount}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="FixedPartitionMaxIteration" UpdateSourceTrigger="PropertyChanged">
@@ -314,10 +322,10 @@
                         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Налаштування розбиття з розміщенням цетрів:" FontWeight="Bold"></Label>
+                    <StackPanel Orientation="Vertical" IsEnabled="{Binding IsCentersPlacingTask}">
+                        <Label Content="{DynamicResource CentersPlacingSettings}" FontWeight="Bold"></Label>
 
-                        <Label Content="Максимальна кількість ітерацій:"></Label>
+                        <Label Content="{DynamicResource MaxIterationsCount}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="RAlgorithmMaxIterationsCount" UpdateSourceTrigger="PropertyChanged">
@@ -328,7 +336,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Початковий крок градієнтного спуску:"></Label>
+                        <Label Content="{DynamicResource GradientDescentStartStep}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="InitialStepH0" UpdateSourceTrigger="PropertyChanged">
@@ -339,10 +347,10 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Мінімальна різниця між центрами для завершення:"></Label>
+                        <Label Content="{DynamicResource MinCenterDiffToStop}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="CentersDeltaEpsilon" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="CentersDeltaEpsilon" StringFormat="0.#################" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -350,7 +358,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Коефіцієнт розтягу простору:"></Label>
+                        <Label Content="{DynamicResource SpaceStretchCoef}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged">
@@ -361,7 +369,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Кількість ітерацій до збільшення кроку:"></Label>
+                        <Label Content="{DynamicResource IterationsCountToIncreaseStep}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="IterationsCountToIncreaseStep" UpdateSourceTrigger="PropertyChanged">
@@ -372,7 +380,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Коефіцієнт збільшення кроку:"></Label>
+                        <Label Content="{DynamicResource StepIncreaseCoef}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="StepIncreaseMultiplier" UpdateSourceTrigger="PropertyChanged">
@@ -383,7 +391,7 @@
                             </TextBox.Text>
                         </TextBox>
 
-                        <Label Content="Коефіцієнт зменшення кроку:"></Label>
+                        <Label Content="{DynamicResource StepDecreaseCoef}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
                                 <Binding Path="StepDecreaseMultiplier" UpdateSourceTrigger="PropertyChanged">

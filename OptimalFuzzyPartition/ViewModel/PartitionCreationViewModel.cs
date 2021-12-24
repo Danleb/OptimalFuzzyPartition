@@ -40,6 +40,9 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         };
 
+        private int _partitionWidth;
+        private int _partitionHeight;
+
         public PartitionCreationViewModel(PartitionSettings partitionSettings, SimpleTcpServer simpleTcpServer)
         {
             _simpleTcpServer = simpleTcpServer;
@@ -63,6 +66,18 @@ namespace OptimalFuzzyPartition.ViewModel
             _timer = new DispatcherTimer();
             _timer.Tick += OnTimerTick;
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+
+            var ratio = PartitionSettings.SpaceSettings.Ratio;
+            if (ratio > 1)
+            {
+                PartitionHeight = 100;
+                PartitionWidth = (int)(_partitionHeight * ratio);
+            }
+            else
+            {
+                PartitionWidth = 100;
+                PartitionHeight = (int)(_partitionWidth / ratio);
+            }
         }
 
         public TimeSpan TimePassed { get; set; }
@@ -78,6 +93,7 @@ namespace OptimalFuzzyPartition.ViewModel
                 Settings.Default.AlwaysShowCentersInfo = _commandAndData.RenderingSettings.AlwaysShowCentersInfo;
                 Settings.Default.Save();
                 OnPropertyChanged();
+                UpdatePartition();
             }
         }
 
@@ -174,6 +190,26 @@ namespace OptimalFuzzyPartition.ViewModel
             set
             {
                 _partitionImageSavePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int PartitionWidth
+        {
+            get => _partitionWidth;
+            set
+            {
+                _partitionWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int PartitionHeight
+        {
+            get => _partitionHeight;
+            set
+            {
+                _partitionHeight = value;
                 OnPropertyChanged();
             }
         }

@@ -14,6 +14,8 @@ namespace OptimalFuzzyPartition
     /// </summary>
     public partial class App : Application
     {
+        private static ResourceDictionary s_stringsDictionary;
+
         static App()
         {
             LanguageChanged += App_LanguageChanged;
@@ -33,7 +35,7 @@ namespace OptimalFuzzyPartition
         }
 
         App()
-        {
+        {            
             InitializeComponent();
             Language = Settings.Default.SavedLanguage;
         }
@@ -58,36 +60,33 @@ namespace OptimalFuzzyPartition
                 Thread.CurrentThread.CurrentUICulture = value;
 
                 var resDict = new ResourceDictionary();
-                switch (value.Name)
-                {
-                    case "en-US":
-                        resDict.Source = new Uri("Resources/lang.xaml", UriKind.Relative);
-                        break;
-                    default:
-                        resDict.Source = new Uri(string.Format("Resources/lang.{0}.xaml", value.Name), UriKind.Relative);
-                        break;
-                }
-
-                var oldDict = Current.Resources.MergedDictionaries
-                    .Where(d => d.Source != null && d.Source.OriginalString.StartsWith("Resources/lang."))
-                    .FirstOrDefault();
+                resDict.Source = new Uri($"Resources/StringLocalization.{value.Name}.xaml", UriKind.Relative);
+                var oldDict = FindCurrentStringsDictionary();
 
                 if (oldDict != null)
                 {
-                    var index = Current.Resources.MergedDictionaries.IndexOf(oldDict);
                     Current.Resources.MergedDictionaries.Remove(oldDict);
-                    Current.Resources.MergedDictionaries.Insert(index, resDict);
-                }
-                else
-                {
-                    Current.Resources.MergedDictionaries.Add(resDict);
                 }
 
+                s_stringsDictionary = resDict;
+                Current.Resources.MergedDictionaries.Add(resDict);
                 LanguageChanged?.Invoke(Current, new EventArgs());
             }
         }
 
-        private static void App_LanguageChanged(Object sender, EventArgs e)
+        public static string Localize(string key)
+        {
+            return (string)s_stringsDictionary[key];
+        }
+
+        private static ResourceDictionary FindCurrentStringsDictionary()
+        {
+            return Current.Resources.MergedDictionaries
+                                .Where(d => d?.Source?.OriginalString?.StartsWith("Resources/StringLocalization.") ?? false)
+                                .FirstOrDefault();
+        }
+
+        private static void App_LanguageChanged(object sender, EventArgs e)
         {
             Settings.Default.SavedLanguage = Language;
             Settings.Default.Save();

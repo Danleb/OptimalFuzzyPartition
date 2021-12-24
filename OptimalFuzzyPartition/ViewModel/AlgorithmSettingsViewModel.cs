@@ -95,6 +95,11 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
+        public string WindowTitle
+        {
+            get => App.Localize("WindowTitleSettings") + " " + CurrentConfigurationFile;
+        }
+
         #region Settings for the: space
 
         public double MinX
@@ -157,9 +162,9 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
-        public DensityType[] DensityTypes => new[]
+        public DensityType[] DensityTypes { get; } = new[]
         {
-            DensityType.Everywhere1
+            DensityType.Everywhere1,
         };
 
         public DensityType DensityType
@@ -172,12 +177,12 @@ namespace OptimalFuzzyPartition.ViewModel
             }
         }
 
-        public MetricsType[] MetricsTypes => new[]
+        public MetricsType[] MetricsTypes { get; } = new[]
         {
             MetricsType.Euclidean,
             MetricsType.Manhattan,
             MetricsType.Chebyshev,
-            MetricsType.CustomFunction
+            //MetricsType.CustomFunction,
         };
 
         public MetricsType MetricsType
@@ -397,9 +402,14 @@ namespace OptimalFuzzyPartition.ViewModel
             });
         }
 
-        private void App_LanguageChanged(object _, System.EventArgs e)
+        private void App_LanguageChanged(object _, EventArgs e)
         {
             CurrentCulture = App.Language;
+            OnPropertyChanged(nameof(WindowTitle));
+            OnPropertyChanged(nameof(DensityTypes));
+            OnPropertyChanged(nameof(DensityType));
+            OnPropertyChanged(nameof(MetricsTypes));
+            OnPropertyChanged(nameof(MetricsType));
             OnPropertyChanged(nameof(CurrentCulture));
         }
 
@@ -415,8 +425,8 @@ namespace OptimalFuzzyPartition.ViewModel
 
         private void NewConfigExec()
         {
-            Settings = DefaultSettingsBuilder.GetPartitionSettings();
             CurrentConfigurationFile = null;
+            Settings = DefaultSettingsBuilder.GetPartitionSettings();
         }
 
         private void Save()
@@ -455,6 +465,7 @@ namespace OptimalFuzzyPartition.ViewModel
 
                 CurrentConfigurationFile = filePath;
                 SaveSettings(CurrentConfigurationFile);
+                OnPropertyChanged(nameof(WindowTitle));
             }
         }
 
@@ -463,7 +474,7 @@ namespace OptimalFuzzyPartition.ViewModel
             var commonOpenFileDialog = new CommonOpenFileDialog
             {
                 Title = "Load partition configuration",
-                //DefaultFileName = $"Partition_{CentersCount}_{SegmentsCountX}x{SegmentsCountY}",
+                DefaultFileName = GetLastSaveFile(),
                 DefaultExtension = "json",
                 InitialDirectory = GetSaveDirectory(),
             };
@@ -478,6 +489,17 @@ namespace OptimalFuzzyPartition.ViewModel
                 CurrentConfigurationFile = filePath;
                 LoadSettings(CurrentConfigurationFile);
             }
+        }
+
+        private string GetLastSaveFile()
+        {
+            var path = Properties.Settings.Default.ConfigurationPath;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return "";
+            }
+
+            return Path.GetFileName(path);
         }
 
         private string GetSaveDirectory()

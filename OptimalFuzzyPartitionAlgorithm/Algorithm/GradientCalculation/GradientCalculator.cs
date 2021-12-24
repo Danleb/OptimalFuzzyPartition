@@ -3,11 +3,12 @@ using MathNet.Numerics.LinearAlgebra;
 using OptimalFuzzyPartition.ViewModel;
 using OptimalFuzzyPartitionAlgorithm.Utils;
 using System;
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace OptimalFuzzyPartitionAlgorithm.Algorithm
 {
     /// <summary>
-    /// Calculated the gradient vector for a single center (one gradient vector for one point-generator).
+    /// Calculates the gradient vector for a single center (one gradient vector for one point (generator)).
     /// </summary>
     public class GradientCalculator
     {
@@ -32,9 +33,11 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
             _centerPosition = centerPosition;
 
             if (SpaceSettings.MetricsType != MetricsType.Euclidean)
-                throw new NotImplementedException($"Визначення градієнту для метрики {SpaceSettings.MetricsType} не реалізовано");
+            {
+                throw new NotImplementedException($"Визначення градієнту для метрики {SpaceSettings.MetricsType} не реалізовано.");
+            }
 
-            var vector = Vector<double>.Build.Dense(SpaceSettings.DimensionsCount);
+            var gradient = Vector.Build.Dense(SpaceSettings.DimensionsCount);
 
             for (var i = 0; i < SpaceSettings.DimensionsCount; i++)
             {
@@ -43,7 +46,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                 var value = GaussLegendreRule.Integrate(
                     (x, y) =>
                     {
-                        var densityValue = 1d;
+                        var densityValue = 1.0d;
                         var mu = muValueInterpolator.GetGridValueAtPoint(x, y);
 
                         var point = VectorUtils.CreateVector(x, y);
@@ -60,10 +63,10 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
                     GaussLegendreIntegralOrder
                 );
 
-                vector[i] = value;
+                gradient[i] = value;
             }
 
-            return vector;
+            return gradient;
         }
 
         /// <summary>
@@ -71,8 +74,8 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm
         /// </summary>
         private double CalculateDistanceGradientValue(Vector<double> point, int dimensionIndex)
         {
-            var distance = (_centerPosition - point).L2Norm();
             var diff = _centerPosition[dimensionIndex] - point[dimensionIndex];
+            var distance = (_centerPosition - point).L2Norm();
             var value = diff / distance;
             return value;
         }

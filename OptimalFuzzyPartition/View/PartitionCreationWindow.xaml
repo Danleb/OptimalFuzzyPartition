@@ -8,7 +8,10 @@
         xmlns:c="clr-namespace:OptimalFuzzyPartition.View.Converter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
-        Title="Оптимальне нечітке розбиття множин - побудова нечіткої діаграми Вороного" Height="625" Width="800" Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico"
+        Title="{DynamicResource WindowTitleCreation}"
+        Height="625" Width="800"
+        MinHeight="600" MinWidth="800"
+        Icon="/OptimalFuzzyPartition;component/OptimalFuzzyPartitionIcon.ico"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
@@ -23,12 +26,15 @@
         <DockPanel>
             <ScrollViewer>
                 <StackPanel>
-                    <Label Content="{Binding TimePassed, Converter={StaticResource TimePassedConverter}}" ContentStringFormat="Часу пройшло: {0}" Margin="5"></Label>
-                    <Label Margin="5" Content="{Binding Path=PerformedIterationCount}" ContentStringFormat="Ітерацій виконано: {0}"></Label>
+                    <TextBlock Margin="10,10,0,5">
+                        <TextBlock Text="{DynamicResource TimePassed}"/>
+                        <TextBlock Text="{Binding TimePassed, Converter={StaticResource TimePassedConverter}}"/>
+                    </TextBlock>
 
-                    <!--<Button Command="RunPartitionCreation" Content="Побудувати розбиття" Margin="5"></Button>-->
-
-
+                    <TextBlock Margin="10,0,0,5">
+                        <TextBlock Text="{DynamicResource PerformedIterationsCount}"/>
+                        <TextBlock Text="{Binding Path=PerformedIterationCount}"/>
+                    </TextBlock>
 
                     <!--<DataGrid Margin="5" ItemsSource="{Binding CenterCoordinates}">
                         <DataGrid.Columns>
@@ -38,8 +44,7 @@
                         </DataGrid.Columns>
                     </DataGrid>-->
 
-
-                    <CheckBox x:Name="CheckBoxAlwaysShowInfo" Content="Завжди показувати інформацію про центри" Margin="5" IsChecked="{Binding AlwaysShowCentersInfo}"></CheckBox>
+                    <CheckBox x:Name="CheckBoxAlwaysShowInfo" Content="{DynamicResource AlwaysShowCentersInfo}" Margin="5" IsChecked="{Binding AlwaysShowCentersInfo}"></CheckBox>
 
                     <!--<Label Margin="5" Content="{Binding IterationNumberToInspect}" ContentStringFormat="Номер ітерації для дослідження: {0}"></Label>
                     <TextBox Margin="5" Width="70" HorizontalAlignment="Left">
@@ -51,27 +56,27 @@
                     </TextBox>
                     <Slider Margin="5" Maximum="{Binding PerformedIterationCount}" Minimum="1"></Slider>-->
 
-                    <CheckBox Margin="5" Content="Розбиття у градаціях сірого" IsChecked="{Binding DrawGrayscale}"></CheckBox>
+                    <CheckBox Margin="5" Content="{DynamicResource GrayscaleImage}" IsChecked="{Binding DrawGrayscale}"></CheckBox>
 
-                    <CheckBox Margin="5" Content="Малювати розбиття з коефіцієнтом недовіри" IsChecked="{Binding DrawWithMistrust}"></CheckBox>
+                    <CheckBox Margin="5" Content="{DynamicResource DrawWithMistrustCoef}" IsChecked="{Binding DrawWithMistrust}"></CheckBox>
                     <StackPanel Orientation="Horizontal" IsEnabled="{Binding DrawWithMistrust}">
-                        <Label Content="Коефіцієнт недовіри: "></Label>
+                        <Label Content="{DynamicResource MistrustsCoefficient}"></Label>
                         <TextBox VerticalAlignment="Center" MinWidth="50" Margin="5" Text="{Binding MistrustCoefficient}"></TextBox>
                     </StackPanel>
                     <Slider IsEnabled="{Binding  DrawWithMistrust}" Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
-                    <Button Name="Button" Margin="5" Content="Оновити розбиття" Command="{Binding UpdatePartitionCommand}"></Button>
+                    <Button Name="Button" Margin="5" Content="{DynamicResource UpdatePartition}" Command="{Binding UpdatePartitionCommand}"></Button>
 
                     <!--<Button Margin="5" Content="Відкрити налаштування"></Button>-->
 
                     <!--"Значення цільового функціоналу: {0}"-->
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Значення цільового функціоналу:"></Label>
+                        <Label Content="{DynamicResource TargetFunctionalValue}"></Label>
                         <TextBox Text="{Binding TargetFunctionalValue}" VerticalAlignment="Center" Margin="5" MinWidth="50" IsReadOnly="True"></TextBox>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Значення двоїстого функціоналу:"></Label>
+                        <Label Content="{DynamicResource DualFunctionalValue}"></Label>
                         <TextBox  Text="{Binding DualFunctionalValue}" VerticalAlignment="Center" Margin="5" MinWidth="50" IsReadOnly="True"></TextBox>
                     </StackPanel>
 
@@ -81,19 +86,21 @@
                     <!--
                     <TextBox Margin="5" Text="{Binding DualFunctionalValue}" IsReadOnly="True"></TextBox>-->
 
-                    <CheckBox Margin="5" Content="Вибрати шлях вручну:" VerticalAlignment="Center" IsChecked="{Binding IsManualSavePathEnabled}"></CheckBox>
+                    <CheckBox Margin="5" Content="{DynamicResource SelectPathManually}" VerticalAlignment="Center" IsChecked="{Binding IsManualSavePathEnabled}"></CheckBox>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="Шлях:" VerticalAlignment="Center"></Label>
-                        <TextBox Grid.Column="1" Text="{Binding PartitionImageSavePath}" VerticalAlignment="Center" MaxWidth="150" IsReadOnly="True"></TextBox>
-                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="5" Content="Обрати шлях" VerticalAlignment="Center" Command="{Binding ChoosePartitionImageSavePathCommand}" IsEnabled="{Binding IsManualSavePathEnabled}"></Button>
+                        <Label Grid.Column="0" Content="{DynamicResource Path}" VerticalAlignment="Center"></Label>
+                        <TextBox Grid.Column="1" Text="{Binding PartitionImageSavePath}" VerticalAlignment="Center" MinWidth="150" IsReadOnly="True"></TextBox>
+                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="5" Content="{DynamicResource SelectPath}" VerticalAlignment="Center" Command="{Binding ChoosePartitionImageSavePathCommand}" IsEnabled="{Binding IsManualSavePathEnabled}"></Button>
                     </Grid>
 
-                    <Button Margin="5" Content="Зберегти зображення" Command="{Binding SavePartitionImageCommand}"></Button>
+                    <Button Margin="5" Content="{DynamicResource SaveImage}" Command="{Binding SavePartitionImageCommand}"></Button>
+
+                    <!--<Button Margin="5" Content="Save partition data"/>-->
 
                     <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Margin="5" Content="&lt;&lt;" Padding="5"/>
@@ -105,8 +112,20 @@
 
                 </StackPanel>
             </ScrollViewer>
+
+            <!--<TabControl>
+                <TabItem Header="Image">
+                    
+                </TabItem>
+                <TabItem Header="Table">
+                    
+                </TabItem>
+            </TabControl>-->
             
-            <view:UnityWindowHost x:Name="UnityWindowHost"></view:UnityWindowHost>
+            <Viewbox>
+                <view:UnityWindowHost x:Name="UnityWindowHost" Width="{Binding PartitionWidth}" Height="{Binding PartitionHeight}"/>
+            </Viewbox>            
+            
         </DockPanel>
     </Grid>
 </Window>

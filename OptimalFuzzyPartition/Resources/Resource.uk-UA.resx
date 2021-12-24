@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WindowTitleSettings" xml:space="preserve">
+    <value>Налаштування алгоритму побудови нечіткого розбиття</value>
+  </data>
+  <data name="MenuNew" xml:space="preserve">
+    <value>Новий</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>Про програму</value>
+  </data>
+  <data name="WindowTitleCreation" xml:space="preserve">
+    <value>Побудова нечіткого розбиття</value>
+  </data>
+  <data name="WindowTitleAbout" xml:space="preserve">
+    <value>Про програму</value>
+  </data>
+  <data name="MenuConfiguration" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="MenuLanguage" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="MenuTheme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="SpaceSettings" xml:space="preserve">
+    <value>Налаштування простору, на якому буде проводитись розбиття:</value>
+  </data>
+  <data name="EnterMinX" xml:space="preserve">
+    <value>Введіть меншу границю за X:</value>
+  </data>
+  <data name="EnterMinY" xml:space="preserve">
+    <value>Введіть меншу границю за Y:</value>
+  </data>
+  <data name="EnterMaxX" xml:space="preserve">
+    <value>Введіть більшу границю за X:</value>
+  </data>
+  <data name="EnterMaxY" xml:space="preserve">
+    <value>Введіть більшу границю за Y:</value>
+  </data>
+  <data name="EnterSegmentsX" xml:space="preserve">
+    <value>Введіть кількість сегментів сітки за X:</value>
+  </data>
+  <data name="EnterSegmentsY" xml:space="preserve">
+    <value>Введіть кількість сегментів сітки за Y:</value>
+  </data>
+  <data name="CentersCount" xml:space="preserve">
+    <value>Кількість центрів</value>
+  </data>
+  <data name="DensityFunction" xml:space="preserve">
+    <value>Функція щільності попиту ρ(x, y):</value>
+  </data>
+  <data name="TaskWithCentersPlacing" xml:space="preserve">
+    <value>Задача із оптимальним  розміщенням центрів</value>
+  </data>
+  <data name="DistanceFunction" xml:space="preserve">
+    <value>Функція відстані с((x,y), τ):</value>
+  </data>
+  <data name="CentersCoordinates" xml:space="preserve">
+    <value>Координати центрів (точок-генераторів):</value>
+  </data>
+  <data name="CenterNumber" xml:space="preserve">
+    <value>Номер центру</value>
+  </data>
+  <data name="BuildPartition" xml:space="preserve">
+    <value>Побудувати розбиття</value>
+  </data>
+  <data name="AdditiveCoefficient" xml:space="preserve">
+    <value>Адитивний коефіцієнт А</value>
+  </data>
+  <data name="CoordinateX" xml:space="preserve">
+    <value>Координата Х</value>
+  </data>
+  <data name="CoordinateY" xml:space="preserve">
+    <value>Координата Y</value>
+  </data>
+  <data name="MultiplicativeCoefficient" xml:space="preserve">
+    <value>Мультиплікативний коефіцієнт W</value>
+  </data>
+  <data name="SquareIntegrationSettings" xml:space="preserve">
+    <value>Налаштування інтегрування площі:</value>
+  </data>
+  <data name="GaussLegendreCoefCount" xml:space="preserve">
+    <value>Кількість коефіцієнтів Гауса-Лежадра для рахування інтеграла:</value>
+  </data>
+  <data name="FixedFuzzyPartitionSettings" xml:space="preserve">
+    <value>Налаштування нечіткого розбиття з закріпленими центрами:</value>
+  </data>
+  <data name="MaxIterationsCount" xml:space="preserve">
+    <value>Максимальна кількість ітерацій:</value>
+  </data>
+  <data name="MinimalGradientValueIterationsStop" xml:space="preserve">
+    <value>Мінімальне граничне значення градієнту для закінчення ітерацій:</value>
+  </data>
+  <data name="StartPsiValue" xml:space="preserve">
+    <value>Початкове значення Psi (впливає на швидкість збігу методу):</value>
+  </data>
+  <data name="GradientStepConstant" xml:space="preserve">
+    <value>Константа C для кроку градієнтного спуску λ = C / (k + 1):</value>
+  </data>
+  <data name="StepIncreaseCoef" xml:space="preserve">
+    <value>Коефіцієнт збільшення кроку:</value>
+  </data>
+  <data name="StepDecreaseCoef" xml:space="preserve">
+    <value>Коефіцієнт зменшення кроку:</value>
+  </data>
+  <data name="SpaceStretchCoef" xml:space="preserve">
+    <value>Коефіцієнт розтягу простору:</value>
+  </data>
+  <data name="IterationsCountToIncreaseStep" xml:space="preserve">
+    <value>Кількість ітерацій до збільшення кроку:</value>
+  </data>
+  <data name="GradientDescentStartStep" xml:space="preserve">
+    <value>Початковий крок градієнтного спуску:</value>
+  </data>
+  <data name="MinCenterDiffToStop" xml:space="preserve">
+    <value>Мінімальний крок зсуву центрів для продовження:</value>
+  </data>
+  <data name="CentersPlacingSettings" xml:space="preserve">
+    <value>Налаштування розбиття з розміщенням цетрів:</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Темна</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Світла</value>
+  </data>
+  <data name="LicenseInfo" xml:space="preserve">
+    <value>Ліцензія MIT.</value>
+  </data>
+  <data name="CopyrightInfo" xml:space="preserve">
+    <value>Копірайт © Данило Лебедєв 2020-2022.</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="ProgramInfo" xml:space="preserve">
+    <value>Програма для побудови нечітких розбиттів з фіксованими центрами та оптимальним розміщенням центрів.</value>
+  </data>
+  <data name="Site" xml:space="preserve">
+    <value>Сайт:</value>
+  </data>
+  <data name="AlwaysShowCentersInfo" xml:space="preserve">
+    <value>Завжди показувати інформацію про центри</value>
+  </data>
+  <data name="DrawWithMistrustCoef" xml:space="preserve">
+    <value>Малювати розбиття з коефіцієнтом недовіри</value>
+  </data>
+  <data name="DualFunctionalValue" xml:space="preserve">
+    <value>Значення двоїстого функціоналу:</value>
+  </data>
+  <data name="GrayscaleImage" xml:space="preserve">
+    <value>Зображення у градаціях сірого</value>
+  </data>
+  <data name="MistrustsCoefficient" xml:space="preserve">
+    <value>Коефіцієнт недовіри:</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Шлях:</value>
+  </data>
+  <data name="SaveImage" xml:space="preserve">
+    <value>Зберегти зображення</value>
+  </data>
+  <data name="SelectPath" xml:space="preserve">
+    <value>Обрати шлях</value>
+  </data>
+  <data name="SelectPathManually" xml:space="preserve">
+    <value>Обрати шлях вручну</value>
+  </data>
+  <data name="TargetFunctionalValue" xml:space="preserve">
+    <value>Значення цільового функціоналу:</value>
+  </data>
+  <data name="UpdatePartition" xml:space="preserve">
+    <value>Оновити розбиття</value>
+  </data>
+  <data name="TimePassed" xml:space="preserve">
+    <value>Часу пройшло:</value>
+  </data>
+  <data name="PerformedIterationsCount" xml:space="preserve">
+    <value>Ітерацій виконано:</value>
+  </data>
+  <data name="Everywhere1" xml:space="preserve">
+    <value>Всюди 1</value>
+  </data>
+  <data name="CustomDistanceFunction" xml:space="preserve">
+    <value>Довільно вказана функція відстані</value>
+  </data>
+  <data name="ChebishevMetric" xml:space="preserve">
+    <value>Метрика Чебишева</value>
+  </data>
+  <data name="EuclideanMetric" xml:space="preserve">
+    <value>Евклідова метрика</value>
+  </data>
+  <data name="ManhattanMetric" xml:space="preserve">
+    <value>Манхеттенська метрика</value>
+  </data>
+  <data name="CentersSettings" xml:space="preserve">
+    <value>Налаштування центрів (точок-генераторів):</value>
+  </data>
+</root>

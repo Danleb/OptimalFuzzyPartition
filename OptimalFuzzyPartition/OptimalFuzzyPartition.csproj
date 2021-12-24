@@ -145,17 +145,17 @@
     <Compile Include="View\ValidationRules\PositiveIntValidationRule.cs" />
     <Compile Include="View\ValidationRules\PositiveNumberValidationRule.cs" />
     <Compile Include="View\Converter\VisibilityConverter.cs" />
-    <Page Include="Resources\lang.uk-UA.xaml">
+    <Page Include="Resources\StringLocalization.en-US.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\lang.ru-RU.xaml">
+    <Page Include="Resources\StringLocalization.ru-RU.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\lang.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Resources\StringLocalization.uk-UA.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AboutWindow.xaml">
       <SubType>Designer</SubType>
@@ -194,6 +194,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="PreBuildEvent.bat" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -226,5 +227,17 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Resource.en-US.resx" />
+    <None Include="Resources\Resource.ru-RU.resx" />
+    <None Include="Resources\Resource.uk-UA.resx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>$(ProjectDir)PreBuildEvent.bat $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

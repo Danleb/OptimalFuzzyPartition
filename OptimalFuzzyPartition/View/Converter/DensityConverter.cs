@@ -10,22 +10,23 @@ namespace OptimalFuzzyPartition.View.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return string.Empty;
+            if (value is string) return string.Empty;
 
             var density = (DensityType)value;
 
             switch (density)
             {
                 case DensityType.Everywhere1:
-                    return "Тотожна одиниця";
+                    return App.Localize("Everywhere1");
                 case DensityType.CustomFunction:
                     break;
                 case DensityType.ByPointsGrid:
                     break;
                 default:
-                    return "Не задано";
+                    return "NONE";
             }
 
-            return "Не задано";
+            return "NONE";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

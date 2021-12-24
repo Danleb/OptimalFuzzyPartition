@@ -1,5 +1,9 @@
-﻿using NaughtyAttributes;
+﻿using FuzzyPartitionComputing;
+using MathNet.Numerics.LinearAlgebra;
+using NaughtyAttributes;
 using OptimalFuzzyPartitionAlgorithm;
+using OptimalFuzzyPartitionAlgorithm.Algorithm;
+using OptimalFuzzyPartitionAlgorithm.Algorithm.GradientCalculation;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,14 +11,14 @@ namespace FuzzyPartitionVisualizing
 {
     public class CentersInfoShower : MonoBehaviour
     {
-        [SerializeField] private CenterInfo _centerInfoPrefab;
+        [SerializeField] private CenterInfoView _centerInfoPrefab;
         [SerializeField] private GameObject _minCorner;
         [SerializeField] private GameObject _maxCorner;
-        [SerializeField] private List<CenterInfo> _centerInfos;
+        [SerializeField] private List<CenterInfoView> _centerInfos;
 
         private PartitionSettings _partitionSettings;
 
-        public void Init(PartitionSettings partitionSettings)
+        public void Init(PartitionSettings partitionSettings, ComputeBuffer muGrids = null)
         {
             _partitionSettings = partitionSettings;
 
@@ -26,10 +30,28 @@ namespace FuzzyPartitionVisualizing
                 _centerInfos.Add(Instantiate(_centerInfoPrefab, transform, true));
             }
 
-            for (var index = 0; index < partitionSettings.CentersSettings.CentersCount; index++)
+            List<Vector<double>> gradients  = null;
+
+            if (muGrids != null)
             {
-                var centerInfo = _centerInfos[index];
-                centerInfo.Init(partitionSettings, index);
+                gradients = new List<Vector<double>>();
+                var muValueInterpolators = ComputeBufferToGridConverter.GetGridValueInterpolators(muGrids, partitionSettings);
+
+                for (var i = 0; i < partitionSettings.CentersSettings.CenterDatas.Count; i++)
+                {
+                    var centerData = partitionSettings.CentersSettings.CenterDatas[i];
+                    var gradientCalculator = new GradientCalculator(partitionSettings.SpaceSettings, partitionSettings.GaussLegendreIntegralOrder);
+                    var gradient = gradientCalculator.CalculateGradientForCenter(centerData.Position, muValueInterpolators[i]);
+                    gradients.Add(gradient);
+                }
+            }
+
+            for (var i = 0; i < partitionSettings.CentersSettings.CentersCount; i++)
+            {
+                var centerData = partitionSettings.CentersSettings.CenterDatas[i];
+                var centerInfoView = _centerInfos[i];
+                var gradient = gradients?[i];
+                centerInfoView.Init(centerData, i, gradient);
             }
 
             SetCenterInfoPositions();

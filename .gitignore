@@ -352,3 +352,6 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 FuzzyPartitionUnityProject/.vsconfig
+
+# Localization strings dictionaries (because they are generated from ResX files before build):
+OptimalFuzzyPartition/Resources/StringLocalization*

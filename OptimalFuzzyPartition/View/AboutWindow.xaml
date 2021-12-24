@@ -4,17 +4,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="About program" 
+        Title="{DynamicResource MenuAbout}" 
         SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
         >
     <Grid>
         <StackPanel Orientation="Vertical" Margin="7">
             <!--<Image Source=""/>-->
-            <Label Content="Program for fuzzy partitions generation with fixed and placing centers."/>
-            <TextBlock Margin="5,2,2,2"> Site: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/Danleb/OptimalFuzzyPartition">https://github.com/Danleb/OptimalFuzzyPartition</Hyperlink></TextBlock>
-            <Label Content="Version 1.1.0"/>
-            <Label Content="Licensed under MIT license."/>
-            <Label Content="Copyright © Danylo Lebediev 2020-2022."/>
+            <Label Content="{DynamicResource ProgramInfo}"/>
+            <TextBlock Margin="5,2,2,5">
+                <TextBlock Text="{DynamicResource Site}"/>
+                <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/Danleb/OptimalFuzzyPartition">https://github.com/Danleb/OptimalFuzzyPartition</Hyperlink>
+            </TextBlock>
+            <TextBlock Margin="5,2,2,2">
+                <TextBlock Text="{DynamicResource Version}"/>
+                <TextBlock Text="1.1.0"/>
+            </TextBlock>
+            <Label Content="{DynamicResource LicenseInfo}"/>
+            <Label Content="{DynamicResource CopyrightInfo}"/>
         </StackPanel>
     </Grid>
 </Window>

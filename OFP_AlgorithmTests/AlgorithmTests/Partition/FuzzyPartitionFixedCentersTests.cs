@@ -10,400 +10,200 @@ using System.Collections.Generic;
 
 namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
 {
+    public static class TestDataUtils
+    {
+        public static PartitionSettings GetDefaultSettings()
+        {
+            return new PartitionSettings
+            {
+                SpaceSettings = new SpaceSettings
+                {
+                    MinCorner = VectorUtils.CreateVector(0, 0),
+                    MaxCorner = VectorUtils.CreateVector(1, 1),
+                    GridSize = new List<int> { 32, 32 },
+                    DensityType = DensityType.Everywhere1,
+                    MetricsType = MetricsType.Euclidean,
+                    CustomDensityFunction = null,
+                    CustomDistanceFunction = null
+                },
+                CentersSettings = new CentersSettings(),
+                FuzzyPartitionFixedCentersSettings = new FuzzyPartitionFixedCentersSettings
+                {
+                    GradientEpsilon = 0.001,
+                    GradientStep = 1,
+                    MaxIterationsCount = 500
+                },
+                GaussLegendreIntegralOrder = 32,
+                RAlgorithmSettings = null,
+                IsCenterPlacingTask = false,
+                FuzzyPartitionPlacingCentersSettings = null,
+            };
+        }
+
+        public static CenterData MakeCenter(double x, double y, double a, double w)
+        {
+            return new CenterData
+            {
+                A = a,
+                W = w,
+                IsFixed = true,
+                Position = VectorUtils.CreateVector(x, y)
+            };
+        }
+
+        public static void AddCenter(this PartitionSettings partitionSettings, double x, double y, double a = 0.0, double w = 1.0)
+        {
+            partitionSettings.CentersSettings.CenterDatas.Add(MakeCenter(x, y, a, w));
+        }
+
+        public static void ExecuteTest(PartitionSettings settings, double expectedFunctionalValue, double epsilon = 0.001)
+        {
+            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(settings.SpaceSettings, settings.CentersSettings, settings.FuzzyPartitionFixedCentersSettings);
+            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
+            var muValueGetters = partition.CreateGridValueInterpolators(settings.SpaceSettings);
+
+            var targetFunctionalCalculator = new TargetFunctionalCalculator(settings.SpaceSettings, settings.CentersSettings, settings.GaussLegendreIntegralOrder);
+            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
+
+            var dualFunctionalCalculator = new DualFunctionalCalculator(settings.SpaceSettings, settings.CentersSettings, settings.GaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(settings.SpaceSettings));
+            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
+
+            Assert.AreEqual(expectedFunctionalValue, targetFunctionalValue, epsilon);
+            Assert.AreEqual(expectedFunctionalValue, dualFunctionalValue, epsilon);
+            //Assert.AreEqual(partitionEvaluator.PerformedIterationsCount, 0);
+        }
+    }
+
     public class FuzzyPartitionFixedCentersTests
     {
         [Test]
         public void UnitSquare1Center()
         {
-            var spaceSettings = new SpaceSettings
-            {
-                MinCorner = VectorUtils.CreateVector(0, 0),
-                MaxCorner = VectorUtils.CreateVector(1, 1),
-                GridSize = new List<int> { 50, 50 },
-                DensityType = DensityType.Everywhere1,
-                MetricsType = MetricsType.Euclidean,
-                CustomDensityFunction = null,
-                CustomDistanceFunction = null
-            };
-            var centersSettings = new CentersSettings
-            {
-                CenterDatas = new List<CenterData>
-                    {
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.5, 0.5),
-                            IsFixed = true
-                        }
-                    },
-            };
-            var partitionSettings = new FuzzyPartitionFixedCentersSettings
-            {
-                GradientEpsilon = 0.001,
-                GradientStep = 1,
-                MaxIterationsCount = 1000
-            };
-            var gaussLegendreIntegralOrder = 32;
-
-            Assert.AreEqual(1, centersSettings.CentersCount);
-            Assert.AreEqual(1, centersSettings.FixedCentersCount);
-            Assert.AreEqual(0, centersSettings.PlacingCentersCount);
-
-            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(spaceSettings, centersSettings, partitionSettings);
-            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
-            var muValueGetters = partition.CreateGridValueInterpolators(spaceSettings);
-
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
-
-            var dualFunctionalCalculator = new DualFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(spaceSettings));
-            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
-
-            Assert.AreEqual(0.38243711, targetFunctionalValue, 0.001);
-            Assert.AreEqual(0.38243711, dualFunctionalValue, 0.001);
-            Assert.AreEqual(partitionEvaluator.PerformedIterationsCount, 0);
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.5, 0.5);
+            // todo move to separate test
+            Assert.AreEqual(1, settings.CentersSettings.CentersCount);
+            Assert.AreEqual(1, settings.CentersSettings.FixedCentersCount);
+            Assert.AreEqual(0, settings.CentersSettings.PlacingCentersCount);
+            TestDataUtils.ExecuteTest(settings, 0.38243711);
         }
 
         [Test]
         public void UnitSquare2Centers()
         {
-            var spaceSettings = new SpaceSettings
-            {
-                MinCorner = VectorUtils.CreateVector(0, 0),
-                MaxCorner = VectorUtils.CreateVector(1, 1),
-                GridSize = new List<int> { 50, 50 },
-                DensityType = DensityType.Everywhere1,
-                MetricsType = MetricsType.Euclidean,
-                CustomDensityFunction = null,
-                CustomDistanceFunction = null
-            };
-            var centersSettings = new CentersSettings
-            {
-                CenterDatas = new List<CenterData>
-                    {
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.25, 0.5),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.75, 0.5),
-                            IsFixed = true
-                        }
-                    },
-            };
-            var partitionSettings = new FuzzyPartitionFixedCentersSettings
-            {
-                GradientEpsilon = 0.001,
-                GradientStep = 1,
-                MaxIterationsCount = 1000
-            };
-            var gaussLegendreIntegralOrder = 32;
-
-            Assert.AreEqual(2, centersSettings.CentersCount);
-            Assert.AreEqual(2, centersSettings.FixedCentersCount);
-            Assert.AreEqual(0, centersSettings.PlacingCentersCount);
-
-            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(spaceSettings, centersSettings, partitionSettings);
-            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
-            var muValueGetters = partition.CreateGridValueInterpolators(spaceSettings);
-
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
-
-            var dualFunctionalCalculator = new DualFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(spaceSettings));
-            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
-
-            Assert.AreEqual(0.188551295725909, targetFunctionalValue, 0.0001);
-            Assert.AreEqual(0.188551295725909, dualFunctionalValue, 0.001);
-            Assert.LessOrEqual(partitionEvaluator.PerformedIterationsCount, 1000);
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.25, 0.5);
+            settings.AddCenter(0.75, 0.5);
+            TestDataUtils.ExecuteTest(settings, 0.188551295725909);
         }
 
         [Test]
-        public void UnitSquare2CentersWithA()
+        public void Centers2_WithA()
         {
-            var spaceSettings = new SpaceSettings
-            {
-                MinCorner = VectorUtils.CreateVector(0, 0),
-                MaxCorner = VectorUtils.CreateVector(1, 1),
-                GridSize = new List<int> { 50, 50 },
-                DensityType = DensityType.Everywhere1,
-                MetricsType = MetricsType.Euclidean,
-                CustomDensityFunction = null,
-                CustomDistanceFunction = null
-            };
-            var centersSettings = new CentersSettings
-            {
-                CenterDatas = new List<CenterData>
-                    {
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.25, 0.5),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0.2,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.75, 0.5),
-                            IsFixed = true
-                        }
-                    },
-            };
-            var partitionSettings = new FuzzyPartitionFixedCentersSettings
-            {
-                GradientEpsilon = 0.001,
-                GradientStep = 1,
-                MaxIterationsCount = 1000
-            };
-            var gaussLegendreIntegralOrder = 32;
-
-            Assert.AreEqual(2, centersSettings.CentersCount);
-            Assert.AreEqual(2, centersSettings.FixedCentersCount);
-            Assert.AreEqual(0, centersSettings.PlacingCentersCount);
-
-            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(spaceSettings, centersSettings, partitionSettings);
-            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
-            var muValueGetters = partition.CreateGridValueInterpolators(spaceSettings);
-
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
-
-            var dualFunctionalCalculator = new DualFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(spaceSettings));
-            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
-
-            Assert.AreEqual(0.234878918790086, targetFunctionalValue, 0.0001);
-            Assert.AreEqual(0.234878918790086, dualFunctionalValue, 0.001);
-            Assert.LessOrEqual(partitionEvaluator.PerformedIterationsCount, 1000);
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.25, 0.5, a: 0);
+            settings.AddCenter(0.75, 0.5, a: 0.2);
+            TestDataUtils.ExecuteTest(settings, 0.234878918790086);
         }
 
         [Test]
-        public void UnitSquare3Centers()
+        public void Centers3()
         {
-            var spaceSettings = new SpaceSettings
-            {
-                MinCorner = VectorUtils.CreateVector(0, 0),
-                MaxCorner = VectorUtils.CreateVector(1, 1),
-                GridSize = new List<int> { 50, 50 },
-                DensityType = DensityType.Everywhere1,
-                MetricsType = MetricsType.Euclidean,
-                CustomDensityFunction = null,
-                CustomDistanceFunction = null
-            };
-            var centersSettings = new CentersSettings
-            {
-                CenterDatas = new List<CenterData>
-                    {
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.25, 0.5),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.75, 0.5),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.5, 0.75),
-                            IsFixed = true
-                        }
-                    },
-            };
-            var partitionSettings = new FuzzyPartitionFixedCentersSettings
-            {
-                GradientEpsilon = 0.001,
-                GradientStep = 1,
-                MaxIterationsCount = 1000
-            };
-            var gaussLegendreIntegralOrder = 32;
-
-            Assert.AreEqual(3, centersSettings.CentersCount);
-            Assert.AreEqual(3, centersSettings.FixedCentersCount);
-            Assert.AreEqual(0, centersSettings.PlacingCentersCount);
-
-            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(spaceSettings, centersSettings, partitionSettings);
-            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
-            var muValueGetters = partition.CreateGridValueInterpolators(spaceSettings);
-
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
-
-            var dualFunctionalCalculator = new DualFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(spaceSettings));
-            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
-
-            Assert.AreEqual(0.124428343589458, targetFunctionalValue, 0.001);
-            Assert.AreEqual(0.124428343589458, dualFunctionalValue, 0.001);
-            Assert.LessOrEqual(partitionEvaluator.PerformedIterationsCount, 1000);
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.25, 0.5);
+            settings.AddCenter(0.75, 0.5);
+            settings.AddCenter(0.5, 0.75);
+            TestDataUtils.ExecuteTest(settings, 0.124428343589458);
         }
 
         [Test]
-        public void UnitSquare7Centers()
+        public void Centers7()
         {
-            var spaceSettings = new SpaceSettings
-            {
-                MinCorner = VectorUtils.CreateVector(0, 0),
-                MaxCorner = VectorUtils.CreateVector(1, 1),
-                GridSize = new List<int> { 50, 50 },
-                DensityType = DensityType.Everywhere1,
-                MetricsType = MetricsType.Euclidean,
-                CustomDensityFunction = null,
-                CustomDistanceFunction = null
-            };
-            var centersSettings = new CentersSettings
-            {
-                CenterDatas = new List<CenterData>
-                    {
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.2, 0.7),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.5, 0.8),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.8, 0.7),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.8, 0.3),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.5, 0.2),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.2, 0.3),
-                            IsFixed = true
-                        },
-                        new CenterData
-                        {
-                            A = 0,
-                            W = 1,
-                            Position = VectorUtils.CreateVector(0.5, 0.5),
-                            IsFixed = true
-                        },
-                    },
-            };
-            var partitionSettings = new FuzzyPartitionFixedCentersSettings
-            {
-                GradientEpsilon = 0.0001,
-                GradientStep = 1,
-                MaxIterationsCount = 1000
-            };
-            var gaussLegendreIntegralOrder = 32;
-
-            Assert.AreEqual(7, centersSettings.CentersCount);
-            Assert.AreEqual(7, centersSettings.FixedCentersCount);
-            Assert.AreEqual(0, centersSettings.PlacingCentersCount);
-
-            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(spaceSettings, centersSettings, partitionSettings);
-            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
-            var muValueGetters = partition.CreateGridValueInterpolators(spaceSettings);
-
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
-
-            var dualFunctionalCalculator = new DualFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(spaceSettings));
-            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
-
-            Assert.AreEqual(0.0500511474840841, targetFunctionalValue, 0.001);
-            Assert.AreEqual(0.0500511474840841, dualFunctionalValue, 0.001);
-            Assert.LessOrEqual(partitionEvaluator.PerformedIterationsCount, 1000);
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.2, 0.7);
+            settings.AddCenter(0.5, 0.8);
+            settings.AddCenter(0.8, 0.7);
+            settings.AddCenter(0.8, 0.3);
+            settings.AddCenter(0.5, 0.2);
+            settings.AddCenter(0.2, 0.3);
+            settings.AddCenter(0.5, 0.5);
+            TestDataUtils.ExecuteTest(settings, 0.0500511474840841, 0.0001);
         }
 
         [Test]
-        public void UnitSquare17Centers_AtCenter()
+        public void Centers7_WithA()
         {
-            var spaceSettings = new SpaceSettings
-            {
-                MinCorner = VectorUtils.CreateVector(0, 0),
-                MaxCorner = VectorUtils.CreateVector(1, 1),
-                GridSize = new List<int> { 16, 16 },
-                DensityType = DensityType.Everywhere1,
-                MetricsType = MetricsType.Euclidean,
-                CustomDensityFunction = null,
-                CustomDistanceFunction = null
-            };
-            var centersSettings = new CentersSettings
-            {
-                CenterDatas = new List<CenterData>()
-            };
-            var partitionSettings = new FuzzyPartitionFixedCentersSettings
-            {
-                GradientEpsilon = 0.0001,
-                GradientStep = 1,
-                MaxIterationsCount = 2000,
-                PsiStartValue = -0.05//-0.1
-            };
-            var gaussLegendreIntegralOrder = 16;
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.2, 0.7, a: 0.2);
+            settings.AddCenter(0.5, 0.8, a: 0.2);
+            settings.AddCenter(0.8, 0.7, a: 0.1);
+            settings.AddCenter(0.8, 0.3, a: 0.1);
+            settings.AddCenter(0.5, 0.2, a: 0.1);
+            settings.AddCenter(0.2, 0.3, a: 0.1);
+            settings.AddCenter(0.5, 0.5, a: 0.0);
+            TestDataUtils.ExecuteTest(settings, 0.0697955709486163);
+        }
 
-            for (var i = 0; i < 17; i++)
+        [Test]
+        public void Centers7_WithSymmetricA()
+        {
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.AddCenter(0.2, 0.7, a: 0.2);
+            settings.AddCenter(0.5, 0.8, a: 0.2);
+            settings.AddCenter(0.8, 0.7, a: 0.2);
+            settings.AddCenter(0.8, 0.3, a: 0.2);
+            settings.AddCenter(0.5, 0.2, a: 0.2);
+            settings.AddCenter(0.2, 0.3, a: 0.2);
+            settings.AddCenter(0.5, 0.5, a: 0.0);
+            TestDataUtils.ExecuteTest(settings, 0.0784969368835626, 0.0001);
+        }
+
+        [Test]
+        public void Centers11_WithA()
+        {
+            var settings = TestDataUtils.GetDefaultSettings();
+            settings.FuzzyPartitionFixedCentersSettings.PsiStartValue = 3;
+            settings.AddCenter(0.2, 0.7, a: 0.2);
+            settings.AddCenter(0.5, 0.8, a: 0.2);
+            settings.AddCenter(0.8, 0.7, a: 0.2);
+            settings.AddCenter(0.8, 0.3, a: 0.2);
+            settings.AddCenter(0.5, 0.2, a: 0.2);
+            settings.AddCenter(0.2, 0.3, a: 0.2);
+            settings.AddCenter(0.5, 0.5, a: 0.2);
+            settings.AddCenter(0.1, 0.5, a: 0.2);
+            settings.AddCenter(0.9, 0.5, a: 0.2);
+            settings.AddCenter(0.1, 0.1, a: 0.2);
+            settings.AddCenter(0.9, 0.9, a: 0.2);
+            TestDataUtils.ExecuteTest(settings, 0.032536271059803, 0.0001);
+        }
+
+        [Test]
+        public void Centers41()
+        {
+            var settings = TestDataUtils.GetDefaultSettings();
+
+            for (var i = 0; i <= 4; i++)
             {
-                centersSettings.CenterDatas.Add(new CenterData
+                for (var j = 0; j <= 4; j++)
                 {
-                    A = 0,
-                    IsFixed = true,
-                    W = 1.0,
-                    Position = VectorUtils.CreateVector(0.5, 0.5)
-                });
+                    var x = 0.1 + i * 0.2;
+                    var y = 0.1 + j * 0.2;
+                    settings.AddCenter(x, y);
+                }
             }
 
-            var partitionEvaluator = new FuzzyPartitionFixedCentersAlgorithm(spaceSettings, centersSettings, partitionSettings);
-            var partition = partitionEvaluator.BuildPartition(out var psiGrid);
-            var muValueGetters = partition.CreateGridValueInterpolators(spaceSettings);
-
-            var targetFunctionalCalculator = new TargetFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder);
-            var targetFunctionalValue = targetFunctionalCalculator.CalculateFunctionalValue(muValueGetters);
-
-            var dualFunctionalCalculator = new DualFunctionalCalculator(spaceSettings, centersSettings, gaussLegendreIntegralOrder, psiGrid.ToGridValueInterpolator(spaceSettings));
-            var dualFunctionalValue = dualFunctionalCalculator.CalculateFunctionalValue();
-
-            for (var i = 0; i < 17; i++)
+            for (var i = 0; i <= 3; i++)
             {
-                var value = muValueGetters[i].GetGridValueAtPoint(0.5, 0.5);
-                Assert.GreaterOrEqual(value, 0.01);
+                for (var j = 0; j <= 3; j++)
+                {
+                    var x = 0.2 + i * 0.2;
+                    var y = 0.2 + j * 0.2;
+                    settings.AddCenter(x, y);
+                }
             }
 
-            Assert.LessOrEqual(partitionEvaluator.PerformedIterationsCount, 500);
-            Assert.AreEqual(0.0500511474840841, targetFunctionalValue, 0.001);
-            Assert.AreEqual(0.0500511474840841, dualFunctionalValue, 0.001);
-            Assert.LessOrEqual(partitionEvaluator.PerformedIterationsCount, 1000);
+            settings.FuzzyPartitionFixedCentersSettings.PsiStartValue = 5;
+            TestDataUtils.ExecuteTest(settings, 0.00830753741833222, 0.0001);
         }
     }
 }

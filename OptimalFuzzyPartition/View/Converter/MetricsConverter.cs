@@ -10,21 +10,22 @@ namespace OptimalFuzzyPartition.View.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return string.Empty;
+            if (value is string) return string.Empty;
 
             var metricsType = (MetricsType)value;
 
             switch (metricsType)
             {
                 case MetricsType.Euclidean:
-                    return "Евклідова метрика";//todo localize
+                    return App.Localize("EuclideanMetric");
                 case MetricsType.Manhattan:
-                    return "Манхеттенська метрика";
+                    return App.Localize("ManhattanMetric");
                 case MetricsType.Chebyshev:
-                    return "Метрика Чебишева";
+                    return App.Localize("ChebishevMetric");
                 case MetricsType.CustomFunction:
-                    return "Довільно вказана функція відстані";
+                    return App.Localize("CustomDistanceFunction");
                 default:
-                    return "Не вказано";
+                    return "NONE";
             }
         }
 

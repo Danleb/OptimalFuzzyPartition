@@ -49,7 +49,8 @@ namespace OptimalFuzzyPartition.Model
                 {
                     GradientEpsilon = 0.01,
                     GradientStep = 1,
-                    MaxIterationsCount = 400
+                    MaxIterationsCount = 100,
+                    PsiStartValue = 1
                 },
                 FuzzyPartitionPlacingCentersSettings = new FuzzyPartitionPlacingCentersSettings
                 {
@@ -58,10 +59,10 @@ namespace OptimalFuzzyPartition.Model
                 RAlgorithmSettings = new RAlgorithmSettings
                 {
                     SpaceStretchFactor = 2,
-                    H0 = 0.7,
+                    H0 = 0.4,
                     MaxIterationsCount = 100,
                     IterationsCountToIncreaseStep = 3,
-                    PrecisionBySubgradient = 0.001,
+                    PrecisionBySubgradient = 0.00001,
                     StepDecreaseMultiplier = 0.9,
                     StepIncreaseMultiplier = 1.1,
                 },

@@ -14,7 +14,7 @@ namespace OptimalFuzzyPartitionAlgorithm.Settings
         /// <summary>
         /// Additive coefficient a.
         /// </summary>
-        public double A;
+        public double A = 0;
 
         /// <summary>
         /// Multiplicative coefficient w.
@@ -24,6 +24,6 @@ namespace OptimalFuzzyPartitionAlgorithm.Settings
         /// <summary>
         /// Is center position fixed or can be moved.
         /// </summary>
-        public bool IsFixed;
+        public bool IsFixed = false;
     }
 }

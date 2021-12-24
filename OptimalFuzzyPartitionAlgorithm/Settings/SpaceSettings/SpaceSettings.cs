@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using Newtonsoft.Json;
 using OptimalFuzzyPartition.ViewModel;
 using OptimalFuzzyPartitionAlgorithm.Algorithm.Common;
 using System;
@@ -9,8 +10,6 @@ namespace OptimalFuzzyPartitionAlgorithm
     [Serializable]
     public class SpaceSettings
     {
-        public int DimensionsCount => MinCorner.Count;
-
         public Vector<double> MinCorner;
 
         public Vector<double> MaxCorner;
@@ -24,5 +23,17 @@ namespace OptimalFuzzyPartitionAlgorithm
         public MetricsType MetricsType;
 
         public Func<Vector<double>, Vector<double>, double> CustomDistanceFunction;
+
+        [JsonIgnore]
+        public int DimensionsCount => MinCorner.Count;
+
+        [JsonIgnore]
+        public double Ratio => Width / Height;
+
+        [JsonIgnore]
+        public double Width => MaxCorner[0] - MinCorner[0];
+
+        [JsonIgnore]
+        public double Height => MaxCorner[1] - MinCorner[1];
     }
 }

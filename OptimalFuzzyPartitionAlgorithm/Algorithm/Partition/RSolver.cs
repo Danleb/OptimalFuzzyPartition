@@ -1,5 +1,7 @@
-﻿using System;
-
+﻿using OptimalFuzzyPartitionAlgorithm.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
 using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
@@ -68,17 +70,18 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.Partition
             x0 = x;
             subgradient = newSubgradient;
 
-            if (subgradient.L2Norm() < options.PrecisionBySubgradient)
-            {
-                // finish by subgradient precision
-                //IsFinished = true;
-                //return;
-            }
+            //if (subgradient.L2Norm() < options.PrecisionBySubgradient)
+            //{
+            //    // finish by subgradient precision
+            //    IsFinished = true;
+            //    return;
+            //}
 
-            var direction = (h * subgradient.ToColumnMatrix()).Column(0);//.ToVector();
+            var direction = (h * subgradient.ToColumnMatrix()).Column(0);
             direction /= Math.Sqrt(direction * subgradient);
 
             var stepsCount = 0;
+            var ch = 0d;
             do
             {
                 ++stepsCount;
@@ -92,8 +95,17 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.Partition
 
                 if (stepsCount > options.IterationsCountToIncreaseStep)
                     step *= options.StepIncreaseMultiplier;
+
+                var v = 0.0;
+                for (int i = 0; i < direction.Count; i++)
+                {
+                    var m = direction[i] * newSubgradient[i];
+                    v += m;
+                }
+
+                ch = direction * newSubgradient;
             }
-            while (direction * newSubgradient > 0);
+            while (ch > 0);
 
             if (stepsCount == 1)
                 step *= options.StepDecreaseMultiplier;
@@ -111,8 +123,17 @@ namespace OptimalFuzzyPartitionAlgorithm.Algorithm.Partition
             // finish condition check -
             // distance between current and previous iteration positions is less then epsilon
             // or iterations count exceeds max iterations count
-            var variableDiff = (x - x0).L2Norm();
-            
+            //var variableDiff = (x - x0).L2Norm();
+            var diffs = new List<double>();
+            for (var i = 0; i < x.Count / 2; i++)
+            {
+                var currentPos = VectorUtils.CreateVector(x[i * 2], x[i * 2 + 1]);
+                var previousPos = VectorUtils.CreateVector(x0[i * 2], x0[i * 2 + 1]);
+                var diff = (currentPos - previousPos).L2Norm();
+                diffs.Add(diff);
+            }
+            var variableDiff = diffs.Max();
+
             IsFinished = variableDiff <= options.PrecisionByVariable
                       || PerformedIterationCount >= options.MaximumIterationsCount;
         }
