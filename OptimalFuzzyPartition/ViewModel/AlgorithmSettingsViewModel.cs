@@ -68,6 +68,8 @@ namespace OptimalFuzzyPartition.ViewModel
             SaveConfig = new RelayCommand(_ => Save());
             SaveAsConfig = new RelayCommand(_ => SaveAs());
             LoadConfig = new RelayCommand(_ => LoadConfiguration());
+            LightTheme = new RelayCommand(_ => LightThemeImpl());
+            DarkTheme = new RelayCommand(_ => DarkThemeImpl());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -538,5 +540,30 @@ namespace OptimalFuzzyPartition.ViewModel
             reader.Close();
             Settings = JsonConvert.DeserializeObject<PartitionSettings>(data, new VectorJsonConverter());
         }
+
+        #region Theme changing
+
+        public string CurrentTheme
+        {
+            get => App.Theme;
+        }
+
+        private void LightThemeImpl()
+        {
+            ChangeTheme("View/LightTheme.xaml");
+        }
+
+        private void DarkThemeImpl()
+        {
+            ChangeTheme("View/DarkTheme.xaml");
+        }
+
+        private void ChangeTheme(string newTheme)
+        {
+            App.Theme = newTheme;
+            OnPropertyChanged(nameof(CurrentTheme));
+        }
+
+        #endregion
     }
 }

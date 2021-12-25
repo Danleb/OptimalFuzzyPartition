@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -117,6 +117,7 @@
     <Compile Include="Model\DefaultSettingsBuilder.cs" />
     <Compile Include="Model\VectorJsonConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModel\AboutViewModel.cs" />
     <Compile Include="ViewModel\AlgorithmSettingsViewModel.cs" />
     <Compile Include="ViewModel\PartitionCreationViewModel.cs" />
     <Compile Include="ViewModel\Utils\RelayCommand.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="View\Converter\CenterDataConverter.cs" />
     <Compile Include="View\CenterDataView.cs" />
     <Compile Include="View\Converter\CultureForCheckboxConverter.cs" />
+    <Compile Include="View\Converter\ThemeConverter.cs" />
     <Compile Include="View\InputBindingsManager.cs" />
     <Compile Include="View\Converter\MetricsConverter.cs" />
     <Compile Include="View\Converter\TimePassedConverter.cs" />
@@ -165,6 +167,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LightTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\PartitionCreationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -177,10 +187,10 @@
       <DependentUpon>PartitionCreationWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Resource Include="View\Styles.xaml">
+    <Page Include="View\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Resource>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -174,7 +174,7 @@ namespace OptimalFuzzyPartitionAlgorithmTests.AlgorithmTests
             settings.AddCenter(0.9, 0.5, a: 0.2);
             settings.AddCenter(0.1, 0.1, a: 0.2);
             settings.AddCenter(0.9, 0.9, a: 0.2);
-            TestDataUtils.ExecuteTest(settings, 0.032536271059803, 0.0001);
+            TestDataUtils.ExecuteTest(settings, 0.05684687, 0.0001);
         }
 
         [Test]

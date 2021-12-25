@@ -105,7 +105,9 @@ At the current moment GUI supports next languages:
 - [MathNet.Numerics](https://numerics.mathdotnet.com/)
 - [NLog](https://nlog-project.org/)
 - [SimpleTCP](https://github.com/BrandonPotter/SimpleTCP)
+- [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
 - [NaughtyAttributes](https://assetstore.unity.com/packages/tools/utilities/naughtyattributes-129996)
+- [NUnit](https://nunit.org/)
 - [NuGet for Unity](https://github.com/GlitchEnzo/NuGetForUnity)
 - [IngameDebugConsole](https://assetstore.unity.com/packages/tools/gui/in-game-debug-console-68068)
 

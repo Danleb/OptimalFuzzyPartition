@@ -44,13 +44,7 @@ def convertFile(resxPath):
         outputXamlData += '<v:String x:Key="{}">{}</v:String>\n'.format(
             key, value)
 
-        #print('String key: ' + key)
-        #print('Value: ' + value)
-
     outputXamlData += XamlResEnd
-
-    #startIndex = resxPath.index()
-    # endIndex = resxPath.index('.resx')
 
     cultureCode = resxPath[len(ResFileNameStart): len(ResFileNameStart)+5]
     print(cultureCode)

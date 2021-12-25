@@ -16,6 +16,7 @@
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
+        Background="{DynamicResource Background}"
         >
     <Window.InputBindings>
         <KeyBinding Command="{Binding UpdatePartitionCommand}" Key="F5"/>

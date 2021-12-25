@@ -6,6 +6,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/StringLocalization.en-US.xaml"/>
+                <ResourceDictionary Source="View/DarkTheme.xaml"/>
+                <!--<ResourceDictionary Source="View/LightTheme.xaml"/>-->
+                <ResourceDictionary Source="View/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
