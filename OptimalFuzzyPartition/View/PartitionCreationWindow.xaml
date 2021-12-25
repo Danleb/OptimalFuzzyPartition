@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:view="clr-namespace:OptimalFuzzyPartition.View"
         xmlns:vm="clr-namespace:OptimalFuzzyPartition.ViewModel"
+        xmlns:vr="clr-namespace:OptimalFuzzyPartition.View.ValidationRules"
         xmlns:c="clr-namespace:OptimalFuzzyPartition.View.Converter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PartitionCreationViewModel}"
@@ -18,10 +19,23 @@
         >
     <Window.InputBindings>
         <KeyBinding Command="{Binding UpdatePartitionCommand}" Key="F5"/>
-    </Window.InputBindings>    
+    </Window.InputBindings>
+
     <Window.Resources>
-        <c:TimePassedConverter x:Key="TimePassedConverter"/>
+        <ResourceDictionary>
+            <c:DensityConverter x:Key="DensityConverter"/>
+            <c:MetricsConverter x:Key="MetricsConverter"/>
+            <c:CenterDataConverter x:Key="CenterDataConverter"/>
+            <c:VisibilityConverter x:Key="VisibilityConverter"/>
+            <c:CultureForCheckboxConverter x:Key="CultureForCheckboxConverter"/>
+            <c:TimePassedConverter x:Key="TimePassedConverter"/>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
+
     <Grid>
         <DockPanel>
             <ScrollViewer>
@@ -65,7 +79,25 @@
                     </StackPanel>
                     <Slider IsEnabled="{Binding  DrawWithMistrust}" Margin="5" Minimum="0" Maximum="1" Value="{Binding MistrustCoefficient}" TickPlacement="BottomRight" TickFrequency="0.01" LargeChange="0.1" IsSnapToTickEnabled="True"></Slider>
 
+                    <CheckBox IsChecked="{Binding ShowGradientInfo}" Margin="5" Content="{DynamicResource ShowGradientData}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                        <Label Content="{DynamicResource DigitsCount}"/>
+                        <!--<TextBox Text="2" VerticalAlignment="Center" MinWidth="50"/>-->
+
+                        <TextBox Style="{StaticResource TextBoxStyle}" MinWidth="50">
+                            <TextBox.Text>
+                                <Binding Path="PositionDigitsCount" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <vr:PositiveIntValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+
                     <Button Name="Button" Margin="5" Content="{DynamicResource UpdatePartition}" Command="{Binding UpdatePartitionCommand}"></Button>
+
+                    <Separator Margin="5"/>
 
                     <!--<Button Margin="5" Content="Відкрити налаштування"></Button>-->
 

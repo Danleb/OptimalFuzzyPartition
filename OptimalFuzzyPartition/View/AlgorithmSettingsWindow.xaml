@@ -29,38 +29,17 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <c:DensityConverter x:Key="DensityConverter"/>
-        <c:MetricsConverter x:Key="MetricsConverter"/>
-        <c:CenterDataConverter x:Key="CenterDataConverter"/>
-        <c:VisibilityConverter x:Key="VisibilityConverter"/>
-        <c:CultureForCheckboxConverter x:Key="CultureForCheckboxConverter"/>
+        <ResourceDictionary>
+            <c:DensityConverter x:Key="DensityConverter"/>
+            <c:MetricsConverter x:Key="MetricsConverter"/>
+            <c:CenterDataConverter x:Key="CenterDataConverter"/>
+            <c:VisibilityConverter x:Key="VisibilityConverter"/>
+            <c:CultureForCheckboxConverter x:Key="CultureForCheckboxConverter"/>
 
-        <ControlTemplate x:Key="ValidationFailed">
-            <StackPanel Orientation="Horizontal">
-                <Border BorderBrush="Red" BorderThickness="2">
-                    <AdornedElementPlaceholder Name="AdornedElementPlaceholder"></AdornedElementPlaceholder>
-                </Border>
-                <!--<Image Margin="2" Stretch="Fill" Source="../ErrorIcon.png" Height="{Binding ElementName=AdornedElementPlaceholder, Path=ActualHeight}" ToolTip="{Binding Path=/ErrorContent}"></Image>-->
-            </StackPanel>
-        </ControlTemplate>
-
-        <Style x:Key="TextBoxStyle" TargetType="TextBox">
-            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ValidationFailed}"></Setter>
-            <Setter Property="Width" Value="70"></Setter>
-            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
-            <Setter Property="VerticalAlignment" Value="Center"></Setter>
-            <Setter Property="Margin" Value="5,0,20,0"></Setter>
-        </Style>
-
-        <Style x:Key="FloatTextBoxStyle" TargetType="TextBlock" BasedOn="{StaticResource TextBoxStyle}">
-            
-        </Style>
-        
-        <ControlTemplate x:Key="TextBoxTemplate" TargetType="TextBox">
-            <TextBox Style="{StaticResource TextBoxStyle}">
-                <!--<TextBox Validation.Error="OnTextBoxValidationError" Style="{StaticResource TextBoxStyle}">-->
-            </TextBox>
-        </ControlTemplate>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
@@ -84,11 +63,11 @@
                 <MenuItem Header="{DynamicResource MenuAbout}" Command="{Binding AboutCommand}"/>
             </Menu>
 
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">                
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">
                 <Separator/>
                 <StackPanel Orientation="Horizontal">
                     <Button Margin="5" Padding="5" Content="{DynamicResource BuildPartition}" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding CreatePartitionCommand}"/>
-                </StackPanel>                
+                </StackPanel>
                 <!--<Label Content="State: " VerticalAlignment="Center"/>-->
                 <!--<Label Content="Warning: Partition with custom metrics/density function will be calculated on CPU. It may take a lot of time for grid bigger than 32x32." VerticalAlignment="Center" Background="{x:Null}" Foreground="#FFFF8500" FontWeight="Bold"/>-->
             </StackPanel>
@@ -185,7 +164,7 @@
                                     </Binding>
                                 </TextBox.Text>
                             </TextBox>
-                            
+
                             <Label Content="{DynamicResource EnterSegmentsY}"></Label>
                             <TextBox Style="{StaticResource TextBoxStyle}">
                                 <TextBox.Text>
@@ -400,7 +379,7 @@
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
-                        </TextBox>                        
+                        </TextBox>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

@@ -46,7 +46,7 @@ namespace PartitionView
             _muGrids = muGrids;
             _partitionSettings = partitionSettings;
             _partitionTextureCreator.Init(_partitionSettings, _renderingSettings, _colorsGenerator.GetColors(_partitionSettings.CentersSettings.CentersCount));
-            _centersInfoShower.Init(partitionSettings, muGrids);
+            _centersInfoShower.Init(_renderingSettings, partitionSettings, muGrids);
 
             return CreatePartitionAndShow();
         }
@@ -69,7 +69,7 @@ namespace PartitionView
             var sprite = _partitionTexture.ToSprite();
             _partitionImage.sprite = sprite;
 
-            _centersInfoShower.SetShowAlways(_renderingSettings.AlwaysShowCentersInfo);
+            _centersInfoShower.UpdateView(_renderingSettings);
 
             return _partitionTexture;
         }

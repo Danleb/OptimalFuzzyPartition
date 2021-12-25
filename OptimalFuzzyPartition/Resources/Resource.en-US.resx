@@ -256,4 +256,10 @@
   <data name="CentersSettings" xml:space="preserve">
     <value>Centers settings:</value>
   </data>
+  <data name="ShowGradientData" xml:space="preserve">
+    <value>Show gradient data</value>
+  </data>
+  <data name="DigitsCount" xml:space="preserve">
+    <value>Position digits count</value>
+  </data>
 </root>

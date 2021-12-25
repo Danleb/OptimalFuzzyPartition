@@ -57,6 +57,8 @@ namespace OptimalFuzzyPartition.ViewModel
             DrawWithMistrust = Settings.Default.DrawPartitionWithMistrustCoef;
             MistrustCoefficient = Settings.Default.MistrustCoef;
             PartitionImageSavePath = Settings.Default.PartitionImageSavePath;
+            ShowGradientInfo = Settings.Default.ShowGradientInfo;
+            PositionDigitsCount = Settings.Default.PositionDigitsCount;
 
             ChoosePartitionImageSavePathCommand = new RelayCommand(v => ChoosePartitionImageSavePath());
             RunPartitionCreationCommand = new RelayCommand(v => RunPartitionCreation());
@@ -106,6 +108,7 @@ namespace OptimalFuzzyPartition.ViewModel
                 Settings.Default.DrawGrayscalePartition = _commandAndData.RenderingSettings.DrawGrayscale;
                 Settings.Default.Save();
                 OnPropertyChanged();
+                UpdatePartition();
             }
         }
 
@@ -118,6 +121,7 @@ namespace OptimalFuzzyPartition.ViewModel
                 Settings.Default.DrawPartitionWithMistrustCoef = _commandAndData.RenderingSettings.DrawWithMistrustCoefficient;
                 Settings.Default.Save();
                 OnPropertyChanged();
+                UpdatePartition();
             }
         }
 
@@ -128,6 +132,31 @@ namespace OptimalFuzzyPartition.ViewModel
             {
                 _commandAndData.RenderingSettings.MistrustCoefficient = value;
                 Settings.Default.MistrustCoef = _commandAndData.RenderingSettings.MistrustCoefficient;
+                Settings.Default.Save();
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShowGradientInfo
+        {
+            get => _commandAndData.RenderingSettings.ShowGradientInfo;
+            set
+            {
+                _commandAndData.RenderingSettings.ShowGradientInfo = value;
+                Settings.Default.ShowGradientInfo = _commandAndData.RenderingSettings.ShowGradientInfo;
+                Settings.Default.Save();
+                OnPropertyChanged();
+                UpdatePartition();
+            }
+        }
+
+        public int PositionDigitsCount
+        {
+            get => _commandAndData.RenderingSettings.PositionDigitsCount;
+            set
+            {
+                _commandAndData.RenderingSettings.PositionDigitsCount = value;
+                Settings.Default.PositionDigitsCount = _commandAndData.RenderingSettings.PositionDigitsCount;
                 Settings.Default.Save();
                 OnPropertyChanged();
             }

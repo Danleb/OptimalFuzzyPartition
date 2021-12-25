@@ -106,5 +106,29 @@ namespace OptimalFuzzyPartition.Properties {
                 this["MistrustCoef"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowGradientInfo {
+            get {
+                return ((bool)(this["ShowGradientInfo"]));
+            }
+            set {
+                this["ShowGradientInfo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int PositionDigitsCount {
+            get {
+                return ((int)(this["PositionDigitsCount"]));
+            }
+            set {
+                this["PositionDigitsCount"] = value;
+            }
+        }
     }
 }

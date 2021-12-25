@@ -315,4 +315,10 @@
   <data name="CentersSettings" xml:space="preserve">
     <value>Налаштування центрів (точок-генераторів):</value>
   </data>
+  <data name="ShowGradientData" xml:space="preserve">
+    <value>Показувати градієнт</value>
+  </data>
+  <data name="DigitsCount" xml:space="preserve">
+    <value>Кількість знаків після коми</value>
+  </data>
 </root>

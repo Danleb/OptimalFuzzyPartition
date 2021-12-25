@@ -1,9 +1,8 @@
 ﻿using FuzzyPartitionComputing;
 using MathNet.Numerics.LinearAlgebra;
-using NaughtyAttributes;
 using OptimalFuzzyPartitionAlgorithm;
 using OptimalFuzzyPartitionAlgorithm.Algorithm;
-using OptimalFuzzyPartitionAlgorithm.Algorithm.GradientCalculation;
+using OptimalFuzzyPartitionAlgorithm.ClientMessaging;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,8 +16,9 @@ namespace FuzzyPartitionVisualizing
         [SerializeField] private List<CenterInfoView> _centerInfos;
 
         private PartitionSettings _partitionSettings;
+        private List<Vector<double>> _gradients = null;
 
-        public void Init(PartitionSettings partitionSettings, ComputeBuffer muGrids = null)
+        public void Init(RenderingSettings renderingSettings, PartitionSettings partitionSettings, ComputeBuffer muGrids = null)
         {
             _partitionSettings = partitionSettings;
 
@@ -30,11 +30,9 @@ namespace FuzzyPartitionVisualizing
                 _centerInfos.Add(Instantiate(_centerInfoPrefab, transform, true));
             }
 
-            List<Vector<double>> gradients  = null;
-
             if (muGrids != null)
             {
-                gradients = new List<Vector<double>>();
+                _gradients = new List<Vector<double>>();
                 var muValueInterpolators = ComputeBufferToGridConverter.GetGridValueInterpolators(muGrids, partitionSettings);
 
                 for (var i = 0; i < partitionSettings.CentersSettings.CenterDatas.Count; i++)
@@ -42,7 +40,7 @@ namespace FuzzyPartitionVisualizing
                     var centerData = partitionSettings.CentersSettings.CenterDatas[i];
                     var gradientCalculator = new GradientCalculator(partitionSettings.SpaceSettings, partitionSettings.GaussLegendreIntegralOrder);
                     var gradient = gradientCalculator.CalculateGradientForCenter(centerData.Position, muValueInterpolators[i]);
-                    gradients.Add(gradient);
+                    _gradients.Add(gradient);
                 }
             }
 
@@ -50,42 +48,18 @@ namespace FuzzyPartitionVisualizing
             {
                 var centerData = partitionSettings.CentersSettings.CenterDatas[i];
                 var centerInfoView = _centerInfos[i];
-                var gradient = gradients?[i];
-                centerInfoView.Init(centerData, i, gradient);
+                var gradient = _gradients?[i];
+                centerInfoView.Init(renderingSettings, centerData, i, gradient);
             }
 
             SetCenterInfoPositions();
         }
 
-        [Button]
-        public void ShowAll()
-        {
-            _centerInfos.ForEach(v => v.Show());
-        }
-
-        [Button]
-        public void HideAll()
-        {
-            _centerInfos.ForEach(v => v.Hide());
-        }
-
-        [Button]
-        public void EnableShowAlways()
-        {
-            SetShowAlways(true);
-        }
-
-        [Button]
-        public void DisableShowAlways()
-        {
-            SetShowAlways(false);
-        }
-
-        public void SetShowAlways(bool isAlwaysShowCentersInfo)
+        public void UpdateView(RenderingSettings renderingSettings)
         {
             foreach (var centerInfo in _centerInfos)
             {
-                centerInfo.SetAlwaysShow(isAlwaysShowCentersInfo);
+                centerInfo.UpdateView(renderingSettings);
             }
         }
 

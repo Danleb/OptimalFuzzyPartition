@@ -16,5 +16,9 @@ namespace OptimalFuzzyPartitionAlgorithm.ClientMessaging
         public double MistrustCoefficient;
 
         public int BorderWidth;
+
+        public int PositionDigitsCount = 3;
+
+        public bool ShowGradientInfo = false;
     }
 }
