@@ -37,7 +37,7 @@
             <c:VisibilityConverter x:Key="VisibilityConverter"/>
             <c:CultureForCheckboxConverter x:Key="CultureForCheckboxConverter"/>
             <c:ThemeConverter x:Key="ThemeConverter"/>
-
+            <c:DoubleConverter x:Key="DoubleConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/View/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -257,7 +257,7 @@
                         <Label Content="{DynamicResource GradientStepConstant}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="FixedPartitionGradientStep" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="FixedPartitionGradientStep" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -268,7 +268,7 @@
                         <Label Content="{DynamicResource StartPsiValue}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="FixedPartitionPsiStartValue" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="FixedPartitionPsiStartValue" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:NumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -279,7 +279,7 @@
                         <Label Content="{DynamicResource MinimalGradientValueIterationsStop}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="FixedPartitionGradientThreshold" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="FixedPartitionGradientThreshold" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -320,7 +320,7 @@
                         <Label Content="{DynamicResource GradientDescentStartStep}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="InitialStepH0" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="InitialStepH0" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -331,7 +331,7 @@
                         <Label Content="{DynamicResource MinCenterDiffToStop}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="CentersDeltaEpsilon" StringFormat="0.#################" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="CentersDeltaEpsilon" StringFormat="0.#################" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -342,7 +342,7 @@
                         <Label Content="{DynamicResource SpaceStretchCoef}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="SpaceStretchFactor" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -355,7 +355,7 @@
                             <TextBox.Text>
                                 <Binding Path="IterationsCountToIncreaseStep" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
-                                        <vr:PositiveNumberValidationRule/>
+                                        <vr:PositiveIntValidationRule/>
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
@@ -364,7 +364,7 @@
                         <Label Content="{DynamicResource StepIncreaseCoef}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="StepIncreaseMultiplier" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="StepIncreaseMultiplier" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>
@@ -375,7 +375,7 @@
                         <Label Content="{DynamicResource StepDecreaseCoef}"></Label>
                         <TextBox Style="{StaticResource TextBoxStyle}">
                             <TextBox.Text>
-                                <Binding Path="StepDecreaseMultiplier" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="StepDecreaseMultiplier" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource DoubleConverter}">
                                     <Binding.ValidationRules>
                                         <vr:PositiveNumberValidationRule/>
                                     </Binding.ValidationRules>

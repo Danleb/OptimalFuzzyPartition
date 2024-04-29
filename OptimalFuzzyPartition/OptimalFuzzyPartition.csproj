@@ -128,6 +128,7 @@
     <Compile Include="View\Converter\CenterDataConverter.cs" />
     <Compile Include="View\CenterDataView.cs" />
     <Compile Include="View\Converter\CultureForCheckboxConverter.cs" />
+    <Compile Include="View\Converter\DoubleConverter.cs" />
     <Compile Include="View\Converter\ThemeConverter.cs" />
     <Compile Include="View\InputBindingsManager.cs" />
     <Compile Include="View\Converter\MetricsConverter.cs" />
